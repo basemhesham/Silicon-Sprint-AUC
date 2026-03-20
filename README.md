@@ -117,6 +117,21 @@ In this implementation, the management core can:
 
 By mapping these functions to the Wishbone address space, the AES hardware becomes a seamless extension of the SoC's memory, allowing for simple software-driven cryptographic operations.
 
+There are 10 signals used to write/read to a wishbone slave port that are summarized in the below table:
+Signal Name in verilog |	# bits |	Signal meaning |	How is the signal used?
+--- | --- | --- | --- 
+wb_clk_i |	1 |	Clock |	A square wave that can be at either high or low. Data is read or written at either the posedge (positive edge) or negedge (negative edge)
+wb_rst_i | 1 | Reset | A reset restores the status of all registers to the initial value (which is normally zero)
+wbs_stb_i/wbs_cyc_i |	1 |	Strobe/Bus Cycle |	If both of these signals are high this means that there is a valid data transfer taking place. The ANDing of those two signals is the enable signal for any slave port register. 
+wbs_we_i | 1 |	Write enable for input | If this signal is high, then a write operation is taking place, if it is low, then a read operation is taking place.
+wbs_sel_i |	4	| Select for input | If a write operation is taking place, the slave port has a 32-bit register. That register is divided into 4 8-bit units. Each bit on this bus tells if the corresponding 8-bits coming from the wbs_dat_i should be written or not. For example, if wbs_sel_i[0] is 1 and this is a write operation, then the slave register bits 0-7 are going to be updated with the values read from wbs_dat_i[7:0]
+wbs_dat_i |	32 | Input data |	This is the data that is written from a master to a slave in a write operation
+wbs_adr_i |	32 | Input Address | Each slave port is mapped to an address in memory. wbs_adr_i specifies that address. 
+wbs_ack_o |	1	| Acknowledgement |	This signal is set to high following a successful read or write operation. In the case of the SPM, a read operation for the P register is not going to take place until the multiplication is done, which means that wbs_ack_o will stay low until the multiplication is finished.
+wbs_dat_o	| 32 | Output Data | At the end of a write operation, the data sent on wbs_dat_o is the same as the input data received from wbs_dat_i which indicates a successful read operation. At the end of a read operation, the data sent on wbs_dat_o is the data stored in slave port with address wbs_adr_i
+
+The above table explains what each signal means in a wishbone slave and how each signal can be used. 
+
 ---
 
 
