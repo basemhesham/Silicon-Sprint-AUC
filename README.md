@@ -1,31 +1,89 @@
 <div align="center">
 
-<img src="https://umsousercontent.com/lib_lnlnuhLgkYnZdkSC/hj0vk05j0kemus1i.png" alt="ChipFoundry Logo" height="140" />
+<img src="https://github.com/user-attachments/assets/84028fb9-2e26-4733-af28-c6e825395912" alt="Silicon Sprint Logo" height="140" />
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Inter&size=44&duration=3000&pause=600&color=4C6EF5&center=true&vCenter=true&width=1100&lines=Caravel+User+Project+Template;OpenLane+%2B+ChipFoundry+Flow;Verification+and+Shuttle-Ready)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Inter&size=44&duration=3000&pause=600&color=4C6EF5&center=true&vCenter=true&width=1100&lines=Silicon+Sprint+AUC;LibreLane+Flow+Mastery;AES+Accelerator+Integration)](https://git.io/typing-svg)
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![ChipFoundry Marketplace](https://img.shields.io/badge/ChipFoundry-Marketplace-6E40C9.svg)](https://platform.chipfoundry.io/marketplace)
-
+# AES-Caravel: Open-Source ASIC Implementation Guide
+<p align="center">
+    <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache 2.0"/></a>
+    <a href="https://www.python.org"><img src="https://img.shields.io/badge/Python-3.8-3776AB.svg?style=flat&logo=python&logoColor=white" alt="Python 3.8.1 or higher" /></a>
+    <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code Style: black"/></a>
+    <a href="https://nixos.org/"><img src="https://img.shields.io/static/v1?logo=nixos&logoColor=white&label=&message=Built%20with%20Nix&color=41439a" alt="Built with Nix"/></a>
+</p>
+<p align="center">
+    <a href="https://github.com/chipfoundry/librelane"><img src="https://img.shields.io/badge/Flow-LibreLane%20v3-FF69B4" alt="LibreLane v3"></a>
+    <a href="https://librelane.readthedocs.io/"><img src="https://readthedocs.org/projects/librelane/badge/?version=latest" alt="Documentation Build Status Badge"/></a>
+    <a href="https://fossi-chat.org"><img src="https://img.shields.io/badge/Community-FOSSi%20Chat-1bb378?logo=element" alt="Invite to FOSSi Chat"/></a>
+</p>
 </div>
 
+A comprehensive, modular learning path for mastering the open-source ASIC ecosystem and the **LibreLane** physical implementation flow with progressive complexity levels. This project provides a complete educational resource with hands-on modules, technical clinics, and surgical flow control documentation covering all aspects of hardening an **AES Accelerator** and integrating it into the **Caravel SoC** harness for the free OpenMPW shuttle.
+
+---
+
 ## Table of Contents
-- [Overview](#overview)
-- [Documentation & Resources](#documentation--resources)
-- [Prerequisites](#prerequisites)
-- [Project Structure](#project-structure)
-- [Starting Your Project](#starting-your-project)
-- [Development Flow](#development-flow)
-- [GPIO Configuration](#gpio-configuration)
-- [Local Precheck](#local-precheck)
-- [Checklist for Shuttle Submission](#checklist-for-shuttle-submission)
+* [Project Description](#project-description)
+* [Caravel SoC](#caravel-soc)
+* [LibreLane Framework](#librelane-framework)
+* [AES Accelerator Architecture](#aes-accelerator-architecture)
+* [Wishbone Communication](#wishbone-communication)
+* [Design Implementation](#design-implementation)
+* [Design Simulation](#design-simulation)
 
-## Overview
-This repository contains a user project designed for integration into the **Caravel chip user space**. Use it as a template for integrating custom RTL with Caravel's system-on-chip (SoC) utilities, including:
+---
 
-* **IO Pads:** Configurable general-purpose input/output.
-* **Logic Analyzer Probes:** 128 signals for non-intrusive hardware debugging.
-* **Wishbone Port:** A 32-bit standard bus interface for communication between the RISC-V management core and your custom hardware.
+## Project Description
+In this project, we build upon the [Caravel User Project](https://github.com/chipfoundry/caravel_user_project) to demonstrate how the SoC template can be used to harden a high-performance **AES (Advanced Encryption Standard) Accelerator** and integrate it within the [Caravel](https://github.com/efabless/caravel) chip. 
+
+While the foundational flow is based on the traditional Caravel tutorial, this implementation leverages the **LibreLane** framework to achieve "surgical" control over the physical design process. This allows us to address complex integration challenges ensuring the cryptographic core is fully compliant with the Sky130 design rules for the OpenMPW shuttle.
+
+---
+
+## Caravel SoC
+[Caravel](https://github.com/efabless/caravel) is a template SoC designed for Efabless Open MPW and chipIgnite shuttles, based on the **Sky130 (130nm)** process node from SkyWater Technologies. It acts as a standardized "harness" that surrounds the user’s custom logic, providing all necessary infrastructure for a functional chip.
+
+<p align="center">
+  <img width="500" alt="Caravel SoC Structure" src="https://user-images.githubusercontent.com/56173018/182022965-96c2875e-91cf-40fc-8c59-cde0ddeaa16e.png">
+</p>
+
+As illustrated above, Caravel consists of a fixed harness frame and two pluggable wrappers:
+1. **Management Area:** Contains the RISC-V CPU and system peripherals.
+2. **User Project Area:** The sandbox where our **AES Accelerator** is implemented.
+
+Our AES core resides within the `user_project_wrapper` and utilizes the following utilities provided by the management SoC:
+* **38 GPIO Ports:** For external data signaling.
+* **128 Logic Analyzer Probes:** For real-time hardware debugging.
+* **Wishbone Bus Connection:** For high-speed register access between the RISC-V CPU and the AES core.
+
+We utilize the **Wishbone Bus** as the primary communication channel to configure the AES keys and transfer data for encryption/decryption. For more details on the signaling, see the [Wishbone Communication](#wishbone-communication) section.
+
+---
+
+## LibreLane Framework
+[LibreLane](https://github.com/chipfoundry/librelane) is an ASIC infrastructure library and orchestration framework currently developed and maintained under the stewardship of the [FOSSi Foundation](https://fossi-foundation.org). 
+
+It is built upon several industry-standard open-source components, including **OpenROAD**, **Yosys**, **Magic**, **Netgen**, **CVC**, and **KLayout**, along with a suite of custom Python scripts designed for advanced design exploration and optimization.
+
+### The "Classic" Reference Flow
+LibreLane provides a robust reference flow known as **"Classic"**, which performs all mandated ASIC implementation steps—from RTL synthesis all the way down to a sign-off ready GDSII. Unlike legacy flows, LibreLane leverages **Nix** to provide a 100% reproducible environment, ensuring that every tool in the chain is version-locked and dependency-free.
+
+### Hardening Strategies
+When implementing the **AES Accelerator** within the Caravel User Project, LibreLane offers three distinct strategies to optimize physical design and sign-off:
+
+* **Macro-First Hardening:** The user macro is hardened as a standalone block first and then incorporated into the `user_project_wrapper` without additional top-level standard cells. This approach is ideal for smaller designs as it significantly reduces Placement and Routing (PnR) and sign-off time.
+* **Full-Wrapper Flattening:** This method merges the user macro(s) directly with the `user_project_wrapper`, covering the entire available area. While this demands more time and iterations for PnR and sign-off, it ultimately enhances overall performance, making it suitable for high-density designs requiring the full wrapper footprint.
+* **Top-Level Integration:** The user macro is placed within the wrapper alongside standard cells at the top level. This method is typically chosen when top-level buffering or glue logic is necessary to interface the macro with the Caravel SoC.
+
+---
+
+### Resources & Community
+* **Documentation:** Get started with the official [LibreLane Docs](https://librelane.readthedocs.io/en/latest/getting_started/).
+* **Community:** Join the technical discussion on the [FOSSi Chat Matrix Server](https://fossi-chat.org).
+
+---
+
+
 
 ---
 
