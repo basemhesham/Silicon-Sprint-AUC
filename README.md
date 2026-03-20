@@ -40,7 +40,7 @@ While the foundational flow is based on the traditional Caravel tutorial, this i
 
 ---
 
-## Caravel SoC
+## Caravel
 [Caravel](https://github.com/efabless/caravel) is a template SoC designed for Efabless Open MPW and chipIgnite shuttles, based on the **Sky130 (130nm)** process node from SkyWater Technologies. It acts as a standardized "harness" that surrounds the user’s custom logic, providing all necessary infrastructure for a functional chip.
 
 <p align="center">
@@ -60,22 +60,68 @@ We utilize the **Wishbone Bus** as the primary communication channel to configur
 
 ---
 
-## LibreLane Framework
-[LibreLane](https://github.com/chipfoundry/librelane) is an ASIC infrastructure library and orchestration framework currently developed and maintained under the stewardship of the [FOSSi Foundation](https://fossi-foundation.org). 
+## LibreLane
+[LibreLane](https://github.com/chipfoundry/librelane) is an automated RTL-to-GDSII flow based on components including OpenROAD, Yosys, Magic, Netgen, CVC, and KLayout. It performs full ASIC implementation from RTL down to GDSII. 
 
-It is built upon several industry-standard open-source components, including **OpenROAD**, **Yosys**, **Magic**, **Netgen**, **CVC**, and **KLayout**, along with a suite of custom Python scripts designed for advanced design exploration and optimization.
+> **Note:** LibreLane is the successor to the original OpenLane. Following the project's transition, it is now developed and maintained under the stewardship of the [FOSSi Foundation](https://fossi-foundation.org).
 
-### The "Classic" Reference Flow
-LibreLane provides a robust reference flow known as **"Classic"**, which performs all mandated ASIC implementation steps—from RTL synthesis all the way down to a sign-off ready GDSII. Unlike legacy flows, LibreLane leverages **Nix** to provide a 100% reproducible environment, ensuring that every tool in the chain is version-locked and dependency-free.
+<p align="center">
+  <img width="686" alt="LibreLane Architecture" src="https://user-images.githubusercontent.com/56173018/182023837-3ec8d154-8c5a-4d47-a80f-3fa4a9959bbd.png">
+</p>
 
-### Hardening Strategies
-When implementing the **AES Accelerator** within the Caravel User Project, LibreLane offers three distinct strategies to optimize physical design and sign-off:
+When hardening your design using LibreLane, there are three primary options:
 
-* **Macro-First Hardening:** The user macro is hardened as a standalone block first and then incorporated into the `user_project_wrapper` without additional top-level standard cells. This approach is ideal for smaller designs as it significantly reduces Placement and Routing (PnR) and sign-off time.
-* **Full-Wrapper Flattening:** This method merges the user macro(s) directly with the `user_project_wrapper`, covering the entire available area. While this demands more time and iterations for PnR and sign-off, it ultimately enhances overall performance, making it suitable for high-density designs requiring the full wrapper footprint.
-* **Top-Level Integration:** The user macro is placed within the wrapper alongside standard cells at the top level. This method is typically chosen when top-level buffering or glue logic is necessary to interface the macro with the Caravel SoC.
+* **Macro-First Hardening:** Harden the user macro(s) individually, then insert them into the `user_project_wrapper`. This is the default and most time-efficient approach.
+* **Full-Wrapper Flattening:** Flatten the user macro(s) with the `user_project_wrapper` and harden everything in a single step for maximum performance.
+* **Top-Level Integration:** Place the user macro(s) within the wrapper alongside top-level standard cells. This is typically chosen to introduce necessary top-level buffering or glue logic.
+---
+
+## Wishbone Integration & Wrapper Hierarchy
+The integration of the AES core into the Caravel SoC is achieved through a multi-layered hardware hierarchy. This ensures the generic memory interface of the AES core is compatible with the **Wishbone** bus architecture used by the Caravel management SoC.
+
+### 1. AES Wishbone Wrapper (`aes_wb_wrapper.v`)
+We begin by using the open-source RTL for AES by [Joachim Strömbergson](https://github.com/secworks/aes/tree/master). Since the original RTL provides a generic memory interface, we implemented a custom Wishbone wrapper. This module acts as the bridge, adding the necessary `ack`, `write_enable`, and `read_enable` logic to handle the Wishbone bus protocol signaling.
+
+<p align="center">
+  <img width="680" alt="AES Wishbone Wrapper Diagram" src="https://github.com/user-attachments/assets/4a1da4fa-96f4-4003-94f9-c9451bbbe2cc" />
+" />
+</p>
+
+### 2. User Project Wrapper (`user_project_wrapper.v`)
+The `aes_wb_wrapper` is the top-level module of our project logic, which is then instantiated inside the `user_project_wrapper.v`. Every project submitted to the Caravel harness must use this fixed set of ports to ensure physical and electrical compatibility with the SoC.
+
+In summary, this top-level module is responsible for:
+* **Bus Communication:** Interfacing with the Caravel management core via the Wishbone bus.
+* **Signal Mapping:** Connecting the AES engine to the Logic Analyzer probes and GPIO pads.
+* **System Integration:** Managing the `IRQ` and power connections within the user sandbox.
+
+<p align="center">
+  <img width="413" height="372" alt="Screenshot 2026-03-20 195621" src="https://github.com/user-attachments/assets/7357f0e5-acc0-46ff-a6e9-5bc1fcc84813" />
+</p>
 
 ---
+
+## Wishbone Communication
+We implement the AES core in the user project area as a peripheral accessible by firmware on the management SoC. The management core communicates with the AES engine using the **Wishbone bus**. While other communication methods like Logic Analyzer (LA) signals exist, this project focuses exclusively on Wishbone-based memory-mapped I/O.
+
+As shown in the [caravel architecture](#caravel), the management core acts as the **Master**, initiating all read and write operations, while our AES peripheral acts as the **Slave**. The Wishbone bus is a shared interface, meaning the management core communicates with the AES core by addressing the user project memory space.
+
+### Register Interface
+The AES engine is controlled through a series of memory-mapped registers that allow the RISC-V core to configure the encryption parameters, load keys, and transfer data blocks. The Wishbone wrapper handles the bus protocol by decoding the address and generating the necessary internal signals for the AES core.
+
+In this implementation, the management core can:
+* **Configure the Engine:** Set the key length (128-bit or 256-bit) and choose between encryption or decryption modes.
+* **Manage Keys and Data:** Write the encryption keys and input data blocks to the core's internal memory.
+* **Control Execution:** Trigger the initialization of key expansion and start the processing of data blocks.
+* **Monitor Status:** Read back the status of the engine to determine when the core is ready for new data or when a valid result is available to be read.
+
+By mapping these functions to the Wishbone address space, the AES hardware becomes a seamless extension of the SoC's memory, allowing for simple software-driven cryptographic operations.
+
+---
+
+
+
+
 
 ### Resources & Community
 * **Documentation:** Get started with the official [LibreLane Docs](https://librelane.readthedocs.io/en/latest/getting_started/).
