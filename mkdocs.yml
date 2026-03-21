@@ -1,0 +1,17 @@
+site_name: "AES ASIC Design Workshop"
+theme:
+  name: material  # This is the high-quality theme used in the links you shared
+
+nav:
+  - Home: index.md
+  - Installation: docs/MODULE0.md
+  - RTL Exploration: docs/MODULE1.md
+
+markdown_extensions:
+  - admonition        # Enables colored "Note" and "Important" boxes
+  - pymdownx.details  # Enables collapsible sections
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
