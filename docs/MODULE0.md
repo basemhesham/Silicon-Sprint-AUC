@@ -1,61 +1,74 @@
 # Module 0: Installation and Setup
 
-**Goal**: Set up the physical design and verification environment and verify toolchain functionality.
-
-## Overview
-
-This module covers the complete setup of your ASIC development environment, including all required tools and dependencies for hardening the AES core. By the end of this module, you will have a working environment capable of running the **LibreLane** infrastructure.
+**Goal**: Establish a reproducible physical design environment and verify the ASIC toolchain functionality.
 
 ---
+
+## 1. Overview
+This module guides you through the complete setup of your ASIC development environment. You will install the necessary dependencies for hardening the **AES core** and ensure that the **LibreLane** infrastructure is correctly configured on your system.
+
+---
+
 ## 2. Nix-based Installation
+LibreLane utilizes **Nix** as its primary build system. Nix is a cross-platform package manager that ensures your local environment perfectly matches the production environment, allowing for fully cacheable and reproducible ASIC builds.
 
-LibreLane uses **Nix** as its primary build system. Nix is a powerful package manager for Linux and macOS that ensures your environment is exactly the same as the developers', allowing for fully cachable and reproducible ASIC builds.
-
-> **Tip for Windows Users**: 
-> You can use the Windows Subsystem for Linux (WSL2). Follow the specific WSL setup instructions in the link below.
+> **Tip for Windows Users**: It is highly recommended to use **Windows Subsystem for Linux (WSL2)** with an Ubuntu 22.04 distribution for the best performance and compatibility.
 
 ### Installation Guides by OS
-Follow the official guide for your specific operating system to install Nix and configure the LibreLane environment:
+Select the guide corresponding to your operating system to install Nix and configure the LibreLane environment:
 
-* **Windows 10+ (WSL2)**: [Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_win.html)
-* **macOS 11+**: [Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_macos.html)
-* **Ubuntu/Other Linux**: [Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html)
+* **Windows 10+ (WSL2)**: [WSL2 Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_win.html)
+* **macOS 11+**: [macOS Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_macos.html)
+* **Ubuntu/Linux**: [Linux Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html)
 
-### Why Nix?
-Unlike traditional package managers, Nix ensures that every tool in the AES hardening flow (from Yosys to Magic) is pinned to a specific, verified version. This prevents the "it works on my machine" problem when sharing your design with the community or submitting to an MPW shuttle.
+### Why use Nix?
+Traditional package managers often suffer from "version drift." Nix ensures that every tool in the AES flow—from **Yosys** (Synthesis) to **Magic** (Layout)—is pinned to a specific, verified version. This eliminates "it works on my machine" bugs during the workshop.
+
+---
 
 ## 3. Invoking the Environment
+Once Nix is installed, you will enter a **Nix-shell**. This creates a virtual environment containing all specialized ASIC tools without cluttering your global system.
 
-Once Nix is installed, you must enter the **nix-shell**. This environment provides all the specialized ASIC tools bundled with LibreLane without requiring a global installation on your host system.
+### Step 3.1: Clone the Repository
+Clone the LibreLane infrastructure into your home directory:
+```console
+$ git clone https://github.com/librelane/librelane/ ~/librelane
+```
 
-1. **Clone the LibreLane repository:**
-   ```console
-   $ git clone https://github.com/librelane/librelane/ ~/librelane
-   ```
-2. **Initialize the Nix-shell:**
-Enter the following command to make the LibreLane packages available to your current session:
-   ```console
-   $ nix-shell --pure ~/librelane/shell.nix
-   ```
-On the first run, Nix will download approximately 3GiB of data. Once the process completes, your terminal prompt will change to indicate you are inside the environment:
+### Step 3.2: Switch to LibreLane 3
+To use the latest features and improvements in LibreLane 3, switch to the development branch:
+```console
+$cd ~/librelane$ git checkout dev
+```
 
-   ```console
-   [nix-shell:~/librelane]$
-   ```
-3. **Verify the Setup:**
-Confirm that the environment is active and the tools are accessible by checking the version:
+### Step 3.3: Initialize the Nix-shell
+Enter the following command to load the LibreLane packages into your current terminal session:
+```console
+$ nix-shell --pure ~/librelane/shell.nix
+```
+
+```{tip}
+On the first execution, Nix will download approximately 3GB of data. Please ensure you have a stable internet connection.
+```
+
+Once finished, your terminal prompt will change to indicate you are inside the managed environment:
+
+```console
+[nix-shell:~/librelane]$
+```
+
+## 4. Verification and Smoke Test
+Now that the shell is active, you must verify the toolchain and download the Sky130 PDK.
+
+### Step 4.1: Version Check
+Confirm the environment is active by checking the LibreLane version:
+
    ```console
    [nix-shell:~/librelane]$ librelane --version
    ```
 
-4. **Smoke Test:**
+### Running the Smoke Test
 Now that your environment is active, you are ready to run the Smoke Test to download the Sky130 PDK.
    ```console
    [nix-shell:~/librelane]$ librelane --log-level ERROR --condensed --show-progress-bar --smoke-test
    ```
-
-### Verification of Nix Setup
-Once installed, verify that the Nix shell can be initialized by running:
-```console
-$ nix-shell --run "librelane --version"
-```
