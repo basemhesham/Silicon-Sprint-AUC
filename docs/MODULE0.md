@@ -72,3 +72,59 @@ Now that your environment is active, you are ready to run the Smoke Test to down
    ```console
    [nix-shell:~/librelane]$ librelane --log-level ERROR --condensed --show-progress-bar --smoke-test
    ```
+---
+
+## 6. Repository Preparation & SSH Configuration
+
+**Goal**: Establish a secure connection to GitHub and clone the required hardware design repositories.
+
+### 6.1 Remote Repository Setup (SSH & Git)
+To manage your design files and collaborate on GitHub securely without entering your password for every action, you must configure SSH (Secure Shell). This establishes an encrypted link between your local machine and your GitHub account.
+
+### Step 1: Generating an SSH Key
+First, check if you already have a key. If not, generate a new one using the Ed25519 algorithm, which is the current standard for security and performance.
+
+**Generate the key**: Open your terminal and run the following command (replace the email with your GitHub email):
+
+```console
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+* **Save the file**: Press **Enter** to accept the default file location (`~/.ssh/id_ed25519`).
+* **Passphrase**: You can enter a passphrase for extra security or press **Enter** twice to leave it empty for convenience.
+
+### Step 2: Adding the Key to GitHub
+GitHub needs your **Public Key** to recognize your machine.
+
+**1. Copy the public key**: Run this command to display the key text:
+```console
+cat ~/.ssh/id_ed25519.pub
+```
+**2. Copy the output**: Highlight and copy the entire text starting with `ssh-ed25519`.
+
+**3. In GitHub**: 
+* Go to **Settings** > **SSH and GPG keys** > **New SSH key**.
+* **Paste the key**: Give it a title (e.g., "Lab_Workstation") and paste the copied text into the "Key" field.
+
+---
+
+### 6.2 Cloning the Project Repositories
+Once the SSH key is linked, you can "clone" (download) the project files. We will pull both the main Caravel project structure and the specific AES source code used in the workshop.
+
+### Step 1: Clone the Silicon-Sprint-AUC Project
+This command clones the Caravel user project template specifically configured for LibreLane into your home directory:
+```console
+git clone git@github.com:basemhesham/Silicon-Sprint-AUC.git ~/Silicon-Sprint-AUC
+```
+
+### Step 2: Clone the AES Source Code
+Next, we clone the specific AES hardware implementation (RTL) that we will be hardening during this workshop:
+```console
+git clone git@github.com:secworks/aes.git ~/secworks_aes
+```
+
+### Step 3: Verification
+Verify that both directories now exist in your home folder:
+```console
+ls -d ~/Silicon-Sprint-AUC ~/secworks_aes
+```
