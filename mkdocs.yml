@@ -1,19 +1,36 @@
-site_name: "Silicon Sprint AUC Workshop"
+site_name: "AES ASIC Project"
+
 theme:
   name: material
-  palette:
-    - scheme: slate
+  palette: 
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: indigo
       accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.expand
+    - content.code.copy 
+    - content.code.select
 
-nav:
-  - Home: index.md
-  - Installation: MODULE0.md
-  - RTL Exploration: MODULE1.md
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
-  - pymdownx.superfences
   - pymdownx.highlight:
       anchor_linenums: true
-      pygments_lang_class: true 
+      pygments_lang_class: true
   - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
