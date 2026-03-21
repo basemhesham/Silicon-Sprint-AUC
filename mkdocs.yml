@@ -4,8 +4,8 @@ theme:
 
 nav:
   - Home: index.md
-  - Installation: docs/MODULE0.md
-  - RTL Exploration: docs/MODULE1.md
+  - Installation: MODULE0.md
+  - RTL Exploration: MODULE1.md
 
 markdown_extensions:
   - admonition        # Enables colored "Note" and "Important" boxes
