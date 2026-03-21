@@ -5,3 +5,4 @@ sphinx
 sphinx-autobuild
 sphinxcontrib-wavedrom
 sphinx-rtd-theme
+mkdocs-material
