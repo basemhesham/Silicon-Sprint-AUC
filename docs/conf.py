@@ -46,7 +46,6 @@ third_party_extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.graphviz",
     "sphinx.ext.mathjax",
-    "sphinxcontrib.bibtex",
     "sphinx_design",
     "sphinx_tippy",
     "sphinx_copybutton",
