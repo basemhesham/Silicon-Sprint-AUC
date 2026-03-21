@@ -1,8 +1,2 @@
-git+https://github.com/SymbiFlow/sphinx_materialdesign_theme.git#egg=sphinx-symbiflow-theme
-
-docutils
-sphinx
-sphinx-autobuild
-sphinxcontrib-wavedrom
-sphinx-rtd-theme
 mkdocs-material
+pymdown-extensions
