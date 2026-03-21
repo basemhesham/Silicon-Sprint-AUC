@@ -22,7 +22,7 @@ Follow the official guide for your specific operating system to install Nix and 
 * **Ubuntu/Other Linux**: [Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html)
 
 ### Why Nix?
-Unlike traditional package managers, **Nix** ensures that every tool in the AES hardening flow—from Yosys to Magic—is pinned to a specific, verified version. This eliminates the "it works on my machine" problem, ensuring that your design remains reproducible when shared with the community or submitted to an Efabless MPW shuttle.
+Unlike traditional package managers, Nix ensures that every tool in the AES hardening flow (from Yosys to Magic) is pinned to a specific, verified version. This prevents the "it works on my machine" problem when sharing your design with the community or submitting to an MPW shuttle.
 
 ## 3. Invoking the Environment
 
@@ -52,34 +52,6 @@ Confirm that the environment is active and the tools are accessible by checking 
 Now that your environment is active, you are ready to run the Smoke Test to download the Sky130 PDK.
    ```console
    [nix-shell:~/librelane]$ librelane --log-level ERROR --condensed --show-progress-bar --smoke-test
-   ```
-
-
-### Why Nix?
-Unlike traditional package managers, Nix ensures that every tool in the AES hardening flow (from Yosys to Magic) is pinned to a specific, verified version. This prevents the "it works on my machine" problem when sharing your design with the community or submitting to an MPW shuttle.
-
-## 3. Invoking the Environment
-
-Once Nix is installed, you need to enter the **nix-shell**. This environment makes all the packages bundled with LibreLane available to your terminal without global installation.
-
-Open a terminal and clone LibreLane as follows:
-
-   ```console
-   $ git clone https://github.com/librelane/librelane/ ~/librelane
-   ```
-   
-Invoke `nix-shell`, which will make all the packages bundled with LibreLane
-   available to your shell.
-
-   ```console
-   $ nix-shell --pure ~/librelane/shell.nix
-   ```
-
-  Some packages will be downloaded (about 3GiB) and afterwards, the terminal
-   prompt should change to:
-
-   ```console
-   [nix-shell:~/librelane]$
    ```
 
 ### Verification of Nix Setup
