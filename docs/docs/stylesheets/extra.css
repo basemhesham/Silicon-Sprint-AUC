@@ -1,0 +1,9 @@
+/* This targets the 'Generic Prompt' ($ or [nix-shell]) in code blocks */
+.md-typeset .highlight .gp {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE10+ */
+  user-select: none;         /* Standard */
+  pointer-events: none;      /* Makes it unclickable */
+  padding-right: 0.5em;      /* Keeps a nice gap */
+}
