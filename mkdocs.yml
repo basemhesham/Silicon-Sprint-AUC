@@ -1,6 +1,10 @@
 site_name: "Silicon Sprint AUC Workshop"
 theme:
-  name: material  # This is the high-quality theme used in the links you shared
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: indigo
 
 nav:
   - Home: index.md
