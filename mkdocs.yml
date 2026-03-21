@@ -25,7 +25,7 @@ theme:
     - content.code.select
 
 extra_css:
-  - stylesheets/extra.css
+  - docs/stylesheets/extra.css
 
 markdown_extensions:
   - pymdownx.highlight:
