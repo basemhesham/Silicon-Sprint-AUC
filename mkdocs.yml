@@ -8,10 +8,8 @@ nav:
   - RTL Exploration: MODULE1.md
 
 markdown_extensions:
-  - admonition        # Enables colored "Note" and "Important" boxes
-  - pymdownx.details  # Enables collapsible sections
+  - pymdownx.superfences
   - pymdownx.highlight:
       anchor_linenums: true
+      pygments_lang_class: true 
   - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
