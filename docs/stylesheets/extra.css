@@ -1,0 +1,27 @@
+/* 1. Bold and Clean Titles */
+h1, h2, h3, h4 {
+  font-weight: 700 !important;
+  color: var(--md-typeset-color);
+  margin-top: 1.5em;
+}
+
+/* 2. Better Body Text readability */
+.md-typeset {
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+/* 3. Anti-Copy for Prompts (Updated) */
+/* This prevents the $ and nix-shell from being copied */
+.md-typeset .highlight .gp {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+  opacity: 0.6; /* Makes the prompt look slightly faded/professional */
+}
+
+/* 4. Improve Code Block look */
+.md-typeset pre > code {
+  padding: 1em;
+  border-radius: 8px;
+}
