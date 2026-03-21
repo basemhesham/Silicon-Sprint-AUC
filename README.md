@@ -61,9 +61,9 @@ We utilize the **Wishbone Bus** as the primary communication channel to configur
 ---
 
 ## LibreLane
-[LibreLane](https://github.com/chipfoundry/librelane) is an automated RTL-to-GDSII flow based on components including OpenROAD, Yosys, Magic, Netgen, CVC, and KLayout. It performs full ASIC implementation from RTL down to GDSII. 
+[LibreLane](https://github.com/chipfoundry/librelane) is an automated RTL-to-GDSII flow based on components including OpenROAD, Yosys, Magic, Netgen, CVC, and KLayout. It performs full ASIC implementation from RTL down to GDSII.
 
-> **Note:** LibreLane is the successor to the original OpenLane. Following the project's transition, it is now developed and maintained under the stewardship of the [FOSSi Foundation](https://fossi-foundation.org).
+Originally started as version 2.0 of OpenLane, LibreLane is a piece of software for ASIC implementation, initially developed by Efabless Corporation, but it is currently maintained under the stewardship of the [FOSSi Foundation](https://fossi-foundation.org). Rather than being a single fixed flow, LibreLane acts as an infrastructure that allows for multiple implementation strategies, including a "Classic" flow for compatibility with earlier OpenLane versions.
 
 <p align="center">
   <img width="686" alt="LibreLane Architecture" src="https://user-images.githubusercontent.com/56173018/182023837-3ec8d154-8c5a-4d47-a80f-3fa4a9959bbd.png">
@@ -71,9 +71,10 @@ We utilize the **Wishbone Bus** as the primary communication channel to configur
 
 When hardening your design using LibreLane, there are three primary options:
 
-* **Macro-First Hardening:** Harden the user macro(s) individually, then insert them into the `user_project_wrapper`. This is the default and most time-efficient approach.
-* **Full-Wrapper Flattening:** Flatten the user macro(s) with the `user_project_wrapper` and harden everything in a single step for maximum performance.
+* **Macro-First Hardening:** Harden the user macro(s) initially and incorporate them into the wrapper without top-level standard cells. This method significantly reduces PnR and sign-off time.
+* **Full-Wrapper Flattening:** Merge the user macro(s) with the `user_project_wrapper` to cover the entire area. This enhances performance but requires more PnR iterations.
 * **Top-Level Integration:** Place the user macro(s) within the wrapper alongside top-level standard cells. This is typically chosen to introduce necessary top-level buffering or glue logic.
+
 ---
 
 ## Wishbone Integration & Wrapper Hierarchy
@@ -134,28 +135,77 @@ The above table explains what each signal means in a wishbone slave and how each
 
 ---
 
+## 📖 Documentation
 
+The `docs/` directory contains the complete learning path for hardening and verifying the AES Accelerator within the Caravel SoC:
 
+### Module Documentation
 
+Each module provides a dedicated guide with a step-by-step flow for a specific stage of the ASIC implementation:
 
-### Resources & Community
-* **Documentation:** Get started with the official [LibreLane Docs](https://librelane.readthedocs.io/en/latest/getting_started/).
-* **Community:** Join the technical discussion on the [FOSSi Chat Matrix Server](https://fossi-chat.org).
+- **[MODULE0.md](docs/MODULE0.md)**: Installation and Environment
+  - Setting up the LibreLane containerized environment.
+  - Caravel User Project repository initialization and Sky130 PDK installation.
+
+- **[MODULE1.md](docs/MODULE1.md)**: RTL Exploration & Simulation
+  - Analyzing the Secworks AES RTL architecture and sub-modules.
+  - Functional verification using Icarus Verilog and GTKWave.
+
+- **[MODULE2.md](docs/MODULE2.md)**: Wishbone Bus Integration
+  - Wrapping the AES core with the Wishbone interface (`aes_wb_wrapper.v`).
+  - Signal mapping and handshaking logic (`ack`, `we`, `stb`).
+
+- **[MODULE3.md](docs/MODULE3.md)**: Hardening with LibreLane
+  - Running the "Classic" flow: Floorplanning, PDN, and Placement.
+  - Generating the GDSII for the standalone AES macro.
+
+- **[MODULE4.md](docs/MODULE4.md)**: Hierarchical Integration
+  - Integrating the AES macro into the `user_project_wrapper`.
+  - Top-level routing and physical sign-off (LVS/DRC) using Magic and Netgen.
+
+- **[MODULE5.md](docs/MODULE5.md)**: Firmware & Silicon Validation
+  - Developing C-firmware for the RISC-V management core to drive the AES engine.
+  - Full-chip SoC simulation to verify memory-mapped I/O operations.
+
+### Reference Documentation
+- **[LibreLane Documentation](https://librelane.readthedocs.io/en/latest/getting_started/)**: Get started with the official LibreLane Docs.
+- **[OpenROAD Documentation](https://openroad.readthedocs.io/en/latest/main/README.html)**: Comprehensive technical documentation for the OpenROAD tool suite.
+- **[Efabless Open MPW Video Playlist](https://www.youtube.com/playlist?list=PLZuGFJzpFksB57YCxIQ50DPkvNFMpfCXd)**: Video guides for the Open MPW shuttle program.
+- **[Caravel Datasheet](https://github.com/chipfoundry/caravel/blob/main/docs/caravel_datasheet_2.pdf)**: Detailed electrical and physical specifications of the Caravel harness.
+- **[Caravel Technical Reference Manual (TRM)](https://github.com/chipfoundry/caravel/blob/main/docs/caravel_datasheet_2_register_TRM_r2.pdf)**: Complete register maps and programming guides for the management SoC.
+- **[Community](https://fossi-chat.org)**: Join the technical discussion on the FOSSi Chat Matrix Server.
+- **[GLOSSARY.md](docs/GLOSSARY.md)**: Comprehensive glossary of ASIC terms (PnR, GDSII, LVS, DRC) used in this workshop.
+
+---
+
+## 🚀 Start Learning
+
+To begin your journey in ASIC design and AES implementation, follow the modules sequentially. Each module builds upon the previous one, taking you from environment setup to a complete, hardened GDSII.
+
+### [Module 0: Installation and Setup](docs/MODULE0.md)
+
+Before starting the design process, you must configure your local or cloud environment. This module provides a step-by-step flow to ensure all dependencies for the Caravel SoC and LibreLane are correctly installed.
+
+**Key Objectives:**
+* **Environment Reproducibility:** Setting up the containerized LibreLane environment to ensure consistent results across different operating systems.
+* **PDK Installation:** Downloading and configuring the **SkyWater 130nm (Sky130)** Process Design Kit.
+* **Repository Setup:** Initializing your local workspace using the Caravel User Project template.
+* **Verification:** Running a basic connectivity check to confirm the toolchain (Yosys, OpenROAD, Magic) is operational.
+
+> **Next Step:** Once your environment is verified, proceed to **Module 1: RTL Exploration & Simulation** to dive into the AES core architecture.
 
 ---
 
 
 
----
 
-## Documentation & Resources
-For detailed hardware specifications and register maps, refer to the following official documents:
 
-* **[Caravel Datasheet](https://github.com/chipfoundry/caravel/blob/main/docs/caravel_datasheet_2.pdf)**: Detailed electrical and physical specifications of the Caravel harness.
-* **[Caravel Technical Reference Manual (TRM)](https://github.com/chipfoundry/caravel/blob/main/docs/caravel_datasheet_2_register_TRM_r2.pdf)**: Complete register maps and programming guides for the management SoC.
-* **[ChipFoundry Marketplace](https://platform.chipfoundry.io/marketplace)**: Access additional IP blocks, EDA tools, and shuttle services.
 
----
+
+
+
+
+
 
 ## Prerequisites
 Ensure your environment meets the following requirements:
