@@ -26,24 +26,20 @@ sys.path.insert(0, os.path.abspath("../_ext"))
 sys.path.insert(0, os.path.abspath("../../"))
 
 # -- Project information -----------------------------------------------------
-project = "LibreLane"
-copyright = "2020-2025 Efabless Corporation and contributors"
-author = "Efabless Corporation"
-repo = "https://github.com/librelane/librelane"
+project = "Silicon Sprint AUC Workshop"
+copyright = "2026, Silicon Sprint AUC"
+author = "Basem Hesham" 
+
+repo = "https://github.com/basemhesham/Silicon-Sprint-AUC"
 branch = "main"
 
-
+html_baseurl = "https://silicon-sprint-auc.readthedocs.io/en/latest/"
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-custom_extensions = [
-    "flow_step_var_directives",
-    "generate_module_autodocs",
-    "generate_configvar_docs",
-    "migration_comparison",
-]
+
 third_party_extensions = [
     "myst_parser",
     "sphinx.ext.todo",
@@ -56,7 +52,7 @@ third_party_extensions = [
     "sphinx_copybutton",
     "sphinx_subfigure",
 ]
-extensions = third_party_extensions + custom_extensions
+extensions = third_party_extensions 
 try:
     import sphinxcontrib.spelling  # noqa: F401
 
@@ -104,7 +100,7 @@ exclude_patterns = [
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_title = "LibreLane Documentation"
+html_title = "Silicon Sprint AUC Workshop"
 html_theme = "furo"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -112,7 +108,7 @@ html_theme = "furo"
 html_theme_options = {
     "source_repository": repo,
     "source_branch": branch,
-    "source_directory": "docs/source",
+    "source_directory": "docs/",
     "footer_icons": [
         {
             "name": "GitHub",
@@ -127,19 +123,14 @@ html_theme_options = {
     ],
 }
 
-html_static_path = ["../_static"]
+html_static_path = ["_static"]
 html_css_files = [
     "css/custom.css",
 ]
 
 numfig = True
 
-# Bibtex
-bibtex_bibfiles = ["refs.bib"]
-bibtex_default_style = "unsrt"
-
 # Autodoc
-generate_module_autodocs = [("librelane", "reference/api")]
 autodoc_typehints = "both"
 autodoc_member_order = "bysource"
 autosectionlabel_prefix_document = True
