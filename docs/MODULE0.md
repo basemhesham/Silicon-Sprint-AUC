@@ -9,20 +9,46 @@ This module guides you through the complete setup of your ASIC development envir
 
 ---
 
-## 2. Nix-based Installation
-LibreLane utilizes **Nix** as its primary build system. Nix is a cross-platform package manager that ensures your local environment perfectly matches the production environment, allowing for fully cacheable and reproducible ASIC builds.
+## Installing Nix
 
-> **Tip for Windows Users**: It is highly recommended to use **Windows Subsystem for Linux (WSL2)** with an Ubuntu 22.04 distribution for the best performance and compatibility.
+{warning}
+Do **not** install Nix using `apt`. The version of Nix provided by `apt` is often outdated and may cause compatibility issues.
+{warning}
+
+Nix requires `curl` to download the installer.
+
+First install `curl`:
+
+```console
+sudo apt-get install -y curl
+```
+
+Then install Nix using the official installer:
+
+```console
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --prefer-upstream-nix --no-confirm --extra-conf "
+    extra-substituters = https://nix-cache.fossi-foundation.org
+    extra-trusted-public-keys = nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=
+"
+```
+
+Enter your password if prompted. The installation typically takes a few minutes.
+
+After the installation completes, close all terminal windows and open a new one before continuing.
+
+For more information or installation steps on operating systems other than Linux, refer to the following guides.
 
 ### Installation Guides by OS
-Select the guide corresponding to your operating system to install Nix and configure the LibreLane environment:
 
-* **Windows 10+ (WSL2)**: [WSL2 Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_win.html)
-* **macOS 11+**: [macOS Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_macos.html)
-* **Ubuntu/Linux**: [Linux Installation Guide](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html)
+Select the guide corresponding to your operating system:
 
-### Why use Nix?
-Traditional package managers often suffer from "version drift." Nix ensures that every tool in the AES flow—from **Yosys** (Synthesis) to **Magic** (Layout)—is pinned to a specific, verified version. This eliminates "it works on my machine" bugs during the workshop.
+* **Windows 10+ (WSL2)**: https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_win.html  
+* **macOS 11+**: https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_macos.html  
+* **Ubuntu/Linux**: https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html  
+
+### Why Nix?
+
+Reproducibility is essential in ASIC design flows. Nix creates an isolated and deterministic development environment where every tool is installed with a fixed and verified version. This ensures that the entire design flow—from synthesis with **Yosys** to layout generation with **Magic**—runs identically on every machine. As a result, the environment becomes reliable and avoids the common problem where a design works on one system but fails on another.
 
 ---
 
