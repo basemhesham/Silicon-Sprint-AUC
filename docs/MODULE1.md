@@ -239,26 +239,31 @@ The primary command to trigger the ASIC flow is `librelane`. It follows a standa
 ##### Sequential Flow Controls
 These options allow you to isolate specific stages (like Synthesis) without running the entire GDSII flow:
 
-* **`-from <StepID>`**: Starts the flow from a specific step (e.g., -from Checker.LintErrors).
-* **`--to <StepID>`**: Stops the flow after a specific step completes (e.g., --to Yosys.Synthesis).
-* **`-skip <StepID>`**: Tells the engine to bypass specific steps during execution.
+| Option | Description | Example |
+| :--- | :--- | :--- |
+| **--from <StepID>** | Starts the flow from a specific step ID. | `-from Checker.LintErrors` |
+| **--to <StepID>** | Stops the flow after a specific step ID completes. | `--to Yosys.Synthesis` |
+| **--skip <StepID>** | Instructs the engine to bypass specific steps during execution. | `-skip Checker.LintTiming` |
 
 ##### Run Management Options
 These options control how LibreLane saves and organizes your data in the runs/ directory:
 
-* **`--run-tag <name>`**: Provides a custom name for your run folder. This is helpful for comparing different strategies (e.g., --run-tag synth_strat_1).
-* **`--last-run`**: Automatically uses the most recent run directory as the target.
-* **`--overwrite`**: Overwrites the existing run directory if it has the same tag.
-* **`--with-initial-state <FILE>`**: Uses a specific state_out.json file as the starting point. This is essential for "resuming" a flow after you have modified a configuration.
+| Option | Description |
+| :--- | :--- |
+| **--run-tag <name>** | Assigns a custom name to the run directory. Crucial for comparing different strategies. |
+| **--last-run** | Automatically targets the most recently created run directory. |
+| **--overwrite** | Overwrites the existing run directory if a matching tag is found. |
+| **--with-initial-state <FILE>** | Uses a specific `state_out.json` as the starting point to resume a previous flow. |
 
-##### Flow Configuration Options
+#### Flow Configuration Modes
+The `--flow` flag (or `-f`) determines the underlying engine and methodology used for the run.
 
-* **--flow [optimizing|classic|openinklayout|openinopenroad]**: The primary flag used to specify the built-in LibreLane flow for the run.
-
-    * **`optimizing`**: A flow designed to iteratively explore different synthesis strategies and settings to achieve the best area and timing results.
-    * **`classic`**: The standard, sequential RTL-to-GDSII flow that follows a predictable, step-by-step path.
-    * **`openinklayout`**: Stops the flow and opens the current design state in the KLayout graphical tool for GDS/Layout inspection.
-    * **`openinopenroad`**: Stops the flow and opens the design in the OpenROAD GUI for analyzing floorplanning, placement, or routing.
+| Mode | Description |
+| :--- | :--- |
+| **classic** | The standard, sequential flow that follows a predictable, step-by-step path. |
+| **optimizing** | An iterative flow that explores multiple synthesis strategies for better area/timing results. |
+| **openinklayout** | Terminates the flow and opens the current design state in **KLayout** for GDS inspection. |
+| **openinopenroad** | Terminates the flow and opens the design in the **OpenROAD GUI** for physical analysis. |
 ---
 ### 3.3 Synthesis Strategy and Execution
 
