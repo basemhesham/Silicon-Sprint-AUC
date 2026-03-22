@@ -30,6 +30,8 @@ Before writing the code, examine the block diagram below. It illustrates how the
 Block diagram of aes_wb_wrapper
 ```
 
+---
+
 ### 1.2 Creating the Verilog Wrapper
 
 To start the integration, you need to create the interface file that bridges the AES logic with the Wishbone bus. This step prepares the "socket" that will hold your encryption engine.
@@ -54,9 +56,12 @@ After pasting the code, save the file and close the editor.
     :linenos:
    ```
 ````
+
 #### Step 3: Download the Source (Optional)
 If you prefer to download the verified source file directly into your code directory for reference, use the link below:
 {download}`Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
+
+---
 
 ## 2: The LibreLane Classic Flow
 
@@ -66,6 +71,9 @@ The LibreLane Classic flow is a sequential process that automates the RTL-to-GDS
 :align: center
 LibreLane flow
 ```
+
+---
+
 ### 2.1 Step IDs
 Each step in the flow is identified by a unique Step ID. These IDs typically follow a standard `ToolName.StepName` format. These IDs are not just labels; they are used to control the flow, allowing you to start, stop, or skip specific processes during the workshop.
 
@@ -120,6 +128,8 @@ The table below details the steps included in the default flow, organized by des
 | | Layout vs. Schematic (Netgen) | `Netgen.LVS` |
 | | Final Manufacturability Report | `Misc.ReportManufacturability` |
 
+---
+
 ### 2.2 Directory Structure and Execution Order
 When running the flow, LibreLane automatically manages the data for you. It creates distinct directories for each step within the runs/ folder. To keep the flow organized and easy to follow, LibreLane uses a numeric prefix that indicates the execution order.
 
@@ -151,40 +161,31 @@ test1
 
 This numbering ensures that even if you have dozens of steps, you can always see the exact chronological path your design took from Verilog to GDS.
 
+---
+
 ## 3 Running the Flow
 In this section, we will execute the LibreLane flow specifically for Linting and Synthesis of the aes_wb_wrapper. This ensures our RTL is structurally sound and ready to be mapped into logic gates.
 
-### 3.1 Design Configuration
-Designs in LibreLane are controlled by Configuration Files. These files contain specific variables defined by the user to guide how the EDA tools process the design. Think of the configuration file as the "instruction manual" for the flow; without it, the tools won't know which files to read or what the timing constraints are.
-
-```{warning}
-(required-variables)=
-For any design, at a minimum you need to specify the following variables:
-* `DESIGN_NAME`
-* `VERILOG_FILES`
-* `CLOCK_PERIOD`
-* `CLOCK_PORT`
-```
-
-### 3.2 Setting Up the Design Environment
+### 3.1 Setting Up the Design Environment
 
 In this workshop, we use an **Iterative Configuration Strategy**. Instead of providing a final, "perfect" configuration file immediately, we start with the **Base Requirements**. We will run the flow, analyze the reports, and then tune advanced parameters based on the specific needs of the `aes_wb_wrapper`.
 
-#### 1. Create the Design Directory
+#### Create the Design Directory
 First, create the dedicated folder where LibreLane will look for your `config.json`:
 
 ```console
-mkdir -p ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper
+$ mkdir -p ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper
 ```
 
-#### 2. Create the Base Configuration File
-Create an empty `config.json` and open it with your preferred text editor:
+#### Create the Configuration File
+Designs in LibreLane are controlled by Configuration Files. These files contain specific variables defined by the user to guide how the EDA tools process the design. Think of the configuration file as the "instruction manual" for the flow; without it, the tools won't know which files to read or what the timing constraints are.
+
+Create an empty `config.json` and open it with your text editor:
 
 ```console
 $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
 ```
 
-#### 3. Define Base Design Configuration
 Paste the following base variables. These are the mandatory settings required to initialize the flow and link your Verilog source files.
 
 ```json
@@ -201,43 +202,48 @@ Paste the following base variables. These are the mandatory settings required to
         "dir::../../verilog/rtl/aes_wb_wrapper.v"
     ],
     "CLOCK_PORT": "wb_clk_i",
-    "CLOCK_PERIOD": 25,
+    "CLOCK_PERIOD": 25
 }
 ```
----
 
-* **DESIGN_NAME**: The name of the top-level Verilog module (`aes_wb_wrapper`).
-* **VERILOG_FILES**: The list of source files. Note the use of `dir::` to resolve paths relative to the design directory.
-* **CLOCK_PERIOD**: Set to **25ns** (40MHz). This is our initial target for timing closure.
-* **CLOCK_PORT**: The specific port in the RTL designated as the primary clock.
----
-# 3.3 Executing the Flow
+* **`DESIGN_NAME`**: The name of the top-level Verilog module (`aes_wb_wrapper`).
+* **`VERILOG_FILES`**: The list of source files. Note the use of `dir::` to resolve paths relative to the design directory.
+* **`CLOCK_PERIOD`**: Set to **25ns** (40MHz). This is our initial target for timing closure.
+* **`CLOCK_PORT`**: The specific port in the RTL designated as the primary clock.
 
+```{warning}
+(required-variables)=
+For any design, at a minimum you need to specify the following variables:
+* `DESIGN_NAME`
+* `VERILOG_FILES`
+* `CLOCK_PERIOD`
+* `CLOCK_PORT`
+```
+
+---
+### 3.2 LibreLane Environment and Command Reference
 Before running any LibreLane commands, you must enter the Nix environment to ensure all EDA tools (Yosys, OpenROAD, etc.) are available with the correct versions.
 
-### 1. Enter the Nix Shell
 Run the following command in your terminal:
 ```console
 $ nix-shell --pure ~/librelane/shell.nix
 ```
-### 2. The librelane Command Structure
-The primary command to trigger the ASIC flow is librelane. It follows this basic syntax:
+
+#### The librelane Command Structure
+The primary command to trigger the ASIC flow is `librelane`. It follows a standard syntax where you provide options followed by your design configuration file:
 
 ```console
 [nix-shell:~]$ librelane [OPTIONS] [CONFIG_FILE]...
 ```
 
-### 3. LibreLane Options
-To support our iterative "Try and Tune" strategy, we use specific flags to control exactly which parts of the flow execute.
-
-#### Sequential Flow Controls
+##### Sequential Flow Controls
 These options allow you to isolate specific stages (like Synthesis) without running the entire GDSII flow:
 
 * **`-from <StepID>`**: Starts the flow from a specific step (e.g., -from Checker.LintErrors).
 * **`--to <StepID>`**: Stops the flow after a specific step completes (e.g., --to Yosys.Synthesis).
 * **`-skip <StepID>`**: Tells the engine to bypass specific steps during execution.
 
-#### Run Management Options
+##### Run Management Options
 These options control how LibreLane saves and organizes your data in the runs/ directory:
 
 * **`--run-tag <name>`**: Provides a custom name for your run folder. This is helpful for comparing different strategies (e.g., --run-tag synth_strat_1).
@@ -245,7 +251,7 @@ These options control how LibreLane saves and organizes your data in the runs/ d
 * **`--overwrite`**: Overwrites the existing run directory if it has the same tag.
 * **`--with-initial-state <FILE>`**: Uses a specific state_out.json file as the starting point. This is essential for "resuming" a flow after you have modified a configuration.
 
-#### Flow Configuration Options
+##### Flow Configuration Options
 
 * **--flow [optimizing|classic|openinklayout|openinopenroad]**: The primary flag used to specify the built-in LibreLane flow for the run.
 
@@ -254,11 +260,11 @@ These options control how LibreLane saves and organizes your data in the runs/ d
     * **`openinklayout`**: Stops the flow and opens the current design state in the KLayout graphical tool for GDS/Layout inspection.
     * **`openinopenroad`**: Stops the flow and opens the design in the OpenROAD GUI for analyzing floorplanning, placement, or routing.
 ---
-### 3.4 Synthesis Strategy and Execution
+### 3.3 Synthesis Strategy and Execution
 
 Synthesis is the stage where your high-level Verilog code is mapped into actual logic gates from the SkyWater 130nm library. To achieve the best results for the `aes_wb_wrapper`, we focus on specific parameters that balance area and timing.
 
-#### 1. Key Synthesis Configurations
+#### Key Synthesis Configurations
 The following table outlines the critical variables you can adjust in your `config.json` to optimize the synthesis results.
 
 | Parameter | Type | Description | Default |
@@ -274,19 +280,18 @@ The following table outlines the critical variables you can adjust in your `conf
 
 ---
 
-#### 2. Running the Base Synthesis Flow
+#### Running the Base Synthesis Flow
 We will start by running the "Classic" flow. This includes Linting, Synthesis, and initial Static Timing Analysis (STA) before we move into Physical Design (PnR).
 
 Run the following command to execute the flow up to the Pre-PnR STA stage:
 ```console
 [nix-shell:~]$ librelane --run-tag classic_to_staprepnr Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json --to OpenROAD.STAPrePNR
 ```
----
 
 #### 3. Optimizing the Flow
 After reviewing the logs from the first run (specifically looking at the Slack and Gate Count), you may want to try an optimized version. For example, if the first run had timing violations, ensure `SYNTH_STRATEGY` is set to `DELAY 4` in your `config.json` and run:
 ```console
-[nix-shell:~]$ librelane --run-tag optimize_to_staprepnr Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json --to OpenROAD.STAPrePNR
+[nix-shell:~]$ librelane --flow optimizing --run-tag optimize_to_staprepnr Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json --to OpenROAD.STAPrePNR
 ```
 By using different `--run-tag` names, you can easily compare the `reports/` folders of both runs to see which configuration yielded the better results.
 
