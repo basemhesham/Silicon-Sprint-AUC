@@ -22,7 +22,7 @@ To start the integration, you need to create the interface file that bridges the
 #### Understanding the Architecture
 Before writing the code, examine the block diagram below. It illustrates how the **AES Core** is encapsulated within the **Wishbone Wrapper**. The wrapper acts as the "middleman," translating standard Wishbone bus signals (like `wbs_stb_i` and `wbs_dat_i`) into control signals that the AES engine can understand.
 
-```{figure} ./figures/aes_wb_wrappre.webp
+```{figure} ./figures/aes_wb_wrappre.png
 :align: center
 
 Block diagram of aes_wb_wrapper
