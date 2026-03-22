@@ -28,5 +28,7 @@ This will open an empty text editor window. Copy the Wishbone wrapper implementa
 
 ````{dropdown} aes_wb_wrapper.v
    ```{literalinclude} ./code/aes_wb_wrapper.v
+    :language: verilog
+    :linenos:
    ```
 ````
