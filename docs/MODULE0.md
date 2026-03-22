@@ -11,9 +11,9 @@ This module guides you through the complete setup of your ASIC development envir
 
 ## Installing Nix
 
-{warning}
+```{warning}
 Do **not** install Nix using `apt`. The version of Nix provided by `apt` is often outdated and may cause compatibility issues.
-{warning}
+```
 
 Nix requires `curl` to download the installer.
 
