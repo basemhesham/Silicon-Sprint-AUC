@@ -157,9 +157,6 @@ In this section, we will execute the LibreLane flow specifically for Linting and
 ### 3.1 Design Configuration
 Designs in LibreLane are controlled by Configuration Files. These files contain specific variables defined by the user to guide how the EDA tools process the design. Think of the configuration file as the "instruction manual" for the flow; without it, the tools won't know which files to read or what the timing constraints are.
 
-#### 3.1.1 Required Variables
-For any design to successfully initialize in the flow, you must specify a set of core variables. Failure to define these will result in an initialization error.
-
 ```{warning}
 (required-variables)=
 For any design, at a minimum you need to specify the following variables:
@@ -168,5 +165,91 @@ For any design, at a minimum you need to specify the following variables:
 * `CLOCK_PERIOD`
 * `CLOCK_PORT`
 ```
+
+### 3.2 Setting Up the Design Environment
+
+In this workshop, we use an **Iterative Configuration Strategy**. Instead of providing a final, "perfect" configuration file immediately, we start with the **Base Requirements**. We will run the flow, analyze the reports, and then tune advanced parameters based on the specific needs of the `aes_wb_wrapper`.
+
+#### 1. Create the Design Directory
+First, create the dedicated folder where LibreLane will look for your `config.json`:
+
+```console
+mkdir -p ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper
+```
+
+#### 2. Create the Base Configuration File
+Create an empty `config.json` and open it with your preferred text editor:
+
+```console
+$ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
+```
+
+#### 3. Define Base Design Configuration
+Paste the following base variables. These are the mandatory settings required to initialize the flow and link your Verilog source files.
+
+```json
+{
+    "DESIGN_NAME": "aes_wb_wrapper",
+    "VERILOG_FILES": [
+        "dir::../../../secworks_aes/src/rtl/aes.v",
+        "dir::../../../secworks_aes/src/rtl/aes_core.v",
+        "dir::../../../secworks_aes/src/rtl/aes_decipher_block.v",
+        "dir::../../../secworks_aes/src/rtl/aes_encipher_block.v",
+        "dir::../../../secworks_aes/src/rtl/aes_inv_sbox.v",
+        "dir::../../../secworks_aes/src/rtl/aes_key_mem.v",
+        "dir::../../../secworks_aes/src/rtl/aes_sbox.v",
+        "dir::../../verilog/rtl/aes_wb_wrapper.v"
+    ],
+    "CLOCK_PORT": "wb_clk_i",
+    "CLOCK_PERIOD": 25,
+}
+```
+---
+
+* **DESIGN_NAME**: The name of the top-level Verilog module (`aes_wb_wrapper`).
+* **VERILOG_FILES**: The list of source files. Note the use of `dir::` to resolve paths relative to the design directory.
+* **CLOCK_PERIOD**: Set to **25ns** (40MHz). This is our initial target for timing closure.
+* **CLOCK_PORT**: The specific port in the RTL designated as the primary clock.
+---
+# 3.3 Executing the Flow
+
+Before running any LibreLane commands, you must enter the Nix environment to ensure all EDA tools (Yosys, OpenROAD, etc.) are available with the correct versions.
+
+### 1. Enter the Nix Shell
+Run the following command in your terminal:
+```console
+$ nix-shell --pure ~/librelane/shell.nix
+```
+### 2. The librelane Command Structure
+The primary command to trigger the ASIC flow is librelane. It follows this basic syntax:
+
+```console
+librelane [OPTIONS] [CONFIG_FILES]...
+```
+
+### 3. Flow Control Options
+To support our iterative "Try and Tune" strategy, we use specific flags to control exactly which parts of the flow execute.
+
+#### Sequential Flow Controls
+These options allow you to isolate specific stages (like Synthesis) without running the entire GDSII flow:
+
+* -from <StepID>: Starts the flow from a specific step (e.g., -from Checker.LintErrors).
+* --to <StepID>: Stops the flow after a specific step completes (e.g., --to Yosys.Synthesis).
+* -skip <StepID>: Tells the engine to bypass specific steps during execution.
+
+#### Run Management Options
+These options control how LibreLane saves and organizes your data in the runs/ directory:
+
+* --run-tag <name>: Provides a custom name for your run folder. This is helpful for comparing different strategies (e.g., --run-tag synth_strat_1).
+* --last-run: Automatically uses the most recent run directory as the target.
+* --overwrite: Overwrites the existing run directory if it has the same tag.
+* --with-initial-state <FILE>: Uses a specific state_out.json file as the starting point. This is essential for "resuming" a flow after you have modified a configuration.
+
+---
+
+
+* **FP_CORE_UTIL**: Set to **40%**. This provides a stable starting density; if routing congestion occurs, this value can be lowered.
+* **RT_MAX_LAYER**: Set to **met4** (Layer Capping). This is a critical fix that reserves Metal 5 for the top-level power grid, preventing hierarchical connectivity failures.
+* **PDN_MULTILAYER**: Set to **false**. For Caravel integration, we restrict the macro's power grid to the lower metal layers to avoid collisions with the SoC harness.
 
 </div>
