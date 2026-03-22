@@ -27,6 +27,6 @@ $ gedit ~/Silicon-Sprint-AUC/verilog/rtl/aes_wb_wrapper.v
 This will open an empty text editor window. Copy the Wishbone wrapper implementation and paste it into this new file, then save it.
 
 ````{dropdown} aes_wb_wrapper.v
-   ```{literalinclude} ./aes_wb_wrapper.v
+   ```{literalinclude} ./code/aes_wb_wrapper.v
    ```
 ````
