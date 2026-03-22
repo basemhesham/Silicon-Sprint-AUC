@@ -1,3 +1,4 @@
+<div align="justify">
 # Module 1: RTL Integration and AES Wrapper
 
 Before proceeding, ensure your environment is fully prepared by following all steps in **MODULE 0**. Your repository must be cloned and the Nix-shell verified before you can start the ASIC flow.
@@ -47,3 +48,4 @@ Once the editor opens, paste the Wishbone wrapper implementation into the file. 
    ```
 ````
 {download}`Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
+</div>
