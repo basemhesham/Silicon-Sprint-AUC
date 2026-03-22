@@ -42,9 +42,9 @@ For more information or installation steps on operating systems other than Linux
 
 Select the guide corresponding to your operating system:
 
-* **Windows 10+ (WSL2)**: https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_win.html  
-* **macOS 11+**: https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_macos.html  
-* **Ubuntu/Linux**: https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html  
+* [Windows 10+ (WSL2)](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_win.html)
+* [macOS 11+](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_macos.html)
+* [Ubuntu/Linux](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html)
 
 ### Why Nix?
 
