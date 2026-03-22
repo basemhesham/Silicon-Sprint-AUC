@@ -58,4 +58,115 @@ After pasting the code, save the file and close the editor.
 If you prefer to download the verified source file directly into your code directory for reference, use the link below:
 {download}`Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
 
+## 2: The LibreLane Classic Flow
+
+The LibreLane Classic flow is a sequential process that automates the RTL-to-GDSII journey using various open-source EDA tools. This structured approach ensures that each phase of the ASIC design—from logic verification to physical implementation—is handled by specialized tools within a unified environment.
+
+```{figure} ./figures/flow.webp
+:align: center
+LibreLane flow
+```
+### 2.1 Step IDs
+Each step in the flow is identified by a unique Step ID. These IDs typically follow a standard `ToolName.StepName` format. These IDs are not just labels; they are used to control the flow, allowing you to start, stop, or skip specific processes during the workshop.
+
+The table below details the steps included in the default flow, organized by design stage:
+
+| Stage | Step Description | Step ID |
+| :--- | :--- | :--- |
+| **Logic Verification** | RTL Linting with Verilator | `Verilator.Lint` |
+| | Check Timing Constructs | `Checker.LintTimingConstructs` |
+| | Check for Lint Errors | `Checker.LintErrors` |
+| | Check for Lint Warnings | `Checker.LintWarnings` |
+| **Synthesis** | Generate Netlist JSON Header | `Yosys.JsonHeader` |
+| | RTL Synthesis and Tech Mapping | `Yosys.Synthesis` |
+| | Check for Unmapped Cells | `Checker.YosysUnmappedCells` |
+| | Logic Synthesis Checks | `Checker.YosysSynthChecks` |
+| | Netlist Assign Statement Check | `Checker.NetlistAssignStatements` |
+| **Floorplanning** | Validate SDC Constraints | `OpenROAD.CheckSDCFiles` |
+| | Validate Macro Instances | `OpenROAD.CheckMacroInstances` |
+| | Pre-PnR Static Timing Analysis | `OpenROAD.STAPrePNR` |
+| | Initial Floorplan Generation | `OpenROAD.Floorplan` |
+| | Cut Rows for Macro Sites | `OpenROAD.CutRows` |
+| | Tap and Endcap Cell Insertion | `OpenROAD.TapEndcapInsertion` |
+| **Power Grid** | Add PDN Obstructions | `Odb.AddPDNObstructions` |
+| | Power Distribution Network Generation | `OpenROAD.GeneratePDN` |
+| | Macro Power Connections | `Odb.SetPowerConnections` |
+| | Remove PDN Obstructions | `Odb.RemovePDNObstructions` |
+| **Placement** | IO Pin Placement | `OpenROAD.IOPlacement` |
+| | Custom IO Pin Placement | `Odb.CustomIOPlacement` |
+| | Global Placement | `OpenROAD.GlobalPlacement` |
+| | Design Repair (Post-GPL) | `OpenROAD.RepairDesignPostGPL` |
+| | Mid-PnR Static Timing Analysis | `OpenROAD.STAMidPNR` |
+| | Detailed Placement | `OpenROAD.DetailedPlacement` |
+| **CTS** | Clock Tree Synthesis | `OpenROAD.CTS` |
+| | Resizer Timing (Post-CTS) | `OpenROAD.ResizerTimingPostCTS` |
+| **Routing** | Global Routing | `OpenROAD.GlobalRouting` |
+| | Initial Antenna Check | `OpenROAD.CheckAntennas` |
+| | Antenna Repair | `OpenROAD.RepairAntennas` |
+| | Resizer Timing (Post-GRT) | `OpenROAD.ResizerTimingPostGRT` |
+| | Detailed Routing | `OpenROAD.DetailedRouting` |
+| | Final Antenna Check | `OpenROAD.CheckAntennas-1` |
+| **Signoff Prep** | Fill Cell Insertion | `OpenROAD.FillInsertion` |
+| | Parasitics Extraction | `OpenROAD.RCX` |
+| | Post-PnR Static Timing Analysis | `OpenROAD.STAPostPNR` |
+| | IR Drop Reporting | `OpenROAD.IRDropReport` |
+| **Physical Signoff** | GDSII Stream Out (Magic) | `Magic.StreamOut` |
+| | GDSII Stream Out (KLayout) | `KLayout.StreamOut` |
+| | Write Macro LEF | `Magic.WriteLEF` |
+| | XOR GDS Comparison | `KLayout.XOR` |
+| | Physical DRC (Magic) | `Magic.DRC` |
+| | Physical DRC (KLayout) | `KLayout.DRC` |
+| | SPICE Netlist Extraction | `Magic.SpiceExtraction` |
+| | Layout vs. Schematic (Netgen) | `Netgen.LVS` |
+| | Final Manufacturability Report | `Misc.ReportManufacturability` |
+
+### 2.2 Directory Structure and Execution Order
+When running the flow, LibreLane automatically manages the data for you. It creates distinct directories for each step within the runs/ folder. To keep the flow organized and easy to follow, LibreLane uses a numeric prefix that indicates the execution order.
+
+```text
+test1
+├── 01-verilator-lint
+├── 02-checker-linttimingconstructs
+├── 03-checker-linterrors
+├── 04-checker-lintwarnings
+├── 05-yosys-jsonheader
+├── 06-yosys-synthesis
+├── 07-checker-yosysunmappedcells
+├── 08-checker-yosyssynthchecks
+├── 09-checker-netlistassignstatements
+├── 10-openroad-checksdcfiles
+├── 11-openroad-checkmacroinstances
+├── 12-openroad-staprepnr
+├── 13-openroad-floorplan
+├── 14-odb-checkmacroantennaproperties
+├── 15-odb-setpowerconnections
+⋮
+├── final/
+├── tmp
+├── error.log
+├── info.log
+├── resolved.json
+└── warning.log
+```
+
+This numbering ensures that even if you have dozens of steps, you can always see the exact chronological path your design took from Verilog to GDS.
+
+## 3 Running the Flow
+In this section, we will execute the LibreLane flow specifically for Linting and Synthesis of the aes_wb_wrapper. This ensures our RTL is structurally sound and ready to be mapped into logic gates.
+
+### 3.1 Design Configuration
+Designs in LibreLane are controlled by Configuration Files. These files contain specific variables defined by the user to guide how the EDA tools process the design. Think of the configuration file as the "instruction manual" for the flow; without it, the tools won't know which files to read or what the timing constraints are.
+
+#### 3.1.1 Required Variables
+For any design to successfully initialize in the flow, you must specify a set of core variables. Failure to define these will result in an initialization error.
+
+```{warning}
+(required-variables)=
+For any design, at a minimum you need to specify the following variables:
+* {var}`::DESIGN_NAME`
+* {var}`Yosys.Synthesis::VERILOG_FILES`
+* {var}`::CLOCK_PERIOD`
+* {var}`::CLOCK_PORT`
+```
+
 </div>
