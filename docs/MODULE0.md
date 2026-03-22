@@ -20,13 +20,13 @@ Nix requires `curl` to download the installer.
 First install `curl`:
 
 ```console
-sudo apt-get install -y curl
+$ sudo apt-get install -y curl
 ```
 
 Then install Nix using the official installer:
 
 ```console
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --prefer-upstream-nix --no-confirm --extra-conf "
+$ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --prefer-upstream-nix --no-confirm --extra-conf "
     extra-substituters = https://nix-cache.fossi-foundation.org
     extra-trusted-public-keys = nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=
 "
@@ -55,6 +55,10 @@ Reproducibility is essential in ASIC design flows. Nix creates an isolated and d
 ## 3. Invoking the Environment
 Once Nix is installed, you will enter a **Nix-shell**. This creates a virtual environment containing all specialized ASIC tools without cluttering your global system.
 
+You first need to install Git if it is not already on your system to be able to clone the required repositories.
+```console
+$ sudo apt install git
+```
 ### Step 3.1: Clone the Repository
 Clone the LibreLane infrastructure into your home directory:
 ```console
@@ -64,7 +68,7 @@ $ git clone https://github.com/librelane/librelane/ ~/librelane
 ### Step 3.2: Switch to LibreLane 3
 To use the latest features and improvements in LibreLane 3, switch to the development branch:
 ```console
-$cd ~/librelane$ git checkout dev
+$ cd ~/librelane$ git checkout dev
 ```
 
 ### Step 3.3: Initialize the Nix-shell
