@@ -32,3 +32,4 @@ This will open an empty text editor window. Copy the Wishbone wrapper implementa
     :linenos:
    ```
 ````
+{download}`Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
