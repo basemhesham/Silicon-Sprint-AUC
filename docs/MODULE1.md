@@ -6,7 +6,7 @@ Before proceeding, ensure your environment is fully prepared by following all st
 
 ---
 
-## 1.1 Understanding the Wishbone Interface
+## 1 RTL integration
 
 Before we begin the ASIC flow, we must bridge the gap between our **AES Core** and the **Caravel SoC**. 
 
@@ -21,7 +21,7 @@ In later modules, we will explain how to drop this entire unit into the **User P
 
 ---
 
-## 1.2 Architectural Overview
+### 1.1 Architectural Overview
 
 Before writing the code, examine the block diagram below. It illustrates how the **AES Core** is encapsulated within the **Wishbone Wrapper**. The wrapper acts as the "middleman," translating standard Wishbone bus signals (like `wbs_stb_i` and `wbs_dat_i`) into control signals that the AES engine can understand.
 
@@ -30,11 +30,11 @@ Before writing the code, examine the block diagram below. It illustrates how the
 Block diagram of aes_wb_wrapper
 ```
 
-## 1.3 Practical: Creating the Verilog Wrapper
+### 1.2 Creating the Verilog Wrapper
 
 To start the integration, you need to create the interface file that bridges the AES logic with the Wishbone bus. This step prepares the "socket" that will hold your encryption engine.
 
-**Step 1: Initialize the Wrapper File**
+#### Step 1: Initialize the Wrapper File
 We will use **gedit**, a simple graphical text editor, to create the wrapper file. Running this command will open a window; if the file does not already exist, it will be created as an empty document.
 
 Open your terminal and run:
@@ -43,7 +43,7 @@ Open your terminal and run:
 $ gedit ~/Silicon-Sprint-AUC/verilog/rtl/aes_wb_wrapper.v
 ```
 
-**Step 2: Add the Verilog Implementation**
+#### Step 2: Add the Verilog Implementation
 Once the editor opens, paste the Wishbone wrapper implementation into the file. This code manage communication between the Caravel SoC and the AES core.
 
 After pasting the code, save the file and close the editor.
@@ -54,7 +54,8 @@ After pasting the code, save the file and close the editor.
     :linenos:
    ```
 ````
-**Step 3: Download the Source (Optional)**
+#### Step 3: Download the Source (Optional)
 If you prefer to download the verified source file directly into your code directory for reference, use the link below:
 {download}`Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
+
 </div>
