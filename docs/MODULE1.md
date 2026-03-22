@@ -224,10 +224,10 @@ $ nix-shell --pure ~/librelane/shell.nix
 The primary command to trigger the ASIC flow is librelane. It follows this basic syntax:
 
 ```console
-librelane [OPTIONS] [CONFIG_FILES]...
+[nix-shell:~]$ librelane [OPTIONS] [CONFIG_FILE]...
 ```
 
-### 3. Flow Control Options
+### 3. LibreLane Options
 To support our iterative "Try and Tune" strategy, we use specific flags to control exactly which parts of the flow execute.
 
 #### Sequential Flow Controls
@@ -245,11 +245,49 @@ These options control how LibreLane saves and organizes your data in the runs/ d
 * **`--overwrite`**: Overwrites the existing run directory if it has the same tag.
 * **`--with-initial-state <FILE>`**: Uses a specific state_out.json file as the starting point. This is essential for "resuming" a flow after you have modified a configuration.
 
+#### Flow Configuration Options
+
+* **--flow [optimizing|classic|openinklayout|openinopenroad]**: The primary flag used to specify the built-in LibreLane flow for the run.
+
+    * **`optimizing`**: A flow designed to iteratively explore different synthesis strategies and settings to achieve the best area and timing results.
+    * **`classic`**: The standard, sequential RTL-to-GDSII flow that follows a predictable, step-by-step path.
+    * **`openinklayout`**: Stops the flow and opens the current design state in the KLayout graphical tool for GDS/Layout inspection.
+    * **`openinopenroad`**: Stops the flow and opens the design in the OpenROAD GUI for analyzing floorplanning, placement, or routing.
+---
+### 3.4 Synthesis Strategy and Execution
+
+Synthesis is the stage where your high-level Verilog code is mapped into actual logic gates from the SkyWater 130nm library. To achieve the best results for the `aes_wb_wrapper`, we focus on specific parameters that balance area and timing.
+
+#### 1. Key Synthesis Configurations
+The following table outlines the critical variables you can adjust in your `config.json` to optimize the synthesis results.
+
+| Parameter | Type | Description | Default |
+| :--- | :--- | :--- | :--- |
+| **SYNTH_HIERARCHY_MODE** | str | Controls how design hierarchy is handled. Options: `flatten` (merges all modules), `deferred_flatten` (flattens after synthesis), or `keep` (preserves hierarchy). | `flatten` |
+| **SYNTH_AUTONAME** | bool | When enabled, generates more human-readable instance names in the netlist. Useful for debugging but can result in very long names. | `False` |
+| **SYNTH_STRATEGY** | str | Selects the ABC logic synthesis strategy. `AREA` (0-3) focuses on compactness; `DELAY` (0-4) focuses on higher clock frequencies. **DELAY 4** is recommended for AES. | `DELAY 0` |
+| **SYNTH_ABC_BUFFERING** | bool | Enables automated cell buffering within the ABC utility to improve signal integrity and timing. | `True` |
+| **SYNTH_SIZING** | bool | Enables ABC cell sizing. This can be used alongside buffering to optimize the drive strength of logic gates. | `False` |
+| **SYNTH_SHARE_RESOURCES** | bool | Allows Yosys to identify and merge shareable hardware resources (like adders) to reduce total area. | `True` |
+| **SYNTH_ELABORATE_ONLY** | bool | Performs RTL elaboration without technology mapping. Use this if your Verilog is already structural/gate-level. | `False` |
+| **VERILOG_POWER_DEFINE** | str | Specifies the macro used to guard power/ground connections in the RTL. | `USE_POWER_PINS` |
+
 ---
 
+#### 2. Running the Base Synthesis Flow
+We will start by running the "Classic" flow. This includes Linting, Synthesis, and initial Static Timing Analysis (STA) before we move into Physical Design (PnR).
 
-* **FP_CORE_UTIL**: Set to **40%**. This provides a stable starting density; if routing congestion occurs, this value can be lowered.
-* **RT_MAX_LAYER**: Set to **met4** (Layer Capping). This is a critical fix that reserves Metal 5 for the top-level power grid, preventing hierarchical connectivity failures.
-* **PDN_MULTILAYER**: Set to **false**. For Caravel integration, we restrict the macro's power grid to the lower metal layers to avoid collisions with the SoC harness.
+Run the following command to execute the flow up to the Pre-PnR STA stage:
+```console
+[nix-shell:~]$ librelane --run-tag classic_to_staprepnr Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json --to OpenROAD.STAPrePNR
+```
+---
+
+#### 3. Optimizing the Flow
+After reviewing the logs from the first run (specifically looking at the Slack and Gate Count), you may want to try an optimized version. For example, if the first run had timing violations, ensure `SYNTH_STRATEGY` is set to `DELAY 4` in your `config.json` and run:
+```console
+[nix-shell:~]$ librelane --run-tag optimize_to_staprepnr Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json --to OpenROAD.STAPrePNR
+```
+By using different `--run-tag` names, you can easily compare the `reports/` folders of both runs to see which configuration yielded the better results.
 
 </div>
