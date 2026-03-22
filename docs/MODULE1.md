@@ -163,10 +163,10 @@ For any design to successfully initialize in the flow, you must specify a set of
 ```{warning}
 (required-variables)=
 For any design, at a minimum you need to specify the following variables:
-* {var}`::DESIGN_NAME`
-* {var}`Yosys.Synthesis::VERILOG_FILES`
-* {var}`::CLOCK_PERIOD`
-* {var}`::CLOCK_PORT`
+* `DESIGN_NAME`
+* `VERILOG_FILES`
+* `CLOCK_PERIOD`
+* `CLOCK_PORT`
 ```
 
 </div>
