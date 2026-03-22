@@ -1,6 +1,5 @@
-<div align="justify">
 # Module 1: RTL Integration and AES Wrapper
-
+<div align="justify">
 Before proceeding, ensure your environment is fully prepared by following all steps in **MODULE 0**. Your repository must be cloned and the Nix-shell verified before you can start the ASIC flow.
 
 ## Understanding the Wishbone Interface
