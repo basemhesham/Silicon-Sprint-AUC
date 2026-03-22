@@ -17,14 +17,28 @@ In later modules, we will explain how to drop this entire unit into the **User P
 
 ### Step 1.1: Create the Verilog Wrapper
 
-To start the integration, you need to create the interface file that bridges the AES logic with the Wishbone bus. We will use **gedit**, a simple graphical text editor. If the file does not already exist, this command will create it for you automatically.
+To start the integration, you need to create the interface file that bridges the AES logic with the Wishbone bus. 
+
+#### Understanding the Architecture
+Before writing the code, examine the block diagram below. It illustrates how the **AES Core** is encapsulated within the **Wishbone Wrapper**. The wrapper acts as the "middleman," translating standard Wishbone bus signals (like `wbs_stb_i` and `wbs_dat_i`) into control signals that the AES engine can understand.
+
+```{figure} ./figures/aes_wb_wrappre.webp
+:align: center
+
+Block diagram of aes_wb_wrapper
+```
+
+#### Creating the File
+We will use **gedit**, a simple graphical text editor, to create the wrapper file. If the file does not already exist, this command will create it for you automatically.
 
 Open your terminal and run:
 
 ```console
 $ gedit ~/Silicon-Sprint-AUC/verilog/rtl/aes_wb_wrapper.v
 ```
-This will open an empty text editor window. Copy the Wishbone wrapper implementation and paste it into this new file, then save it.
+
+#### Adding the Verilog Code
+Once the editor opens, paste the Wishbone wrapper implementation into the file. This code defines the registers and logic gates required to manage data flow between the SoC and the encryption engine.
 
 ````{dropdown} aes_wb_wrapper.v
    ```{literalinclude} ./code/aes_wb_wrapper.v
