@@ -66,14 +66,10 @@ $ git clone https://github.com/librelane/librelane/ ~/librelane
 ```
 
 ### Step 3.2: Switch to LibreLane 3
-To use the latest features and improvements in LibreLane 3, first enter the directory and then switch to the development branch:
+To use the latest features and improvements in LibreLane 3, switch the repository to the development branch:
 
 ```console
-cd ~/librelane
-```
-
-```console
-git checkout dev
+$ git -C ~/librelane checkout dev
 ```
 
 ### Step 3.3: Initialize the Nix-shell
