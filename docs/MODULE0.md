@@ -59,26 +59,26 @@ You first need to install Git if it is not already on your system to be able to 
 ```console
 $ sudo apt install git
 ```
-### Step 3.1: Clone the Repository
+**Step 3.1: Clone the Repository**
 Clone the LibreLane infrastructure into your home directory:
 ```console
 $ git clone https://github.com/librelane/librelane/ ~/librelane
 ```
 
-### Step 3.2: Switch to LibreLane 3
+**Step 3.2: Switch to LibreLane 3**
 To use the latest features and improvements in LibreLane 3, switch the repository to the development branch:
 
 ```console
 $ git -C ~/librelane checkout dev
 ```
 
-### Step 3.3: Initialize the Nix-shell
+**Step 3.3: Initialize the Nix-shell**
 Enter the following command to load the LibreLane packages into your current terminal session:
 ```console
 $ nix-shell --pure ~/librelane/shell.nix
 ```
 
-```{tip}
+```{admonition} Note
 On the first execution, Nix will download approximately 3GB of data. Please ensure you have a stable internet connection.
 ```
 
@@ -91,45 +91,51 @@ Once finished, your terminal prompt will change to indicate you are inside the m
 ## 4. Verification and Smoke Test
 Now that the shell is active, you must verify the toolchain and download the Sky130 PDK.
 
-### Step 4.1: Version Check
+**Step 4.1: Version Check**
 Confirm the environment is active by checking the LibreLane version:
 
-   ```console
-   [nix-shell:~/librelane]$ librelane --version
-   ```
+```console
+[nix-shell:~]$ librelane --version
+```
 
-### Running the Smoke Test
+**Step 4.2: Running the Smoke Test**
 Now that your environment is active, you are ready to run the Smoke Test to download the Sky130 PDK.
-   ```console
-   [nix-shell:~/librelane]$ librelane --log-level ERROR --condensed --show-progress-bar --smoke-test
-   ```
+```console
+[nix-shell:~]$ librelane --log-level ERROR --condensed --show-progress-bar --smoke-test
+```
+```{admonition} Note
+After you have finished running the smoke test or working with the ASIC tools, you can safely leave the Nix environment and return to your standard terminal by typing:
+      ```console
+     [nix-shell:~]$ exit
+     ```
+```
 ---
 
 ## 6. Repository Preparation & SSH Configuration
 
 **Goal**: Establish a secure connection to GitHub and clone the required hardware design repositories.
 
-### 6.1 Remote Repository Setup (SSH & Git)
+**6.1 Remote Repository Setup (SSH & Git)**
 To manage your design files and collaborate on GitHub securely without entering your password for every action, you must configure SSH (Secure Shell). This establishes an encrypted link between your local machine and your GitHub account.
-
-### Step 1: Generating an SSH Key
+ 
+**Step 1: Generating an SSH Key**
 First, check if you already have a key. If not, generate a new one using the Ed25519 algorithm, which is the current standard for security and performance.
 
 **Generate the key**: Open your terminal and run the following command (replace the email with your GitHub email):
 
 ```console
-ssh-keygen -t ed25519 -C "your_email@example.com"
+$ ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
 * **Save the file**: Press **Enter** to accept the default file location (`~/.ssh/id_ed25519`).
 * **Passphrase**: You can enter a passphrase for extra security or press **Enter** twice to leave it empty for convenience.
 
-### Step 2: Adding the Key to GitHub
+**Step 2: Adding the Key to GitHub**
 GitHub needs your **Public Key** to recognize your machine.
 
 **1. Copy the public key**: Run this command to display the key text:
 ```console
-cat ~/.ssh/id_ed25519.pub
+$ cat ~/.ssh/id_ed25519.pub
 ```
 **2. Copy the output**: Highlight and copy the entire text starting with `ssh-ed25519`.
 
@@ -139,19 +145,19 @@ cat ~/.ssh/id_ed25519.pub
 
 ---
 
-### 6.2 Cloning the Project Repositories
+**6.2 Cloning the Project Repositories**
 Once the SSH key is linked, you can "clone" (download) the project files. We will pull both the main Caravel project structure and the specific AES source code used in the workshop.
 
-### Step 1: Clone the Silicon-Sprint-AUC Project
+**Step 1: Clone the Silicon-Sprint-AUC Project**
 This command clones the Caravel user project template specifically configured for LibreLane into your home directory:
 ```console
-git clone git@github.com:basemhesham/Silicon-Sprint-AUC.git ~/Silicon-Sprint-AUC
+$ git clone git@github.com:basemhesham/Silicon-Sprint-AUC.git ~/Silicon-Sprint-AUC
 ```
 
-### Step 2: Clone the AES Source Code
+**Step 2: Clone the AES Source Code**
 Next, we clone the specific AES hardware implementation (RTL) that we will be hardening during this workshop:
 ```console
-git clone git@github.com:secworks/aes.git ~/secworks_aes
+$ git clone git@github.com:secworks/aes.git ~/secworks_aes
 ```
 
 ### Step 3: Verification
