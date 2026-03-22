@@ -233,17 +233,17 @@ To support our iterative "Try and Tune" strategy, we use specific flags to contr
 #### Sequential Flow Controls
 These options allow you to isolate specific stages (like Synthesis) without running the entire GDSII flow:
 
-* -from <StepID>: Starts the flow from a specific step (e.g., -from Checker.LintErrors).
-* --to <StepID>: Stops the flow after a specific step completes (e.g., --to Yosys.Synthesis).
-* -skip <StepID>: Tells the engine to bypass specific steps during execution.
+* **`-from <StepID>`**: Starts the flow from a specific step (e.g., -from Checker.LintErrors).
+* **`--to <StepID>`**: Stops the flow after a specific step completes (e.g., --to Yosys.Synthesis).
+* **`-skip <StepID>`**: Tells the engine to bypass specific steps during execution.
 
 #### Run Management Options
 These options control how LibreLane saves and organizes your data in the runs/ directory:
 
-* --run-tag <name>: Provides a custom name for your run folder. This is helpful for comparing different strategies (e.g., --run-tag synth_strat_1).
-* --last-run: Automatically uses the most recent run directory as the target.
-* --overwrite: Overwrites the existing run directory if it has the same tag.
-* --with-initial-state <FILE>: Uses a specific state_out.json file as the starting point. This is essential for "resuming" a flow after you have modified a configuration.
+* **`--run-tag <name>`**: Provides a custom name for your run folder. This is helpful for comparing different strategies (e.g., --run-tag synth_strat_1).
+* **`--last-run`**: Automatically uses the most recent run directory as the target.
+* **`--overwrite`**: Overwrites the existing run directory if it has the same tag.
+* **`--with-initial-state <FILE>`**: Uses a specific state_out.json file as the starting point. This is essential for "resuming" a flow after you have modified a configuration.
 
 ---
 
