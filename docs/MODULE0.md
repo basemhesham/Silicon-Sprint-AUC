@@ -85,7 +85,7 @@ On the first execution, Nix will download approximately 3GB of data. Please ensu
 Once finished, your terminal prompt will change to indicate you are inside the managed environment:
 
 ```console
-[nix-shell:~/librelane]$
+[nix-shell:~]$
 ```
 
 ## 4. Verification and Smoke Test
