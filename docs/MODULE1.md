@@ -353,11 +353,11 @@ The `--flow` flag selects the underlying execution engine and methodology for th
 
 ---
 
-### 3.3 Synthesis Strategy & Execution
+### 3.3 RTL-to-Power-Grid Configuration
+This section covers the critical parameters required to transform your Verilog RTL into a placed design with a robust power distribution network. These settings in `config.json` directly impact the area, timing, and electrical integrity of the **aes_wb_wrapper**.
 
-Synthesis is the stage where your Verilog RTL is mapped into actual logic gates from the **SkyWater 130nm (`sky130_fd_sc_hd`)** standard cell library. The parameters below can be tuned in `config.json` to balance area, power, and timing for the `aes_wb_wrapper`.
-
-#### Synthesis Configuration Parameters
+#### 3.3.1 Logic Synthesis Parameters
+Synthesis maps your RTL to the **SkyWater 130nm (`sky130_fd_sc_hd`)** library. Tuning these helps balance the trade-off between gate count and clock frequency.
 
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
@@ -371,7 +371,73 @@ Synthesis is the stage where your Verilog RTL is mapped into actual logic gates 
 | `VERILOG_POWER_DEFINE` | `str` | Specifies the macro used to guard power/ground connections in the RTL. | `USE_POWER_PINS` |
 
 ---
+### 3.3.2 Floorplan Configuration Reference
 
+The following parameters define the physical boundaries of your AES core. In the context of the Caravel SoC, these settings ensure the design fits within the assigned "User Project" area while maintaining enough space for routing.
+
+| Parameter | Type | Description | Default / Recommended |
+| :--- | :--- | :--- | :--- |
+| **FP_CORE_UTIL** | `Decimal` | Sets the standard cell density as a percentage of the core area. Typical values range from 25% to 60%; **50%** is a stable starting point for the AES core. | `50` |
+| **FP_SIZING** | `str` | Determines the sizing mode. `relative` calculates area based on utilization, while `absolute` uses fixed dimensions specified by the user. | `relative` |
+| **FP_ASPECT_RATIO** | `Decimal` | Defines the ratio of the core's height to its width. A value of **1** results in a square floorplan. | `1` |
+| **CORE_AREA** | `Tuple` | Specifies a specific core boundary (die area minus margins) as a 4-corner rectangle. Must be paired with `DIE_AREA`. | `None` |
+| **DIE_AREA** | `Tuple` | Explicitly sets the die area coordinates in the format `x0 y0 x1 y1`. Essential for fixed-size projects like the Caravel wrapper. | `None` |
+
+> **Note: Choosing Between Relative and Absolute Sizing**
+>
+> * **Relative Sizing (`"FP_SIZING": "relative"`)**: The default mode. LibreLane automatically calculates the chip area based on your gate count and the `FP_CORE_UTIL` percentage. Use this for initial iterations to find the smallest possible footprint.
+> * **Absolute Sizing (`"FP_SIZING": "absolute"`)**: Mandatory for fixed-size projects like the **Caravel User Project**. You explicitly define the physical coordinates via the `DIE_AREA` variable (e.g., `0 0 2920 3520`). This ensures your AES core fits perfectly into the pre-defined silicon cavity of the SoC.
+
+---
+### 3.3.3 Power Distribution Network (PDN) Reference
+
+The Power Distribution Network (PDN) is the grid of metal wires that delivers power (`VDD`) and ground (`GND`) to every standard cell. For the `aes_wb_wrapper`, we must configure the PDN specifically to ensure it integrates into the Caravel SoC.
+
+| Parameter | Type | Description | Default |
+| :--- | :--- | :--- | :--- |
+| **FP_PDN_SKIPTRIM** | `bool` | Prevents removal of metal stubs not connected to macros. Disabling this helps reduce top-level routing congestion. | `False` |
+| **FP_PDN_CORE_RING** | `bool` | Generates a power ring around the core area. Required for macros using the "ring method" for power integration. | `False` |
+| **FP_PDN_ENABLE_RAILS** | `bool` | Enables the creation of standard cell power rails (Metal 1) across every row. | `True` |
+| **FP_PDN_HORIZONTAL_HALO** | `Decimal` | Sets the horizontal keep-out distance (halo) around macros where rows are cut to prevent shorts. | `10 µm` |
+| **FP_PDN_VERTICAL_HALO** | `Decimal` | Sets the vertical keep-out distance (halo) around macros where rows are cut during power grid insertion. | `10 µm` |
+
+The following values are the **SkyWater 130nm** defaults used by the tool if they are not explicitly overridden. These values ensure compliance with the metal stack rules for the `sky130_fd_sc_hd` library.
+
+| Feature / Layer | Parameter | Default Value | Description |
+| :--- | :--- | :--- | :--- |
+| **Standard Cell Rail (M1)** | `FP_PDN_RAIL_WIDTH` | **0.48 µm** | Width of the M1 rail inside each cell row. |
+| **Standard Cell Rail (M1)** | `FP_PDN_RAIL_OFFSET` | **0** | Offset for the starting rail. |
+| **Vertical Strap (M4)** | `FP_PDN_VWIDTH` | **1.6 µm** | Width of the main vertical power delivery lines. |
+| **Vertical Strap (M4)** | `FP_PDN_VSPACING` | **1.7 µm** | Minimum space between parallel vertical straps. |
+| **Vertical Strap (M4)** | `FP_PDN_VPITCH` | **153.6 µm** | Distance between the centers of vertical straps. |
+| **Vertical Strap (M4)** | `FP_PDN_VOFFSET` | **16.32 µm** | Distance of the first strap from the left core boundary. |
+| **Horizontal Strap (M5)** | `FP_PDN_HWIDTH` | **1.6 µm** | Width of horizontal straps (if `PDN_MULTILAYER` is `True`). |
+| **Horizontal Strap (M5)** | `FP_PDN_HPITCH` | **153.18 µm** | Distance between centers of horizontal straps. |
+| **Core Ring (M4/M5)** | `CORE_RING_VWIDTH` | **1.6 µm** | Width of the vertical portions of the power ring. |
+| **Core Ring (M4/M5)** | `CORE_RING_VOFFSET` | **6.0 µm** | Offset of the ring from the core boundary. |
+
+##### ⚠️ Critical Note: `FP_PDN_MULTILAYER`
+Setting **`FP_PDN_MULTILAYER`** to **`False`** is vital for Caravel integration.
+
+* **The Risk (`True`):** The tool creates horizontal straps on **Metal 5**. Since the Caravel wrapper also uses Metal 5, your macro will "short" against the wrapper's power grid, causing fatal DRC violations.
+* **The Solution (`False`):** This restricts the macro to **Metal 4 (vertical)**, leaving Metal 5 clear for top-level SoC routing.
+
+**Visualizing in KLayout:**
+* **Case A (Multilayer: True):** You will see a "mesh" pattern of crossing Vertical (M4) and Horizontal (M5) straps. **Avoid this.**
+* **Case B (Multilayer: False):** You will only see Vertical Straps (M4). Horizontal connectivity is safely handled by the M1 rails. **This is the correct setup for the AES wrapper.**
+
+
+```{figure} ./figures/multilayer_true.png
+:align: right
+KLayout DEF View: Conflicting Multilayer PDN (FP_PDN_MULTILAYER: True)
+```
+
+```{figure} ./figures/multilayer_false.png
+:align: left
+KLayout DEF View: Optimized Vertical-Only PDN (FP_PDN_MULTILAYER: False)
+```
+
+---
 #### Run 1 — Classic Flow to Pre-PnR STA
 
 Start by running the Classic flow up to the **Pre-PnR Static Timing Analysis** step. This validates your RTL, synthesizes the design, and gives you the first timing report (Slack and Gate Count) without committing to full physical implementation.
