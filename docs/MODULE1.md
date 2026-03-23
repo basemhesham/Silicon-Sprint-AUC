@@ -188,13 +188,12 @@ This file is used during the Placement and Routing stages. It focuses on setting
 
 Enter the following command to create the file:
 ```console
-gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/pnr.sdc
+$ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/pnr.sdc
 ```
-**Paste the following code into the editor and save.**
+Paste the following code into the editor and save.
 ````{dropdown} pnr.sdc
    ```{literalinclude} ./code/pnr.sdc
-    :language: sdc
-    :linenos:
+    :language: tcl
    ```
 ````
 
@@ -203,13 +202,12 @@ This file is used for the final timing validation (Signoff). It includes more pe
 
 Enter the following command:
 ```console
-gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/signoff.sdc
+$ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/signoff.sdc
 ```
-**Paste the following code into the editor and save.**
+Paste the following code into the editor and save.
 ````{dropdown} signoff.sdc
    ```{literalinclude} ./code/signoff.sdc
-    :language: sdc
-    :linenos:
+    :language: tcl
    ```
 ````
 
