@@ -143,11 +143,11 @@ The `docs/` directory contains the complete learning path for hardening and veri
 
 ### Module Documentation
 
-- **[MODULE0.md](docs/MODULE0.md)**: Installation and Environment
+- **[MODULE0.md]([docs/MODULE0.md](https://silicon-sprint-auc.readthedocs.io/en/latest/MODULE0.html))**: Installation and Environment
   - Completing the prerequisite setup for the LibreLane environment.
   - Initializing the Caravel User Project repository and installing the Sky130 PDK.
 
-- **[MODULE1.md](docs/MODULE1.md)**: RTL Exploration & Hardware Project Structure
+- **[MODULE1.md]([docs/MODULE1.md](https://silicon-sprint-auc.readthedocs.io/en/latest/MODULE1.html))**: RTL Exploration & Hardware Project Structure
   - Navigating the design hierarchy and understanding the AES core architecture.
   - Configuring the `config.json` for LibreLane and executing the initial Synthesis and Static Timing Analysis (STA) exploration.
 
@@ -178,18 +178,5 @@ The `docs/` directory contains the complete learning path for hardening and veri
 
 To begin your journey in ASIC design and AES implementation, follow the modules sequentially. Each module builds upon the previous one, taking you from environment setup to a complete, hardened GDSII.
 
-### [Module 0: Installation and Setup]([docs/MODULE0.md](https://silicon-sprint-auc.readthedocs.io/en/latest/MODULE0.html))
-
-Before starting the design process, you must configure your local or cloud environment. This module provides a step-by-step flow to ensure all dependencies for the Caravel SoC and LibreLane are correctly installed.
-
-**Key Objectives:**
-* **Environment Reproducibility:** Setting up the containerized LibreLane environment to ensure consistent results across different operating systems.
-* **PDK Installation:** Downloading and configuring the **SkyWater 130nm (Sky130)** Process Design Kit.
-* **Repository Setup:** Initializing your local workspace using the Caravel User Project template.
-* **Verification:** Running a basic connectivity check to confirm the toolchain (Yosys, OpenROAD, Magic) is operational.
-
-> **Next Step:** Once your environment is verified, proceed to **Module 1: RTL Exploration & Simulation** to dive into the AES core architecture.
-
----
 
 
