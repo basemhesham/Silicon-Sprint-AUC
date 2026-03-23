@@ -137,36 +137,30 @@ The above table explains what each signal means in a wishbone slave and how each
 
 ## 📖 Documentation
 
-The `docs/` directory contains the complete learning path for hardening and verifying the AES Accelerator within the Caravel SoC:
+The `docs/` directory contains the complete learning path for hardening and verifying the AES Accelerator within the Caravel SoC. The following modules guide you through the ASIC implementation process:
 
 ### Module Documentation
 
-Each module provides a dedicated guide with a step-by-step flow for a specific stage of the ASIC implementation:
-
 - **[MODULE0.md](docs/MODULE0.md)**: Installation and Environment
-  - Setting up the LibreLane containerized environment.
-  - Caravel User Project repository initialization and Sky130 PDK installation.
+  - Completing the prerequisite setup for the LibreLane environment.
+  - Initializing the Caravel User Project repository and installing the Sky130 PDK.
 
-- **[MODULE1.md](docs/MODULE1.md)**: RTL Exploration & Simulation
-  - Analyzing the Secworks AES RTL architecture and sub-modules.
-  - Functional verification using Icarus Verilog and GTKWave.
+- **[MODULE1.md](docs/MODULE1.md)**: RTL Exploration & Hardware Project Structure
+  - Navigating the design hierarchy and understanding the AES core architecture.
+  - Configuring the `config.json` for LibreLane and executing the initial Synthesis and Static Timing Analysis (STA) exploration.
 
-- **[MODULE2.md](docs/MODULE2.md)**: Wishbone Bus Integration
-  - Wrapping the AES core with the Wishbone interface (`aes_wb_wrapper.v`).
-  - Signal mapping and handshaking logic (`ack`, `we`, `stb`).
+- **[MODULE2.md](docs/MODULE2.md)**: 
+  - *Content coming soon.*
 
-- **[MODULE3.md](docs/MODULE3.md)**: Hardening with LibreLane
-  - Running the "Classic" flow: Floorplanning, PDN, and Placement.
-  - Generating the GDSII for the standalone AES macro.
+- **[MODULE3.md](docs/MODULE3.md)**: 
+  - *Content coming soon.*
 
-- **[MODULE4.md](docs/MODULE4.md)**: Hierarchical Integration
-  - Integrating the AES macro into the `user_project_wrapper`.
-  - Top-level routing and physical sign-off (LVS/DRC) using Magic and Netgen.
+- **[MODULE4.md](docs/MODULE4.md)**: 
+  - *Content coming soon.*
 
-- **[MODULE5.md](docs/MODULE5.md)**: Firmware & Silicon Validation
-  - Developing C-firmware for the RISC-V management core to drive the AES engine.
-  - Full-chip SoC simulation to verify memory-mapped I/O operations.
-
+- **[MODULE5.md](docs/MODULE5.md)**: 
+  - *Content coming soon.*
+  - 
 ### Reference Documentation
 - **[LibreLane Documentation](https://librelane.readthedocs.io/en/latest/getting_started/)**: Get started with the official LibreLane Docs.
 - **[OpenROAD Documentation](https://openroad.readthedocs.io/en/latest/main/README.html)**: Comprehensive technical documentation for the OpenROAD tool suite.
@@ -182,7 +176,7 @@ Each module provides a dedicated guide with a step-by-step flow for a specific s
 
 To begin your journey in ASIC design and AES implementation, follow the modules sequentially. Each module builds upon the previous one, taking you from environment setup to a complete, hardened GDSII.
 
-### [Module 0: Installation and Setup](docs/MODULE0.md)
+### [Module 0: Installation and Setup]([docs/MODULE0.md](https://silicon-sprint-auc.readthedocs.io/en/latest/MODULE0.html))
 
 Before starting the design process, you must configure your local or cloud environment. This module provides a step-by-step flow to ensure all dependencies for the Caravel SoC and LibreLane are correctly installed.
 
