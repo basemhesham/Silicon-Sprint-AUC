@@ -177,6 +177,42 @@ First, create the dedicated folder where LibreLane will look for your `config.js
 $ mkdir -p ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper
 ```
 
+#### Defining Design-Specific Constraints (SDC)
+
+To achieve timing closure on a complex design like the AES accelerator, it is highly recommended to use design-specific SDC files rather than relying on the tool's default auto-generation. This is handled using the **PNR_SDC_FILE** and **SIGNOFF_SDC_FILE** variables.
+
+These files act as a "timing contract," ensuring your design can communicate reliably with the Caravel SoC at the required frequency.
+
+##### Create the PnR Constraint File
+This file is used during the Placement and Routing stages. It focuses on setting the clock, identifying multicycle paths, and establishing design rules (DRC) like maximum fanout and transition.
+
+Enter the following command to create the file:
+```console
+gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/pnr.sdc
+```
+**Paste the following code into the editor and save.**
+````{dropdown} pnr.sdc
+   ```{literalinclude} ./code/pnr.sdc
+    :language: sdc
+    :linenos:
+   ```
+````
+
+##### Create the Signoff Constraint File
+This file is used for the final timing validation (Signoff). It includes more pessimistic "derate" values and detailed input/output delays. These are essential to ensure the chip remains functional across different voltage and temperature variations once manufactured.
+
+Enter the following command:
+```console
+gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/signoff.sdc
+```
+**Paste the following code into the editor and save.**
+````{dropdown} signoff.sdc
+   ```{literalinclude} ./code/signoff.sdc
+    :language: sdc
+    :linenos:
+   ```
+````
+
 #### Create the Configuration File
 Designs in LibreLane are controlled by Configuration Files. These files contain specific variables defined by the user to guide how the EDA tools process the design. Think of the configuration file as the "instruction manual" for the flow; without it, the tools won't know which files to read or what the timing constraints are.
 
