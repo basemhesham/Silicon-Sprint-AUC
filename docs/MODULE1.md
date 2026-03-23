@@ -235,7 +235,9 @@ Paste the following base variables. These are the mandatory settings required to
         "dir::../../verilog/rtl/aes_wb_wrapper.v"
     ],
     "CLOCK_PORT": "wb_clk_i",
-    "CLOCK_PERIOD": 25
+    "CLOCK_PERIOD": 25,
+    "PNR_SDC_FILE": "dir::cons.sdc",
+    "SIGNOFF_SDC_FILE": "dir::cons.sdc"
 }
 ```
 
