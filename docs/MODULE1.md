@@ -231,10 +231,15 @@ Paste the following base configuration:
     "CLOCK_PORT": "wb_clk_i",
     "CLOCK_PERIOD": 25,
     "PNR_SDC_FILE": "dir::pnr.sdc",
-    "SIGNOFF_SDC_FILE": "dir::signoff.sdc"
+    "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
+    "DEFAULT_CORNER": "max_ss_100C_1v60"
 }
 ```
+We explicitly set `DEFAULT_CORNER` to the "Slow-Slow" worst-case (100°C, 1.60V). Optimizing for this slowest gate performance ensures the design remains robust under the most challenging physical conditions.
 
+```json
+    "DEFAULT_CORNER": "max_ss_100C_1v60"
+```
 The mandatory variables are described below:
 
 | Variable | Value | Description |
@@ -245,6 +250,7 @@ The mandatory variables are described below:
 | `CLOCK_PERIOD` | `25` | Clock period in nanoseconds — **25 ns = 40 MHz**. This is the initial timing target. |
 | `PNR_SDC_FILE` | `"dir::pnr.sdc"` | Points to the SDC file used during Placement and Routing. |
 | `SIGNOFF_SDC_FILE` | `"dir::signoff.sdc"` | Points to the SDC file used for final timing signoff. |
+| `DEFAULT_CORNER` | `"max_ss_100C_1v60"` | Specifies the primary PVT corner for analysis, prioritizing the one with the most timing violations. |
 
 > ⚠️ **Warning — Minimum Required Variables:** Every LibreLane design configuration **must** include the following four variables at a minimum, or the flow will fail at initialization:
 > - `DESIGN_NAME`
@@ -317,8 +323,8 @@ The following values are the **SkyWater 130nm** defaults used by the tool if the
 | **Core Ring (M4/M5)** | `CORE_RING_VWIDTH` | **1.6 µm** | Width of the vertical portions of the power ring. |
 | **Core Ring (M4/M5)** | `CORE_RING_VOFFSET` | **6.0 µm** | Offset of the ring from the core boundary. |
 
-##### ⚠️ Critical Note: `FP_PDN_MULTILAYER`
-Setting **`FP_PDN_MULTILAYER`** to **`False`** is vital for Caravel integration.
+##### ⚠️ Critical Note: `PDN_MULTILAYER`
+Setting **`PDN_MULTILAYER`** to **`False`** is vital for Caravel integration.
 
 * **The Risk (`True`):** The tool creates horizontal straps on **Metal 5**. Since the Caravel wrapper also uses Metal 5, your macro will "short" against the wrapper's power grid, causing fatal DRC violations.
 * **The Solution (`False`):** This restricts the macro to **Metal 4 (vertical)**, leaving Metal 5 clear for top-level SoC routing.
@@ -330,12 +336,12 @@ Setting **`FP_PDN_MULTILAYER`** to **`False`** is vital for Caravel integration.
 
 ```{figure} ./figures/multilayer_true.png
 :align: centre
-KLayout DEF View: Conflicting Multilayer PDN (FP_PDN_MULTILAYER: True)
+KLayout DEF View: Conflicting Multilayer PDN (PDN_MULTILAYER: True)
 ```
 
 ```{figure} ./figures/multilayer_false.png
 :align: centre
-KLayout DEF View: Optimized Vertical-Only PDN (FP_PDN_MULTILAYER: False)
+KLayout DEF View: Optimized Vertical-Only PDN (PDN_MULTILAYER: False)
 ```
 You may review [Power Distribution Networks](https://librelane.readthedocs.io/en/stable/usage/pdn.html) for more information.
 
@@ -402,7 +408,8 @@ Modify your `config.json` with the parameters below. We have selected **`DELAY 4
     "CLOCK_PERIOD": 25,
     "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
-    "FP_PDN_MULTILAYER" : false,
+    "DEFAULT_CORNER": "max_ss_100C_1v60",
+    "PDN_MULTILAYER" : false,
     "FP_CORE_UTIL": 40,
     "SYNTH_STRATEGY": "DELAY 4"
 }
@@ -626,7 +633,7 @@ Run the following command in your terminal. Ensure you use the specific `--run-t
 ```
 
 ### Step 2: Performance Benchmarking
-Complete the following table to visualize the impact of the optimizing flow by comparing the relevant metrics from both run directories:
+Complete the following table to visualize the impact of the optimizing flow. You can find these metrics in the `summary.rpt` and individual STA reports within the run directories.
 
 | Design Metric | Classic Flow (Baseline) | Optimizing Flow | % Difference |
 | :--- | :--- | :--- | :--- |
@@ -634,5 +641,15 @@ Complete the following table to visualize the impact of the optimizing flow by c
 | **Total Power (Watts)** | | | |
 | **Worst Negative Slack (WNS)** | | | |
 | **Total Negative Slack (TNS)** | | | |
+| **Max Slew Violations** | | | |
+| **Max Cap Violations** | | | |
+
+> ⚠️ **Important Note on Run Management:**
+>
+> When re-running a flow with an existing `--run-tag`, be aware of the following behaviors to avoid directory confusion:
+>
+> * **Using `--overwrite`:** This will completely replace the contents of the existing run directory. Use this if you want to start fresh while keeping the same tag name.
+> * **Running without `--overwrite`:** If you specify a tag that already exists without using the overwrite flag, the tool will append new steps starting from the last successful index (e.g., starting a new linting step at index `22-` if the previous run ended at `21-`). This can lead to a cluttered and confusing directory structure.
+> * **Using a New Tag:** The cleanest method for comparing different configurations is to simply provide a unique `--run-tag` (e.g., `optimizing_v2`), which creates a separate, isolated directory.
 
 </div>
