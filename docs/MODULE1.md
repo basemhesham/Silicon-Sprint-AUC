@@ -489,23 +489,82 @@ To visualize the design with a focus on placement density and logical connectivi
 ```console
 [nix-shell:~]$ librelane --last-run --flow openinopenroad ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
 ```
+#### OpenROAD GUI
+The OpenROAD GUI is a powerful visualization, analysis, and debugging tool with a customizable Tcl interface. It provides a real-time graphical representation of your physical design, allowing you to see exactly how your constraints (like `DIE_AREA` and pin placements) are being implemented.
 
-#### Run 2 — Optimizing Flow for Improved Timing
+* **Display Control (LHS):** Use this window to toggle the visibility of specific design elements. You can show/hide individual **Metal Layers**, **Nets**, **Instances**, or **Blockages**. It also features **Heatmaps** for analyzing congestion and power density.
+* **Inspector Window (RHS):** When you select a design object (like a pin or a standard cell), the Inspector provides its specific properties, such as coordinates, layer, and connectivity. It also displays detailed **Timing Reports**.
+* **Main Layout View:** The central area where you can zoom in to verify pin spacing and track alignment.
 
-If the first run shows timing violations or you want to explore a better synthesis result, update `SYNTH_STRATEGY` to `DELAY 4` in your `config.json`, then re-run using the `optimizing` flow:
+```{figure} ./figures/OpenROAD.png
+:align: center
+OpenROAD GUI
+```
+
+#### Tcl Command Interface
+OpenROAD is built on a Tcl-based architecture. Every action performed in the GUI can also be executed via commands in the **Tcl Console** located at the bottom of the screen. This is essential for debugging floorplan scripts or querying the design database directly.
+
+Type `help` in the console to see all available commands. Below are examples of how to verify design metrics:
+
+**1. Area Analysis**
+To check the current utilization and physical dimensions, run:
+`report_design_area`
+
+> **Output Example:**
+```text
+Design area 256073 um^2 40% utilization.
+```
+**2. Power Analysis**
+To view a breakdown of power consumption across different logic groups, run:
+`report_power`
+
+> **Output Example:**
+```text
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             4.94e-03   2.27e-05   3.68e-08   4.97e-03  63.0%
+Combinational          1.62e-03   1.30e-03   8.42e-08   2.92e-03  37.0%
+Clock                  0.00e+00   0.00e+00   1.91e-09   1.91e-09   0.0%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  6.56e-03   1.32e-03   1.23e-07   7.89e-03 100.0%
+                          83.2%      16.8%       0.0%
+```
+
+
+---
+## 8 — Task: Comparative Analysis of Flow Results
+
+In this task, you will evaluate the performance of the **Optimizing Flow** against your previous **Classic Flow**. This comparison is critical for understanding the "PPA" (Power, Performance, Area) trade-offs in VLSI design.
+
+### Objectives
+1.  **Execute** the optimization run to generate a secondary dataset.
+2.  **Preserve** previous results using unique run tags.
+3.  **Compare** key metrics: Power consumption, Total Area, and Timing Slack.
+
+---
+
+### Step 1: Execute the Optimizing Flow
+Run the following command in your terminal. Ensure you use the specific `--run-tag` below to keep your directories organized.
 
 ```console
 [nix-shell:~]$ librelane \
     --flow optimizing \
-    --run-tag optimizing_to_staprepnr \
-    --to OpenROAD.STAPrePNR \
+    --run-tag optimizing_to_pdn \
+    --to Odb.RemovePDNObstructions \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
 ```
 
-> 🔁 **Key Takeaway — Comparing Runs:** By using distinct `--run-tag` names (`classic_to_staprepnr` vs. `optimizing_to_staprepnr`), both run directories are preserved side by side. You can directly compare the `reports/` folders of each run to determine which configuration yields better timing closure before investing time in full Place-and-Route.
+### Step 2: Performance Benchmarking
+Complete the following table to visualize the impact of the optimizing flow by comparing the relevant metrics from both run directories:
 
----
-
-*Proceed to **Module 2** once your Pre-PnR STA reports show no timing violations (WNS ≥ 0).*
+| Design Metric | Classic Flow (Baseline) | Optimizing Flow | % Difference |
+| :--- | :--- | :--- | :--- |
+| **Total Area (um²)** | | | |
+| **Total Power (Watts)** | | | |
+| **Worst Negative Slack (WNS)** | | | |
+| **Total Negative Slack (TNS)** | | | |
 
 </div>
