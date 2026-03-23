@@ -77,12 +77,10 @@ After pasting, **save the file** and close the editor.
 ```
 ````
 
-#### Step 3 — Download the Source File *(Optional)*
-
+```{tip}
 If you prefer to download the verified source file directly into your code directory, use the link below:
-
 {download}`⬇ Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
-
+```
 ---
 
 ## 2. The LibreLane Classic Flow
@@ -188,15 +186,9 @@ runs/
 
 ---
 
-## 3. Running the ASIC Flow
+## 3. Setting Up the Design Environment
 
-In this section, we execute the LibreLane flow for the `aes_wb_wrapper` design. We follow an **Iterative Configuration Strategy**: start with base requirements, run the flow, analyze the reports, and then tune advanced parameters based on actual results.
-
----
-
-### 3.1 Setting Up the Design Environment
-
-#### Step 1 — Create the Design Directory
+### Step 1 — Create the Design Directory
 
 Create the dedicated folder where LibreLane will look for your `config.json`:
 
@@ -206,13 +198,13 @@ $ mkdir -p ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper
 
 ---
 
-#### Step 2 — Define Timing Constraints (SDC Files)
+### Step 2 — Define Timing Constraints (SDC Files)
 
 To achieve timing closure on a complex design like the AES accelerator, we strongly recommend providing design-specific SDC files instead of relying on the tool's auto-generated defaults. This is done using the `PNR_SDC_FILE` and `SIGNOFF_SDC_FILE` configuration variables.
 
 > ⏱️ **Key Concept:** Think of SDC files as a **"timing contract"** between your RTL design and the physical implementation tools. They declare the clock frequency, multicycle paths, and I/O timing requirements that OpenROAD must satisfy.
 
-##### PnR Constraint File (`pnr.sdc`)
+#### PnR Constraint File (`pnr.sdc`)
 
 Used during **Placement and Routing**. Sets the clock period, identifies multicycle paths, and establishes design rules such as maximum fanout and transition time.
 
@@ -228,7 +220,7 @@ Paste the following code into the editor and save:
 ```
 ````
 
-##### Signoff Constraint File (`signoff.sdc`)
+#### Signoff Constraint File (`signoff.sdc`)
 
 Used for **final timing validation (Signoff)**. Applies more pessimistic derating values and detailed I/O delays to ensure the chip remains functional across voltage and temperature corners.
 
@@ -246,7 +238,7 @@ Paste the following code into the editor and save:
 
 ---
 
-#### Step 3 — Create the Configuration File (`config.json`)
+### Step 3 — Create the Configuration File (`config.json`)
 
 The `config.json` file is the **instruction manual** for the LibreLane flow. It tells the EDA tools which source files to read, what the timing target is, and where to find the SDC constraints.
 
@@ -297,66 +289,10 @@ The mandatory variables are described below:
 
 ---
 
-### 3.2 Environment & Command Reference
-
-#### Entering the Nix Shell
-
-Before running any LibreLane commands, you must enter the Nix environment to ensure all EDA tools (Yosys, OpenROAD, Magic, etc.) are available at the correct versions.
-
-```console
-$ nix-shell --pure ~/librelane/shell.nix
-```
-
-Your prompt will change to `[nix-shell:~]$`, confirming you are inside the environment.
-
-> ✅ **Pro Tip:** Always verify you are inside the Nix shell before running `librelane`. Commands executed outside the shell may use incompatible system-level tool versions.
-
----
-
-#### The `librelane` Command Syntax
-
-```console
-[nix-shell:~]$ librelane [OPTIONS] [CONFIG_FILE]...
-```
-
-**Sequential Flow Controls** — Isolate specific stages without running the full flow:
-
-| Option | Description | Example |
-| :--- | :--- | :--- |
-| `--from <StepID>` | Starts the flow from a specific step. | `--from Checker.LintErrors` |
-| `--to <StepID>` | Stops the flow after a specific step completes. | `--to Yosys.Synthesis` |
-| `--skip <StepID>` | Bypasses a specific step during execution. | `--skip Checker.LintWarnings` |
-
-**Run Management Options** — Control how LibreLane saves and organizes output:
-
-| Option | Description |
-| :--- | :--- |
-| `--run-tag <name>` | Assigns a custom name to the run directory. Essential for comparing different strategies side by side. |
-| `--last-run` | Automatically targets the most recently created run directory. |
-| `--overwrite` | Overwrites the existing run directory if a matching tag is found. |
-| `--with-initial-state <FILE>` | Resumes a previous flow using a specific `state_out.json` as the starting point. |
-
----
-
-#### Flow Configuration Modes (`--flow` / `-f`)
-
-The `--flow` flag selects the underlying execution engine and methodology for the run:
-
-| Mode | Description |
-| :--- | :--- |
-| `classic` | The standard sequential flow. Predictable, step-by-step — ideal for learning and debugging. |
-| `optimizing` | An iterative flow that automatically explores multiple synthesis strategies to improve area and timing results. |
-| `openinklayout` | Terminates the flow and opens the current design state in **KLayout** for GDS inspection. |
-| `openinopenroad` | Terminates the flow and opens the design in the **OpenROAD GUI** for physical analysis. |
-
-> 💡 **Pro Tip:** Use `--flow classic` for your first run to establish a baseline, then switch to `--flow optimizing` to let the tool search for a better result automatically.
-
----
-
-### 3.3 RTL-to-Power-Grid Configuration
+## 4 RTL-to-Power-Grid Configuration
 This section covers the critical parameters required to transform your Verilog RTL into a placed design with a robust power distribution network. These settings in `config.json` directly impact the area, timing, and electrical integrity of the **aes_wb_wrapper**.
 
-#### 3.3.1 Logic Synthesis Parameters
+### 4.1 Logic Synthesis Configuration Reference
 Synthesis maps your RTL to the **SkyWater 130nm (`sky130_fd_sc_hd`)** library. Tuning these helps balance the trade-off between gate count and clock frequency.
 
 | Parameter | Type | Description | Default |
@@ -371,7 +307,7 @@ Synthesis maps your RTL to the **SkyWater 130nm (`sky130_fd_sc_hd`)** library. T
 | `VERILOG_POWER_DEFINE` | `str` | Specifies the macro used to guard power/ground connections in the RTL. | `USE_POWER_PINS` |
 
 ---
-### 3.3.2 Floorplan Configuration Reference
+### 4.2 Floorplan Configuration Reference
 
 The following parameters define the physical boundaries of your AES core. In the context of the Caravel SoC, these settings ensure the design fits within the assigned "User Project" area while maintaining enough space for routing.
 
@@ -389,7 +325,7 @@ The following parameters define the physical boundaries of your AES core. In the
 > * **Absolute Sizing (`"FP_SIZING": "absolute"`)**: Mandatory for fixed-size projects like the **Caravel User Project**. You explicitly define the physical coordinates via the `DIE_AREA` variable (e.g., `0 0 2920 3520`). This ensures your AES core fits perfectly into the pre-defined silicon cavity of the SoC.
 
 ---
-### 3.3.3 Power Distribution Network (PDN) Reference
+### 4.3 Power Distribution Network (PDN) Configuration Reference
 
 The Power Distribution Network (PDN) is the grid of metal wires that delivers power (`VDD`) and ground (`GND`) to every standard cell. For the `aes_wb_wrapper`, we must configure the PDN specifically to ensure it integrates into the Caravel SoC.
 
@@ -428,34 +364,119 @@ Setting **`FP_PDN_MULTILAYER`** to **`False`** is vital for Caravel integration.
 
 
 ```{figure} ./figures/multilayer_true.png
-:align: right
+:align: centre
 KLayout DEF View: Conflicting Multilayer PDN (FP_PDN_MULTILAYER: True)
 ```
 
 ```{figure} ./figures/multilayer_false.png
-:align: left
+:align: centre
 KLayout DEF View: Optimized Vertical-Only PDN (FP_PDN_MULTILAYER: False)
 ```
+You may review [Power Distribution Networks](https://librelane.readthedocs.io/en/stable/usage/pdn.html) for more information.
 
 ---
-#### Run 1 — Classic Flow to Pre-PnR STA
+## 5 The `librelane` Command Syntax
 
-Start by running the Classic flow up to the **Pre-PnR Static Timing Analysis** step. This validates your RTL, synthesizes the design, and gives you the first timing report (Slack and Gate Count) without committing to full physical implementation.
+```console
+[nix-shell:~]$ librelane [OPTIONS] [CONFIG_FILE]...
+```
+
+**Sequential Flow Controls** — Isolate specific stages without running the full flow:
+
+| Option | Description | Example |
+| :--- | :--- | :--- |
+| `--from <StepID>` | Starts the flow from a specific step. | `--from Checker.LintErrors` |
+| `--to <StepID>` | Stops the flow after a specific step completes. | `--to Yosys.Synthesis` |
+| `--skip <StepID>` | Bypasses a specific step during execution. | `--skip Checker.LintWarnings` |
+
+**Run Management Options** — Control how LibreLane saves and organizes output:
+
+| Option | Description |
+| :--- | :--- |
+| `--run-tag <name>` | Assigns a custom name to the run directory. Essential for comparing different strategies side by side. |
+| `--last-run` | Automatically targets the most recently created run directory. |
+| `--overwrite` | Overwrites the existing run directory if a matching tag is found. |
+| `--with-initial-state <FILE>` | Resumes a previous flow using a specific `state_out.json` as the starting point. |
+
+---
+
+#### Flow Configuration Modes (`--flow` / `-f`)
+
+The `--flow` flag selects the underlying execution engine and methodology for the run:
+
+| Mode | Description |
+| :--- | :--- |
+| `classic` | The standard sequential flow. Predictable, step-by-step — ideal for learning and debugging. |
+| `optimizing` | An iterative flow that automatically explores multiple synthesis strategies to improve area and timing results. |
+| `openinklayout` | Terminates the flow and opens the current design state in **KLayout** for GDS inspection. |
+| `openinopenroad` | Terminates the flow and opens the design in the **OpenROAD GUI** for physical analysis. |
+
+> 💡 **Pro Tip:** Use `--flow classic` for your first run to establish a baseline, then switch to `--flow optimizing` to let the tool search for a better result automatically.
+
+---
+## 6 Run 1: Execution to Power Network (Classic Flow)
+In this initial run, we execute the **Classic Flow** up to the completion of the Power Distribution Network (PDN). This stage transforms the RTL into a placed design with a verified power grid.
+
+### 6.1 Configuration Setup
+Modify your `config.json` with the parameters below. We have selected **`DELAY 4`** as the synthesis strategy to optimize logic depth for the AES core and to achieve timing closure, and set **`FP_CORE_UTIL`** to **40%** to ensure sufficient routing resources for timing closure.
+
+```json
+{
+    "DESIGN_NAME": "aes_wb_wrapper",
+    "VERILOG_FILES": [
+        "dir::../../../secworks_aes/src/rtl/aes.v",
+        "dir::../../../secworks_aes/src/rtl/aes_core.v",
+        "dir::../../../secworks_aes/src/rtl/aes_decipher_block.v",
+        "dir::../../../secworks_aes/src/rtl/aes_encipher_block.v",
+        "dir::../../../secworks_aes/src/rtl/aes_inv_sbox.v",
+        "dir::../../../secworks_aes/src/rtl/aes_key_mem.v",
+        "dir::../../../secworks_aes/src/rtl/aes_sbox.v",
+        "dir::../../verilog/rtl/aes_wb_wrapper.v"
+    ],
+    "CLOCK_PORT": "wb_clk_i",
+    "CLOCK_PERIOD": 25,
+    "PNR_SDC_FILE": "dir::pnr.sdc",
+    "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
+    "FP_PDN_MULTILAYER" : false,
+    "FP_CORE_UTIL": 40,
+    "STRATEGY" : ’DELAY 4
+}
+```
+---
+### 6.2 Entering the Nix Shell
+Before running any LibreLane commands, you must enter the Nix environment to ensure all EDA tools (Yosys, OpenROAD, Magic, etc.) are available at the correct versions.
+
+```console
+$ nix-shell --pure ~/librelane/shell.nix
+```
+
+Your prompt will change to `[nix-shell:~]$`, confirming you are inside the environment.
+
+> ✅ **Pro Tip:** Always verify you are inside the Nix shell before running `librelane`. Commands executed outside the shell may use incompatible system-level tool versions.
+
+---
+
+### 6.3 Flow Execution
+Execute the following command in your terminal. We use the `--to` flag to stop the flow immediately after the PDN obstructions are removed, which is the final step of the Power Network phase.
 
 ```console
 [nix-shell:~]$ librelane \
     --flow classic \
-    --run-tag classic_to_staprepnr \
-    --to OpenROAD.STAPrePNR \
+    --run-tag classic_to_pdn \
+    --to OpenROAD.Odb.RemovePDNObstructions \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
 ```
 
-After the run completes, examine the timing report in:
-```
-runs/classic_to_staprepnr/12-openroad-staprepnr/reports/
-```
+---
 
-Look for **worst negative slack (WNS)** and **total negative slack (TNS)**. A negative value indicates a timing violation that must be resolved before proceeding to physical design.
+
+
+
+
+
+
+
+
 
 ---
 
