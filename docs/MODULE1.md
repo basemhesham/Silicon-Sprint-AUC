@@ -79,9 +79,9 @@ We use **gedit** (a lightweight graphical text editor) to create the wrapper fil
 
 Open your terminal and run:
 
-```console
-$ gedit ~/Silicon-Sprint-AUC/verilog/rtl/aes_wb_wrapper.v
-```
+     ```console
+      $ gedit ~/Silicon-Sprint-AUC/verilog/rtl/aes_wb_wrapper.v
+      ```
 
 #### Step 2 — Add the Verilog Implementation
 
@@ -89,13 +89,12 @@ Once the editor opens, paste the Wishbone wrapper implementation into the file. 
 
 After pasting, **save the file** and close the editor.
 
-````{dropdown} 📄 `aes_wb_wrapper.v` — Click to expand
-
-     ```{literalinclude} ./code/aes_wb_wrapper.v
-        :language: verilog
-        :linenos:
-    ```
-    ````
+````{dropdown} aes_wb_wrapper.v — Click to expand
+```{literalinclude} ./code/aes_wb_wrapper.v
+:language: verilog
+:linenos:
+```
+````
 
 
 ```{tip}
@@ -111,6 +110,7 @@ After pasting, **save the file** and close the editor.
 The **LibreLane Classic Flow** is a sequential, automated {term}`RTL`-to-{term}`GDSII` pipeline built entirely on open-source {term}`EDA` tools. Each phase of ASIC design — from logic verification through physical signoff — is handled by a specialized tool within a single unified environment.
 
 ```{figure} ./figures/flow.webp
+:scale: 60 %
 :align: center
 
 *LibreLane RTL-to-GDSII Flow*
@@ -216,11 +216,10 @@ $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/pnr.sdc
 
 Paste the following code into the editor and save:
 
-````{dropdown} 📄 `pnr.sdc` — Click to expand
-    ```{literalinclude} ./code/pnr.sdc
-        :language: verilog
-     ```
-````
+````{dropdown} 📄 pnr.sdc — Click to expand
+```{literalinclude} ./code/pnr.sdc
+:language: verilog
+```
 ````
 
 #### Signoff Constraint File (`signoff.sdc`)
@@ -233,12 +232,12 @@ $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/signoff.sdc
 
 Paste the following code into the editor and save:
 
-````{dropdown} 📄 `signoff.sdc` — Click to expand
+````{dropdown} 📄 signoff.sdc — Click to expand
 ```{literalinclude} ./code/signoff.sdc
 :language: tcl
 ```
 ````
-````
+
 ---
 
 ### Step 3 — Create the Configuration File (`config.json`)
