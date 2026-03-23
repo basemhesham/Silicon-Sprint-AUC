@@ -433,8 +433,7 @@ Execute the following command in your terminal. We use the `--to` flag to stop t
 ---
 
 ### 6.4 Output Directory Structure
-
-When the flow runs, LibreLane automatically creates a numbered subdirectory for each step inside the `runs/` folder. The numeric prefix reflects the execution order, making it easy to trace your design's journey from RTL to GDS.
+Upon executing a flow, LibreLane generates a structured run directory within the `runs/` folder. Each stage of the RTL-to-GDSII journey is captured in a dedicated, numerically prefixed subdirectory. This sequential naming convention allows for precise traceability of the design transformation and simplifies the debugging of specific steps.
 
 ```text
 runs/
@@ -463,12 +462,27 @@ runs/
     └── warning.log
 ```
 
-> 🔍 **Pro Tip:** After any run, check `error.log` first for critical failures, then `warning.log` for non-fatal issues that may affect downstream stages.
+> 🔍 **Engineering Note:** Always prioritize reviewing `error.log` following a failed run to identify the root cause of execution stops. If the flow completes but performance metrics (like Slack or Area) are sub-optimal, inspect `warning.log` for non-fatal issues that may have impacted downstream optimization or routing.
 
+### Step-Level Artifacts
+Each numbered subdirectory contains the specific inputs, outputs, and metadata for that transformation. Below is a breakdown of the critical files found within these folders:
+
+| File Name | Description |
+| :--- | :--- |
+| **`COMMANDS`** | A transcript of the exact shell or Tcl commands executed by the step. |
+| **`config.json`** | The specific subset of variables and constraints applied to this step. |
+| **`state_in.json`** | Metadata describing the input layout formats and metrics (e.g., incoming DEF). |
+| **`state_out.json`** | An updated dictionary reflecting new artifacts (e.g., generated DEF or metrics). |
+| **`*.log`** | Raw output from the underlying tool engines (e.g., Yosys or OpenROAD). |
+| **`*.process_stats.json`** | Hardware resource utilization and execution time telemetry. |
+| **`[design].nl.v`** | Structural gate-level netlist (excluding power pins). |
+| **`[design].pnl.v`** | Physical gate-level netlist (including power and ground pins). |
+| **`[design].odb`** | The design state saved in the native OpenROAD binary database format. |
+| **`[design].def`** | The design state saved in the industry-standard Design Exchange Format. |
+| **`[design].sdc`** | Synopsys Design Constraints applied for timing and clocking. |
 
 ---
-## 7 Checking the results
-We will now utilize GUI tools to inspect the physical layout and verify the power grid, tap cells, and decoupling capacitors (decaps).
+## 7 Viewing the Layout
 
 ### 7.1 Viewing the Layout in KLayout
 KLayout is the standard tool for high-resolution inspection of metal layers and the final GDS/DEF structure. Execute the following command in your terminal to load the results of your most recent run:
@@ -482,7 +496,7 @@ Explore the GUI to verify the automated physical infrastructure of the macro. Co
 * **Decap Cells:** Capacitors filling row gaps to provide a local charge reservoir and reduce power noise.
 * **Power Straps:** Ensure **Metal 4** vertical straps are present and **Metal 5** horizontal straps are absent. 
 ---
-### 7.1 Inspecting via OpenROAD GUI
+### 7.2 Inspecting via OpenROAD GUI
 To visualize the design with a focus on placement density and logical connectivity, launch the OpenROAD interface. This tool is particularly useful for analyzing the floorplan and verifying the cell rows.
 
 ```console
@@ -509,7 +523,7 @@ Type `help` in the console to see all available commands. Below are examples of 
 To check the current utilization and physical dimensions, run:
 `report_design_area`
 
-> **Output Example:**
+**Output Example:**
 ```text
 Design area 256073 um^2 40% utilization.
 ```
@@ -517,7 +531,7 @@ Design area 256073 um^2 40% utilization.
 To view a breakdown of power consumption across different logic groups, run:
 `report_power`
 
-> **Output Example:**
+**Output Example:**
 ```text
 Group                  Internal  Switching    Leakage      Total
                           Power      Power      Power      Power (Watts)
@@ -532,9 +546,64 @@ Total                  6.56e-03   1.32e-03   1.23e-07   7.89e-03 100.0%
                           83.2%      16.8%       0.0%
 ```
 
-
 ---
-## 8 — Task: Comparative Analysis of Flow Results
+## 8 — Check The Reports
+
+After executing the flow, it is essential to verify the health of your design by inspecting the generated reports. These files provide insight into syntax issues, timing performance, electrical integrity, and power distribution.
+
+### 8.1 Syntax and Linting Checks
+The first step of the flow is a strict linting check. If any critical errors are detected during this stage, the flow will exit immediately to prevent downstream issues.
+
+* **Location:** `runs/classic_to_pdn/01-verilator-lint/verilator-lint.log`
+* **Action:** Open this log if the flow crashes at the start. Search for "Error" to find syntax mismatches or unsupported Verilog constructs.
+
+### 9.2 Timing and Electrical Summary
+The **Static Timing Analysis (STA)** pre-placement report provides a snapshot of the design’s timing health.
+
+* **Location:** `runs/classic_to_pdn/12-openroad-staprepnr/summary.rpt`
+```text
+┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃                      ┃ Hold     ┃ Reg to   ┃          ┃          ┃ of which  ┃ Setup    ┃           ┃          ┃           ┃ of which ┃           ┃          ┃
+┃                      ┃ Worst    ┃ Reg      ┃          ┃ Hold Vio ┃ reg to    ┃ Worst    ┃ Reg to    ┃ Setup    ┃ Setup Vio ┃ reg to   ┃ Max Cap   ┃ Max Slew ┃
+┃ Corner/Group         ┃ Slack    ┃ Paths    ┃ Hold TNS ┃ Count    ┃ reg       ┃ Slack    ┃ Reg Paths ┃ TNS      ┃ Count     ┃ reg      ┃ Violatio… ┃ Violati… ┃
+┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
+│ Overall              │ -0.7039  │ 0.1242   │ -184.11… │ 1167     │ 0         │ 9.0038   │ 9.7665    │ 0.0000   │ 0         │ 0        │ 36        │ 2377     │
+│ nom_tt_025C_1v80     │ -0.6583  │ 0.2630   │ -130.68… │ 389      │ 0         │ 11.3333  │ 17.3576   │ 0.0000   │ 0         │ 0        │ 16        │ 1373     │
+│ nom_ss_100C_1v60     │ -0.4039  │ 0.7043   │ -51.3690 │ 389      │ 0         │ 9.0038   │ 9.7665    │ 0.0000   │ 0         │ 0        │ 36        │ 2377     │
+│ nom_ff_n40C_1v95     │ -0.7039  │ 0.1242   │ -184.11… │ 389      │ 0         │ 11.2064  │ 20.1298   │ 0.0000   │ 0         │ 0        │ 16        │ 1167     │
+└──────────────────────┴──────────┴──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
+```
+* **Observations:** There are **Hold violations**, **Max Capacitance**, or **Max Slew** violations. Note that these are common at this stage and are typically resolved in the subsequent Clock Tree Synthesis (CTS) and Routing stages.
+
+### 9.3 Detailed Multi-Corner Analysis
+For a deep dive into timing, navigate to the subdirectories within `12-openroad-staprepnr`. These directories represent different PVT (Pressure, Voltage, Temperature) corners:
+* `nom_ff_n40C_1v95`: Fast-Fast corner (Best case).
+* `nom_ss_100C_1v60`: Slow-Slow corner (Worst case).
+* `nom_tt_025C_1v80`: Typical-Typical corner.
+
+Each corner directory contains the following critical reports:
+
+| File Name | Description |
+| :--- | :--- |
+| **`wns.max.rpt` / `wns.min.rpt`** | Worst Negative Slack for Setup (Max) and Hold (Min) paths. |
+| **`tns.max.rpt` / `tns.min.rpt`** | Total Negative Slack; the sum of all negative slack across the design. |
+| **`violator_list.rpt`** | A categorized list of all nets and pins failing timing constraints. |
+| **`power.rpt`** | Detailed power analysis including Internal, Switching, and Leakage power. |
+| **`checks.rpt`** | Reports on unconstrained pins, multiple clock domains, or missing arrival times. |
+| **`max.rpt` / `min.rpt`** | Detailed path-by-path timing reports for the worst-case setup and hold paths. |
+| **`skew.max.rpt`** | Analysis of clock skew across the clock tree (critical for synchronous designs). |
+| **`sta.log`** | The raw output log of the OpenROAD STA engine for this specific corner. |
+| **`aes_wb_wrappre.sdf`** | Standard Delay Format file containing timing delay data for back-annotation. |
+
+### 9.4 Power Distribution Network (PDN) Integrity
+After generating the power grid, you must ensure there are no connectivity issues or "dangling" segments in the power/ground straps.
+
+* **VPWR Errors:** `runs/classic_to_pdn/21-openroad-generatepdn/VPWR-grid-errors.rpt`
+* **VGND Errors:** `runs/classic_to_pdn/21-openroad-generatepdn/VGND-grid-errors.rpt`
+
+If these files contain entries, it indicates that certain parts of your power grid are not properly connected to the main supply rails, which could lead to non-functional silicon.
+
+## 10 — Task: Comparative Analysis of Flow Results
 
 In this task, you will evaluate the performance of the **Optimizing Flow** against your previous **Classic Flow**. This comparison is critical for understanding the "PPA" (Power, Performance, Area) trade-offs in VLSI design.
 
