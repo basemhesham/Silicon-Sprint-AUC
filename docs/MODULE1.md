@@ -361,7 +361,7 @@ Synthesis is the stage where your Verilog RTL is mapped into actual logic gates 
 
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
-| `SYNTH_STRATEGY` | `str` | Selects the ABC logic synthesis strategy. `AREA 0–3` targets compactness; `DELAY 0–4` targets higher clock frequencies. **`DELAY 4` is recommended for AES.** | `DELAY 0` |
+| `SYNTH_STRATEGY` | `str` | Selects the ABC logic synthesis strategy. `AREA 0–3` targets compactness; `DELAY 0–4` targets higher clock frequencies. | `AREA 0` |
 | `SYNTH_HIERARCHY_MODE` | `str` | Controls hierarchy handling: `flatten` (merges all modules), `deferred_flatten` (flattens after synthesis), or `keep` (preserves hierarchy). | `flatten` |
 | `SYNTH_ABC_BUFFERING` | `bool` | Enables automated cell buffering within ABC to improve signal integrity and timing margins. | `True` |
 | `SYNTH_SIZING` | `bool` | Enables ABC cell sizing alongside buffering to optimize gate drive strength. | `False` |
