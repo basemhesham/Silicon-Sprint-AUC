@@ -217,9 +217,10 @@ $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/pnr.sdc
 Paste the following code into the editor and save:
 
 ````{dropdown} 📄 `pnr.sdc` — Click to expand
-```{literalinclude} ./code/pnr.sdc
-:language: tcl
-```
+    ```{literalinclude} ./code/pnr.sdc
+        :language: verilog
+     ```
+````
 ````
 
 #### Signoff Constraint File (`signoff.sdc`)
@@ -237,7 +238,7 @@ Paste the following code into the editor and save:
 :language: tcl
 ```
 ````
-
+````
 ---
 
 ### Step 3 — Create the Configuration File (`config.json`)
