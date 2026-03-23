@@ -151,41 +151,6 @@ Each step in the flow has a unique **Step ID** in the format `ToolName.StepName`
 
 ---
 
-### 2.2 Output Directory Structure
-
-When the flow runs, LibreLane automatically creates a numbered subdirectory for each step inside the `runs/` folder. The numeric prefix reflects the execution order, making it easy to trace your design's journey from RTL to GDS.
-
-```text
-runs/
-└── test1/
-    ├── 01-verilator-lint/
-    ├── 02-checker-linttimingconstructs/
-    ├── 03-checker-linterrors/
-    ├── 04-checker-lintwarnings/
-    ├── 05-yosys-jsonheader/
-    ├── 06-yosys-synthesis/
-    ├── 07-checker-yosysunmappedcells/
-    ├── 08-checker-yosyssynthchecks/
-    ├── 09-checker-netlistassignstatements/
-    ├── 10-openroad-checksdcfiles/
-    ├── 11-openroad-checkmacroinstances/
-    ├── 12-openroad-staprepnr/
-    ├── 13-openroad-floorplan/
-    ├── 14-odb-checkmacroantennaproperties/
-    ├── 15-odb-setpowerconnections/
-    ⋮
-    ├── final/
-    ├── tmp/
-    ├── error.log
-    ├── info.log
-    ├── resolved.json
-    └── warning.log
-```
-
-> 🔍 **Pro Tip:** After any run, check `error.log` first for critical failures, then `warning.log` for non-fatal issues that may affect downstream stages.
-
----
-
 ## 3. Setting Up the Design Environment
 
 ### Step 1 — Create the Design Directory
@@ -439,7 +404,7 @@ Modify your `config.json` with the parameters below. We have selected **`DELAY 4
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "FP_PDN_MULTILAYER" : false,
     "FP_CORE_UTIL": 40,
-    "SYNTH_STRATEGY": DELAY 4
+    "SYNTH_STRATEGY": "DELAY 4"
 }
 ```
 ---
@@ -461,24 +426,69 @@ Execute the following command in your terminal. We use the `--to` flag to stop t
 
 ```console
 [nix-shell:~]$ librelane \
-    --flow classic \
     --run-tag classic_to_pdn \
-    --to OpenROAD.Odb.RemovePDNObstructions \
+    --to Odb.RemovePDNObstructions \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
 ```
-
 ---
 
+### 6.4 Output Directory Structure
 
+When the flow runs, LibreLane automatically creates a numbered subdirectory for each step inside the `runs/` folder. The numeric prefix reflects the execution order, making it easy to trace your design's journey from RTL to GDS.
 
+```text
+runs/
+└── classic_to_pdn/
+    ├── 01-verilator-lint/
+    ├── 02-checker-linttimingconstructs/
+    ├── 03-checker-linterrors/
+    ├── 04-checker-lintwarnings/
+    ├── 05-yosys-jsonheader/
+    ├── 06-yosys-synthesis/
+    ├── 07-checker-yosysunmappedcells/
+    ├── 08-checker-yosyssynthchecks/
+    ├── 09-checker-netlistassignstatements/
+    ├── 10-openroad-checksdcfiles/
+    ├── 11-openroad-checkmacroinstances/
+    ├── 12-openroad-staprepnr/
+    ├── 13-openroad-floorplan/
+    ├── 14-odb-checkmacroantennaproperties/
+    ├── 15-odb-setpowerconnections/
+    ⋮
+    ├── final/
+    ├── tmp/
+    ├── error.log
+    ├── info.log
+    ├── resolved.json
+    └── warning.log
+```
 
-
-
-
-
+> 🔍 **Pro Tip:** After any run, check `error.log` first for critical failures, then `warning.log` for non-fatal issues that may affect downstream stages.
 
 
 ---
+## 7 Checking the results
+We will now utilize GUI tools to inspect the physical layout and verify the power grid, tap cells, and decoupling capacitors (decaps).
+
+### 7.1 Viewing the Layout in KLayout
+KLayout is the standard tool for high-resolution inspection of metal layers and the final GDS/DEF structure. Execute the following command in your terminal to load the results of your most recent run:
+
+```console
+[nix-shell:~]$ librelane --last-run --flow openinklayout ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
+```
+Explore the GUI to verify the automated physical infrastructure of the macro. Confirm the presence of these key elements:
+
+* **Tap Cells:** Small cells placed at regular intervals to prevent "latch-up" by biasing the substrate/n-wells.
+* **Decap Cells:** Capacitors filling row gaps to provide a local charge reservoir and reduce power noise.
+* **Power Straps:** Ensure **Metal 4** vertical straps are present and **Metal 5** horizontal straps are absent.
+* 
+---
+### 7.1 Inspecting via OpenROAD GUI
+To visualize the design with a focus on placement density and logical connectivity, launch the OpenROAD interface. This tool is particularly useful for analyzing the floorplan and verifying the cell rows.
+
+```console
+[nix-shell:~]$ librelane --last-run --flow openinopenroad ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
+```
 
 #### Run 2 — Optimizing Flow for Improved Timing
 
