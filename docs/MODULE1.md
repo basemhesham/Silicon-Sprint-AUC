@@ -200,7 +200,6 @@ Paste the following code into the editor and save.
 ##### Create the Signoff Constraint File
 This file is used for the final timing validation (Signoff). It includes more pessimistic "derate" values and detailed input/output delays. These are essential to ensure the chip remains functional across different voltage and temperature variations once manufactured.
 
-Enter the following command:
 ```console
 $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/signoff.sdc
 ```
