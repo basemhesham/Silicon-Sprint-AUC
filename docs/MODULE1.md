@@ -89,18 +89,20 @@ Once the editor opens, paste the Wishbone wrapper implementation into the file. 
 
 After pasting, **save the file** and close the editor.
 
-   ````{dropdown} 📄 `aes_wb_wrapper.v` — Click to expand
-    ```{literalinclude} ./code/aes_wb_wrapper.v
-       :language: verilog
-       :linenos:
-     ```
+````{dropdown} 📄 `aes_wb_wrapper.v` — Click to expand
+
+     ```{literalinclude} ./code/aes_wb_wrapper.v
+        :language: verilog
+        :linenos:
+    ```
     ````
 
- ```{tip}
+
+```{tip}
  If you prefer to download the verified source file directly into your code directory, use the link below:
 
 {download}`⬇ Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
- ```
+```
 
 ---
 
