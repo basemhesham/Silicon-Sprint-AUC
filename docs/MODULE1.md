@@ -480,8 +480,7 @@ Explore the GUI to verify the automated physical infrastructure of the macro. Co
 
 * **Tap Cells:** Small cells placed at regular intervals to prevent "latch-up" by biasing the substrate/n-wells.
 * **Decap Cells:** Capacitors filling row gaps to provide a local charge reservoir and reduce power noise.
-* **Power Straps:** Ensure **Metal 4** vertical straps are present and **Metal 5** horizontal straps are absent.
-* 
+* **Power Straps:** Ensure **Metal 4** vertical straps are present and **Metal 5** horizontal straps are absent. 
 ---
 ### 7.1 Inspecting via OpenROAD GUI
 To visualize the design with a focus on placement density and logical connectivity, launch the OpenROAD interface. This tool is particularly useful for analyzing the floorplan and verifying the cell rows.
