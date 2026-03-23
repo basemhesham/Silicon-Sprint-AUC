@@ -439,7 +439,7 @@ Modify your `config.json` with the parameters below. We have selected **`DELAY 4
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "FP_PDN_MULTILAYER" : false,
     "FP_CORE_UTIL": 40,
-    "SYNTH_STRATEGY" : DELAY 4
+    "SYNTH_STRATEGY": DELAY 4
 }
 ```
 ---
