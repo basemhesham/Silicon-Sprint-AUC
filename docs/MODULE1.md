@@ -79,9 +79,9 @@ We use **gedit** (a lightweight graphical text editor) to create the wrapper fil
 
 Open your terminal and run:
 
-     ```console
-      $ gedit ~/Silicon-Sprint-AUC/verilog/rtl/aes_wb_wrapper.v
-      ```
+```console
+$ gedit ~/Silicon-Sprint-AUC/verilog/rtl/aes_wb_wrapper.v
+```
 
 #### Step 2 — Add the Verilog Implementation
 
