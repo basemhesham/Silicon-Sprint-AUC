@@ -76,14 +76,14 @@ the design from synthesis through Power Distribution Network generation.
 :::
 
 :::{grid-item-card} 🔄 Module 2 — Placement & Clock Tree *(Coming Soon)*
-:link: #
+:link: MODULE2
 :link-type: url
 
 Guided placement optimization, Clock Tree Synthesis ({term}`CTS`), and post-CTS timing
 closure using the OpenROAD toolchain.
 
 +++
-*Not yet available — check back for updates.*
+ 
 :::
 
 :::{grid-item-card} 🚦 Module 3 — Routing & Signoff *(Coming Soon)*
