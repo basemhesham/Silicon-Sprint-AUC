@@ -202,9 +202,9 @@ SkyWater 130nm {term}`PDK` to your local cache.
 After completing the smoke test — or any work session with the ASIC tools — exit the Nix
 environment and return to your standard terminal by running:
 
-```console
-[nix-shell:~]$ exit
-```
+       ```console
+        [nix-shell:~]$ exit
+       ```
 
 This cleanly releases the managed environment. Your system is unchanged.
 ```
