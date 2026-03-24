@@ -46,6 +46,7 @@ on the output of the previous one — complete them in order.
 
 MODULE0
 MODULE1
+MODULE2
 ```
 
 ### Module Overview
