@@ -198,16 +198,14 @@ SkyWater 130nm {term}`PDK` to your local cache.
 [nix-shell:~]$ librelane --log-level ERROR --condensed --show-progress-bar --smoke-test
 ```
 
-```{tip}
 After completing the smoke test — or any work session with the ASIC tools — exit the Nix
 environment and return to your standard terminal by running:
 
-       ```console
-        [nix-shell:~]$ exit
-       ```
-
-This cleanly releases the managed environment. Your system is unchanged.
+```console
+[nix-shell:~]$ exit
 ```
+This cleanly releases the managed environment. Your system is unchanged.
+
 
 ```{admonition} Expected Outcome
 :class: note
