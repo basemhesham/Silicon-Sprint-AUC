@@ -60,12 +60,6 @@ MODULE1
 Install and configure the LibreLane toolchain, clone the workshop repository, and verify
 your Nix shell environment before beginning the ASIC flow.
 
-**Topics covered:**
-- Nix package manager installation
-- LibreLane environment setup
-- Repository structure walkthrough
-- Environment verification
-
 +++
 *Start here — prerequisites for all subsequent modules.*
 :::
@@ -75,14 +69,7 @@ your Nix shell environment before beginning the ASIC flow.
 :link-type: doc
 
 Integrate the AES core with a Wishbone wrapper, configure the LibreLane flow, and execute
-the design pipeline from synthesis through Power Distribution Network generation.
-
-**Topics covered:**
-- Wishbone wrapper RTL integration
-- {term}`SDC` timing constraint authoring
-- LibreLane `config.json` configuration
-- Classic and Optimizing flow execution
-- Pre-{term}`PnR` timing analysis and report interpretation
+the design from synthesis through Power Distribution Network generation.
 
 +++
 *Requires completion of Module 0.*
