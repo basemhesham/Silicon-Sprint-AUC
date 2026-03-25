@@ -174,7 +174,57 @@ the `OpenROAD.IOPlacement` step.
 ```
 
 ---
+## 2. Clock Tree Synthesis (CTS)
 
+Once the placement of standard cells is finalized, the tool must deliver the clock signal to every sequential element (flip-flops) in the `aes_wb_wrapper`. This stage, known as Clock Tree Synthesis (CTS), is vital for minimizing skew and ensuring the design operates at the intended frequency.
+
+### 2.1 Clock Tree Synthesis (CTS) Configuration Reference
+
+| Parameter | Type | Description | Default |
+| :--- | :--- | :--- | :--- |
+| **`RUN_CTS`** | `bool` | Enables the clock tree synthesis step using the `OpenROAD.CTS` engine. | `True` |
+| **`CTS_CLK_BUFFERS`** | `List[str]` | Defines the specific clock buffers to be used during CTS. Limiting this list to specific sizes can help balance the tree and reduce clock skew. | `None` |
+| **`CTS_ROOT_BUFFER`** | `str` | Specifies the specific cell to be inserted at the very root of the clock tree. | `None` |
+| **`CTS_CLK_MAX_WIRE_LENGTH`** | `Decimal` | Sets the maximum allowable wire length for clock nets in microns to prevent signal degradation. | `0 µm` |
+| **`CTS_SINK_CLUSTERING_SIZE`** | `int` | Determines the maximum number of sinks (flip-flop clock pins) allowed in a single cluster. | `25` |
+| **`CTS_DISTANCE_BETWEEN_BUFFERS`** | `Decimal` | Defines the physical distance between buffers when building the clock tree branches. | `0 µm` |
+| **`RUN_POST_CTS_RESIZER_TIMING`** | `bool` | Enables automated timing optimizations (resizing and buffering) after CTS to fix violations. | `True` |
+| **`PL_RESIZER_HOLD_SLACK_MARGIN`** | `Decimal` | Instructs the optimizer to "over-fix" hold violations by aiming for this positive slack margin. | `0.1 ns` |
+| **`PL_RESIZER_SETUP_SLACK_MARGIN`** | `Decimal` | Sets the target positive slack margin for setup violations during post-CTS optimization. | `0.05 ns` |
+| **`PL_RESIZER_ALLOW_SETUP_VIOS`** | `bool` | Allows the tool to create setup violations if necessary to resolve critical hold violations. | `False` |
+
+---
+
+### 2.2 The CTS Flow (Step 35: OpenROAD.CTS)
+
+In this stage, the TritonCTS engine builds the physical distribution network for the clock. The process involves several automated steps:
+
+1.  **Topology Generation (H-Tree):** The tool creates a balanced H-Tree structure to ensure the clock path to every flip-flop is as symmetric as possible.
+2.  **Sink Clustering:** Sinks are grouped into clusters based on their physical location and the maximum capacitive load the clock buffers can drive.
+3.  **Buffer Insertion:** Clock buffers are inserted at the root and throughout the branches to maintain signal integrity and drive the large number of sequential cells.
+4.  **Dummy Load Insertion:** To keep the tree perfectly balanced, the tool adds "dummy" loads to lighter branches so they match the delay of the heavier branches.
+5.  **Post-CTS Legalization:** Since new buffers have been added to the layout, a detailed placement run is performed to resolve any overlaps.
+
+---
+
+### 2.3 Post-CTS Timing Repair (Step 37: OpenROAD.ResizerTimingPostCTS)
+
+After the clock tree is physically inserted, the "real" clock delays are known. This stage uses the OpenROAD Resizer to clean up timing violations:
+
+1.  **Setup Repair:** The tool checks if any data paths are now too slow due to the inserted clock tree. If violations are found, it resizes gates or inserts buffers to speed up the path.
+2.  **Hold Repair:** This is the most active part of the stage. The tool identifies paths where data is arriving too quickly and inserts delay buffers to ensure the data remains stable for the required hold time.
+3.  **Iterative Optimization:** The resizer works through multiple iterations, adding buffers and calculating the impact on area and timing until all violations are resolved or the target margins are met.
+
+---
+
+### 2.4 Timing Verification Stages
+
+During the CTS process, LibreLane performs two distinct Static Timing Analysis (STA) checks to track the health of the design:
+
+* **Step 36 (STAMidPNR-1):** Performed *before* the Post-CTS Resizer. At this point, the report will likely show a significant number of **Hold Violations**, as the clock tree has been added but the data paths haven't been adjusted to match.
+* **Step 38 (STAMidPNR-2):** Performed *after* the Post-CTS Resizer. Comparing this report to the previous one shows that the hold violations have been successfully resolved through the insertion of timing repair buffers.
+
+---
 ```{glossary}
 I/O
   Input/Output. Refers to the physical pins on a macro or chip boundary through which signals enter and leave the design.
