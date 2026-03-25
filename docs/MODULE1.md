@@ -352,6 +352,11 @@ to find the smallest feasible footprint.
 (e.g., `0 0 2920 3520`), ensuring the AES core fits precisely into the pre-defined silicon cavity of the SoC.
 ```
 
+```{figure} ./figures/floorplan.png
+:align: center
+
+*Floorplan Boundary and Margin Visualization*
+```
 ---
 
 ### 4.3 Power Distribution Network ({term}`PDN`) Configuration Reference
@@ -464,14 +469,14 @@ The `--flow` flag selects the execution engine and methodology for the run:
 | Mode | Description |
 | :--- | :--- |
 | `classic` | Standard sequential flow. Predictable and step-by-step — the recommended starting point for learning. |
-| `optimizing` | Iterative flow that automatically explores multiple synthesis strategies to improve {term}`PPA` results. |
+| `SynthesisExploration` | Specialized synthesis flow that automatically iterates through all available `SYNTH_STRATEGY` options to find the best {term}`PPA` results. |
 | `openinklayout` | Terminates the flow and opens the current design state in **KLayout** for {term}`GDSII`/{term}`DEF` inspection. |
 | `openinopenroad` | Terminates the flow and opens the design in the **OpenROAD GUI** for physical analysis. |
 
 ```{tip}
-Use `--flow classic` for your first run to establish a reproducible baseline.
-Once you have baseline metrics, switch to `--flow optimizing` to allow the tool to search
-for an improved synthesis configuration automatically.
+It is highly recommended to run **`--flow SynthesisExploration`** first to identify the optimal strategy for your design.
+
+When starting a new design, finding the best synthesis strategy is essential. Since `AREA` strategies minimize footprint and `DELAY` strategies focus on timing, LibreLane provides an exploration flow to test all options and identify the best fit for your specific design.
 ```
 
 ---
