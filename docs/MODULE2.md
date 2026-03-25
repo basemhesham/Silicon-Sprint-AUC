@@ -183,14 +183,16 @@ Once the placement of standard cells is finalized, the tool must deliver the clo
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
 | **`RUN_CTS`** | `bool` | Enables the clock tree synthesis step using the `OpenROAD.CTS` engine. | `True` |
-| **`CTS_CLK_BUFFERS`** | `List[str]` | Defines the specific clock buffers to be used during CTS. Limiting this list to specific sizes can help balance the tree and reduce clock skew. | `None` |
+| **`CTS_CLK_BUFFERS`** | `List[str]` | Defines the specific clock buffers to be used during CTS. Limiting this to specific sizes can help balance the tree. | `None` |
 | **`CTS_ROOT_BUFFER`** | `str` | Specifies the specific cell to be inserted at the very root of the clock tree. | `None` |
 | **`CTS_CLK_MAX_WIRE_LENGTH`** | `Decimal` | Sets the maximum allowable wire length for clock nets in microns to prevent signal degradation. | `0 µm` |
 | **`CTS_SINK_CLUSTERING_SIZE`** | `int` | Determines the maximum number of sinks (flip-flop clock pins) allowed in a single cluster. | `25` |
-| **`CTS_DISTANCE_BETWEEN_BUFFERS`** | `Decimal` | Defines the physical distance between buffers when building the clock tree branches. | `0 µm` |
 | **`RUN_POST_CTS_RESIZER_TIMING`** | `bool` | Enables automated timing optimizations (resizing and buffering) after CTS to fix violations. | `True` |
+| **`NON_DEFAULT_RULES`** | `Dict` | Defines custom routing rules (width/spacing) to protect critical nets like the clock from crosstalk and high resistance. | `None` |
+| **`CTS_APPLY_NDR`** | `str` | Determines the level of NDR application. Valid values: `none`, `root_only`, `half`, `full`. | `none` |
+| **`RT_CLOCK_MIN_LAYER`** | `str` | The name of the lowest metal layer to be used for routing the clock net (e.g., `met3`). | `None` |
+| **`RT_CLOCK_MAX_LAYER`** | `str` | The name of the highest metal layer to be used for routing the clock net. | `None` |
 | **`PL_RESIZER_HOLD_SLACK_MARGIN`** | `Decimal` | Instructs the optimizer to "over-fix" hold violations by aiming for this positive slack margin. | `0.1 ns` |
-| **`PL_RESIZER_SETUP_SLACK_MARGIN`** | `Decimal` | Sets the target positive slack margin for setup violations during post-CTS optimization. | `0.05 ns` |
 | **`PL_RESIZER_ALLOW_SETUP_VIOS`** | `bool` | Allows the tool to create setup violations if necessary to resolve critical hold violations. | `False` |
 
 ---
