@@ -26,6 +26,11 @@ Before proceeding, ensure you have completed **Module 1** and that your Classic 
 4. [Executing the CTS Run](#executing-the-cts-run)
    - [4.1 Flow Execution](#flow-execution)
    - [4.2 Results](#results)
+     - [Viewing the Layout](#viewing-the-layout)
+     - [Tracing the Clock Tree](#tracing-the-clock-tree)
+     - [Using Heat Maps](#using-heat-maps)
+     - [Inspecting Timing Paths](#inspecting-timing-paths)
+     - [Inspecting Intermediate Flow Steps](#inspecting-intermediate-flow-steps)
 
 ---
 
@@ -206,7 +211,7 @@ timing reports generated immediately after.
 | :--- | :--- |
 | **1. Topology Generation (H-Tree)** | The tool constructs a balanced H-Tree structure ensuring the clock path to every flip-flop is as geometrically symmetric as possible, equalising propagation delays across the chip area. |
 | **2. Sink Clustering** | Flip-flop clock pins (sinks) are grouped into spatial clusters. Each cluster is sized to remain within the maximum capacitive load the selected clock buffers can drive (`CTS_SINK_CLUSTERING_SIZE`). |
-| **3. Buffer Insertion** | Clock buffers are inserted at the root and at every branch point to maintain signal integrity across the **flip-flops** of the AES core. |
+| **3. Buffer Insertion** | Clock buffers are inserted at the root and at every branch point to maintain signal integrity across the **2,995 flip-flops** of the AES core. |
 | **4. Dummy Load Insertion** | To keep the tree perfectly balanced, dummy capacitive loads are added to lighter branches, equalising their delay against heavier branches. |
 | **5. Post-CTS Legalisation** | The newly inserted clock buffers occupy physical space. A Detailed Placement pass is run to resolve any cell overlaps introduced by buffer insertion. |
 
@@ -277,34 +282,36 @@ constraint boundary that is consistent with how the library was characterised.
 
 | Parameter | Default | New Value | Impact |
 | :--- | :---: | :---: | :--- |
-| `MAX_TRANSITION_CONSTRAINT` | `0.75 ns` | **`1.5 ns`** | Aligns the repair target with the `sky130_fd_sc_hd` Liberty file characterisation boundary, eliminating over-buffering on nets that are compliant with the actual library limit. |
-| `DESIGN_REPAIR_MAX_SLEW_PCT` | `20%` | **`40%`** | Increases the proactive slew repair margin, instructing the Resizer to fix paths within 30% of the slew limit — catching borderline paths before post-routing parasitics push them into hard violation. |
-| `DESIGN_REPAIR_MAX_CAP_PCT` | `20%` | **`40%`** | Increases the proactive capacitance repair margin, reducing the number of Max Cap violations that emerge after actual wire routing adds real parasitic load. |
+| `DESIGN_REPAIR_MAX_SLEW_PCT` | `20%` | **`30%`** | Increases the proactive slew repair margin, instructing the Resizer to fix paths within 30% of the slew limit — catching borderline paths before post-routing parasitics push them into hard violation. |
+| `DESIGN_REPAIR_MAX_CAP_PCT` | `20%` | **`30%`** | Increases the proactive capacitance repair margin, reducing the number of Max Cap violations that emerge after actual wire routing adds real parasitic load. |
 
-```{admonition} When Does MAX_TRANSITION_CONSTRAINT Take Effect?
-:class: important
+```{note}
+**Why is `MAX_TRANSITION_CONSTRAINT` not set here?**
 
-`MAX_TRANSITION_CONSTRAINT` is enforced primarily during the **Post-{term}`PnR` Static
-Timing Analysis** (`OpenROAD.STAPostPNR`) — not at the pre-placement stage.
+When a design uses custom {term}`SDC` files — as `aes_wb_wrapper` does via `pnr.sdc`
+and `signoff.sdc` — the `MAX_TRANSITION_CONSTRAINT` configuration variable has **no
+effect**. This is due to the constraint priority hierarchy within the LibreLane flow:
 
-As a result, the **Max Slew violation count** visible in the `12-openroad-staprepnr`
-report will not change between runs with different `MAX_TRANSITION_CONSTRAINT` values.
-The pre-placement report always compares against the internal default (0.75 ns).
+1. **{term}`SDC` constraints** (values declared in `.sdc` files) take absolute
+   precedence over all configuration variables.
+2. **Configuration variables** such as `MAX_TRANSITION_CONSTRAINT` are only applied
+   when no SDC constraint exists to override them.
 
-The benefit of setting `MAX_TRANSITION_CONSTRAINT: 1.5` is realised at signoff:
-the final Post-PnR STA will flag violations only against the 1.5 ns boundary,
-producing a cleaner and more physically accurate timing report.
+Because `pnr.sdc` already defines the transition limit, LibreLane uses that value
+throughout the entire flow from Placement through to the Post-{term}`PnR` {term}`STA`.
+At signoff, `signoff.sdc` takes over — which in this workshop already sets the
+transition constraint to **1.5 ns**, consistent with the `sky130_fd_sc_hd` library
+characterisation boundary.
 
-The two percentage-based margins (`DESIGN_REPAIR_MAX_SLEW_PCT` and
-`DESIGN_REPAIR_MAX_CAP_PCT`) **do** affect the Placement and Design Repair phases
-and will produce a measurable reduction in violations during those stages.
+Setting `MAX_TRANSITION_CONSTRAINT` in `config.json` alongside active SDC files would
+therefore be silently ignored and is omitted here to avoid confusion.
 ```
 
 ---
 
 ### 3.2 Final `config.json`
 
-Add the three optimisation parameters to your existing configuration. Your complete
+Add the two optimisation parameters to your existing configuration. Your complete
 `config.json` should now read:
 
 ```console
@@ -333,17 +340,9 @@ $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
     "FP_CORE_UTIL": 40,
     "SYNTH_STRATEGY": "DELAY 4",
     "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
-    "MAX_TRANSITION_CONSTRAINT": 1.5,
     "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
     "DESIGN_REPAIR_MAX_CAP_PCT": 30
 }
-```
-
-```{warning}
-Do **not** set `MAX_TRANSITION_CONSTRAINT` above 1.5 ns. Values beyond the library's
-characterised boundary cause the {term}`STA` engine to extrapolate timing data rather
-than interpolate from measured table entries. The resulting reports may appear clean
-while masking real silicon-level violations.
 ```
 
 ---
@@ -396,17 +395,183 @@ runs/classic_to_cts/
 
 ### 4.2 Results
 
-```{admonition} Results — To Be Completed
-:class: note
+After the run completes, we inspect the physical layout and timing data using the
+**OpenROAD GUI**. This section walks through four inspection tasks: layout verification,
+clock tree visualisation, congestion and power analysis, and timing path review.
 
-This section will be populated with the timing summary comparison after the run
-completes. Navigate to the following reports to gather your data:
+---
 
-- **Pre-CTS STA:** `runs/classic_to_cts/35-openroad-stamidpnr-1/summary.rpt`
-- **Post-CTS STA:** `runs/classic_to_cts/37-openroad-stamidpnr-2/summary.rpt`
+#### Viewing the Layout
 
-Record the Hold {term}`WNS`, Hold {term}`TNS`, and violation counts from both
-checkpoints to quantify the effect of the Post-CTS Resizer repair pass.
+Launch the OpenROAD GUI for the last completed run:
+
+```console
+[nix-shell:~]$ librelane \
+    ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json \
+    --last-run \
+    --flow openinopenroad
+```
+
+```{tip}
+**Standard cells not visible?** Zoom into the core area using the scroll wheel or the
+`F` key to fit the view. If cells still do not appear, navigate to the **Display
+Control** panel on the left sidebar, expand **Instances**, and enable the
+**stdCells** checkbox. You should also verify that Wishbone interface pins appear
+clustered along the **South (bottom)** edge — confirming that `pin_order.cfg` was
+applied correctly.
+```
+
+The figure below shows the post-{term}`CTS` layout with standard cells placed and the
+clock tree buffers visible throughout the core area:
+
+```{figure} ./figures/.png
+:align: center
+
+*Post-CTS layout of* `aes_wb_wrapper` *— standard cells placed, Wishbone pins constrained to the South edge.*
+```
+
+---
+
+#### Tracing the Clock Tree
+
+The OpenROAD GUI includes a dedicated **Clock Tree Viewer** for inspecting the
+synthesised clock distribution network.
+
+**Step 1 — Open the Clock Tree Viewer:**
+From the top menu bar, select **Windows → Clock Tree Viewer**.
+
+**Step 2 — Render the tree:**
+In the **Clock Tree Viewer** panel on the right-hand side, click **Update** in the
+top-right corner. The viewer will render the full hierarchical clock tree for
+`aes_wb_wrapper`, showing the H-Tree topology, buffer stages, and sink clusters.
+
+```{tip}
+For a cleaner view of the clock tree topology, disable all metal layer visibility in
+the **Display Control** panel on the left sidebar — deselect all entries under the
+**Layers** section. This removes the routing clutter and leaves only the clock tree
+structure visible in the main canvas.
+```
+
+```{figure} ./figures/.png
+:align: center
+
+*Clock Tree Viewer — synthesised H-Tree topology for* `aes_wb_wrapper`*, with metal layers hidden for clarity.*
+```
+
+---
+
+#### Using Heat Maps
+
+OpenROAD provides three heat map overlays for analysing the physical distribution of
+placement density, routing congestion, and power dissipation across the floorplan.
+
+**Placement Density**
+
+From the menu bar, select **Tools → Heat Maps → Placement Density**.
+Alternatively, expand **Heat Maps → Placement Density** in the **Display Control**
+panel on the left sidebar.
+
+```{figure} ./figures/.png
+:align: center
+
+*Placement Density heat map — warmer colours indicate higher standard cell density regions.*
+```
+
+**Routing Congestion**
+
+From **Display Control**, expand **Heat Maps** and select **Routing Congestion** to
+visualise congestion selectively on vertical and horizontal routing layers.
+
+```{figure} ./figures/.png
+:align: center
+
+*Routing Congestion heat map — regions approaching saturation may require floorplan adjustment.*
+```
+
+**Power Density**
+
+From **Display Control**, expand **Heat Maps** and select **Power Density** to overlay
+the estimated power dissipation distribution across the core area.
+
+```{figure} ./figures/.png
+:align: center
+
+*Power Density heat map — highlights regions of high switching activity in the AES datapath.*
+```
+
+---
+
+#### Inspecting Timing Paths
+
+The OpenROAD GUI provides an interactive **Timing Report** panel for examining
+individual timing paths after {term}`CTS`.
+
+**Step 1 — Open the Timing Report panel:**
+From the menu bar, select **Windows → Timing Report**.
+
+**Step 2 — Load the paths:**
+In the **Timing Report** panel, select **Paths → Update**. Enter an integer value
+for the number of paths to display (e.g., `20` for the 20 worst paths). The panel
+will populate with a ranked list of timing paths.
+
+```{figure} ./figures/.png
+:align: center
+
+*Timing Report panel — ranked list of timing paths after Post-CTS repair.*
+```
+
+**Step 3 — Analyse Setup and Hold paths:**
+Select the **Setup** or **Hold** tab to switch between path groups. Each path entry
+shows a detailed segment-by-segment breakdown with the following fields:
+
+| Field | Description |
+| :--- | :--- |
+| **Pin Name** | The specific cell pin at each stage of the timing path. |
+| **Time** | Cumulative arrival time at this pin relative to the clock edge. |
+| **Delay** | Incremental cell or wire delay contributed at this segment. |
+| **Slew** | Signal transition time at this pin — flagged if it exceeds `MAX_TRANSITION_CONSTRAINT`. |
+| **Load** | Capacitive load driven at this pin — flagged if it exceeds the cell's rated maximum. |
+
+Path groups include **clock-to-register**, **register-to-register**, and
+**register-to-output** segments, each with its own arrival time profile and slack value.
+
+```{figure} ./figures/.png
+:align: center
+
+*Detailed path breakdown — pin-level delay, slew, and load values for a Hold-critical register-to-register path.*
+```
+
+---
+
+#### Inspecting Intermediate Flow Steps
+
+The OpenROAD GUI is not limited to the last run. Any intermediate step can be loaded
+directly using its `state_out.json` file and the `--with-initial-state` flag.
+
+For example, to inspect the design **after Global Placement** — before Detailed
+Placement corrects cell overlaps — run:
+
+```console
+[nix-shell:~]$ librelane \
+    ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json \
+    --flow openinopenroad \
+    --with-initial-state \
+    ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/runs/classic_to_cts/28-openroad-globalplacement/state_out.json
+```
+
+```{note}
+At the Global Placement stage, cell positions are optimised for wire length but
+**overlaps between cells are not yet resolved**. The GUI will show cells visually
+overlapping one another — this is expected and intentional at this intermediate step.
+Detailed Placement (the following step) legalises the placement by eliminating all
+overlaps while preserving the global optimisation. Comparing the two states side by
+side is an effective way to understand what the legalisation step contributes.
+```
+
+```{figure} ./figures/.png
+:align: center
+
+*Global Placement state — cell overlaps are visible before Detailed Placement legalisation.*
 ```
 
 ---
