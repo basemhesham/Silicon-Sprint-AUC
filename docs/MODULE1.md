@@ -778,17 +778,22 @@ To run that flow, enter the following command:
 2. Observe the results for each strategy in the generated reports.
 3. Fill out the table below based on your findings.
 
-| Synthesis Strategy | Total Area ($\mu m^2$) | Worst Negative Slack (WNS) | Max Slew Violations |
-| :--- | :--- | :--- | :--- |
-| **AREA 0** | | | |
-| **AREA 1** | | | |
-| **AREA 2** | | | |
-| **AREA 3** | | | |
-| **DELAY 0** | | | |
-| **DELAY 1** | | | |
-| **DELAY 2** | | | |
-| **DELAY 3** | | | |
-| **DELAY 4** | | | |
+```text
+┏━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ SYNTH_STRATEGY ┃ Gates ┃ Area (µm²)    ┃ Worst Register-to-Register Setup Slack (ns) ┃ Worst Setup Slack (ns) ┃ Total -ve Setup Slack (ns) ┃
+┡━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ AREA 0         │       │               │                                             │                        │                            │
+│ AREA 1         │       │               │                                             │                        │                            │
+│ AREA 2         │       │               │                                             │                        │                            │
+│ AREA 3         │       │               │                                             │                        │                            │
+│ DELAY 0        │       │               │                                             │                        │                            │
+│ DELAY 1        │       │               │                                             │                        │                            │
+│ DELAY 2        │       │               │                                             │                        │                            │
+│ DELAY 3        │       │               │                                             │                        │                            │
+│ DELAY 4        │       │               │                                             │                        │                            │
+└────────────────┴───────┴───────────────┴─────────────────────────────────────────────┴────────────────────────┴────────────────────────────┘
+```
+
 
 **Final Analysis:**
 Based on the data collected above, which synthesis strategy provides the best balance for your design goals?
