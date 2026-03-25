@@ -760,45 +760,41 @@ non-functional silicon and **must be resolved before proceeding to Placement and
 
 ---
 
-## 9. Task: Comparative Analysis of Flow Results
+### Task: Running Synthesis Exploration
 
-In this task, you will evaluate the performance of the **Optimizing Flow** against your **Classic Flow** baseline. This comparison is a fundamental exercise in understanding the **{term}`PPA`** (Power, Performance, Area) trade-offs inherent in VLSI design.
+When running a new design, it’s always good to first find the best synthesis strategy. Synthesis strategies are scripts for the **ABC** utility that handle fine-grained optimization and technology mapping.
 
-### Objectives
+You can find a list of available strategies under the `SYNTH_STRATEGY` parameter. Generally, `AREA` strategies result in a smaller footprint, while `DELAY` strategies focus on achieving lower timing slack. Since it is difficult to predict which strategy will yield the best results for a specific design, **LibreLane** provides a synthesis exploration flow that iterates through all of them to compare outcomes.
 
-1. **Execute** the optimizing flow run to generate a secondary dataset.
-2. **Preserve** all results using unique `--run-tag` identifiers.
-3. **Compare** key metrics: Total Power, Cell Area, Worst Negative Slack ({term}`WNS`), and Total Negative Slack ({term}`TNS`).
-
----
-
-### Step 1 — Execute the Optimizing Flow
-
-Run the following command in your terminal. Use the exact `--run-tag` below to maintain an organized directory structure:
+To run that flow, enter the following command:
 
 ```console
-[nix-shell:~]$ librelane \
-    --flow optimizing \
-    --run-tag optimizing_to_pdn \
-    --to Odb.RemovePDNObstructions \
-    ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
+[nix-shell:~]$librelane ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json --flow SynthesisExploration
+
 ```
 
----
+**Instructions:**
+1. Execute the synthesis exploration flow for your `aes_wb_wrapper`.
+2. Observe the results for each strategy in the generated reports.
+3. Fill out the table below based on your findings.
 
-### Step 2 — Performance Benchmarking
+| Synthesis Strategy | Total Area ($\mu m^2$) | Worst Negative Slack (WNS) | Max Slew Violations |
+| :--- | :--- | :--- | :--- |
+| **AREA 0** | | | |
+| **AREA 1** | | | |
+| **AREA 2** | | | |
+| **AREA 3** | | | |
+| **DELAY 0** | | | |
+| **DELAY 1** | | | |
+| **DELAY 2** | | | |
+| **DELAY 3** | | | |
+| **DELAY 4** | | | |
 
-Complete the table below to quantify the impact of the optimizing flow. Retrieve these metrics from `summary.rpt` and the individual {term}`STA` reports within each run directory.
+**Final Analysis:**
+Based on the data collected above, which synthesis strategy provides the best balance for your design goals?
 
-| Design Metric | Classic Flow (Baseline) | Optimizing Flow | % Difference |
-| :--- | :---: | :---: | :---: |
-| **Total Area (µm²)** | | | |
-| **Total Power (Watts)** | | | |
-| **Worst Negative Slack — {term}`WNS` (ns)** | | | |
-| **Total Negative Slack — {term}`TNS` (ns)** | | | |
-| **Max Slew Violations** | | | |
-| **Max Cap Violations** | | | |
-
+* **Selected Best Strategy:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+* **Reasoning:** \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 ---
 
 ### Run Management — Avoiding Directory Confusion
