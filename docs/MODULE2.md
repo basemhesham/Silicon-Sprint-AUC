@@ -206,7 +206,7 @@ timing reports generated immediately after.
 | :--- | :--- |
 | **1. Topology Generation (H-Tree)** | The tool constructs a balanced H-Tree structure ensuring the clock path to every flip-flop is as geometrically symmetric as possible, equalising propagation delays across the chip area. |
 | **2. Sink Clustering** | Flip-flop clock pins (sinks) are grouped into spatial clusters. Each cluster is sized to remain within the maximum capacitive load the selected clock buffers can drive (`CTS_SINK_CLUSTERING_SIZE`). |
-| **3. Buffer Insertion** | Clock buffers are inserted at the root and at every branch point to maintain signal integrity across the **2,995 flip-flops** of the AES core. |
+| **3. Buffer Insertion** | Clock buffers are inserted at the root and at every branch point to maintain signal integrity across the **flip-flops** of the AES core. |
 | **4. Dummy Load Insertion** | To keep the tree perfectly balanced, dummy capacitive loads are added to lighter branches, equalising their delay against heavier branches. |
 | **5. Post-CTS Legalisation** | The newly inserted clock buffers occupy physical space. A Detailed Placement pass is run to resolve any cell overlaps introduced by buffer insertion. |
 
