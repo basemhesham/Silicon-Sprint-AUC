@@ -132,17 +132,7 @@ $ git clone https://github.com/librelane/librelane/ ~/librelane
 
 ---
 
-### Step 3.2 — Switch to LibreLane 3
-
-Switch the repository to the development branch to access the latest features and improvements:
-
-```console
-$ git -C ~/librelane checkout dev
-```
-
----
-
-### Step 3.3 — Initialize the Nix Shell
+### Step 3.2 — Initialize the Nix Shell
 
 Load all LibreLane packages into your current terminal session:
 
