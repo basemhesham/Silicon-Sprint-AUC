@@ -328,13 +328,17 @@ Synthesis maps your RTL to the **SkyWater 130nm (`sky130_fd_sc_hd`)** standard c
 
 These parameters define the physical boundaries of the AES core. Within the Caravel SoC context, correct floorplan settings ensure the macro fits within the designated "User Project" area while preserving adequate routing resources.
 
-| Parameter | Type | Description | Default / Recommended |
+| Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
-| `FP_CORE_UTIL` | `Decimal` | Standard cell density as a percentage of the core area. **50%** is a stable starting point. | `50` |
-| `FP_SIZING` | `str` | `relative` calculates area from utilization; `absolute` uses user-defined fixed dimensions. | `relative` |
-| `FP_ASPECT_RATIO` | `Decimal` | Ratio of core height to width. A value of **1** produces a square floorplan. | `1` |
-| `CORE_AREA` | `Tuple` | Specifies a fixed core boundary as a 4-corner rectangle. Must be paired with `DIE_AREA`. | `None` |
-| `DIE_AREA` | `Tuple` | Explicitly sets die area coordinates in the format `x0 y0 x1 y1`. Essential for fixed-size SoC projects. | `None` |
+| **`FP_CORE_UTIL`** | `Decimal` | Sets the core utilization percentage. Typical values range from 25% to 60%, with 40% often used as a stable starting point. | `50` |
+| **`FP_ASPECT_RATIO`** | `Decimal` | Defines the core's aspect ratio (calculated as height / width). A value of 1 creates a square floorplan. | `1` |
+| **`FP_SIZING`** | `str` | Determines the sizing mode. `'relative'` calculates area based on utilization, while `'absolute'` uses fixed user-defined dimensions. | `'relative'` |
+| **`DIE_AREA`** | `Tuple?` | Specifies a fixed die boundary as a 4-corner rectangle "x0 y0 x1 y1". This is required when `FP_SIZING` is set to absolute. | `None` |
+| **`CORE_AREA`** | `Tuple?` | Explicitly sets the core area boundary (die area minus margins). Must be paired with `DIE_AREA`. | `None` |
+| **`BOTTOM_MARGIN_MULT`** | `Decimal` | Sets the bottom core margin in multiples of site heights. This is ignored if `DIE_AREA` and `CORE_AREA` are manually defined. | `4` |
+| **`TOP_MARGIN_MULT`** | `Decimal` | Sets the top core margin in multiples of site heights. This is ignored if `DIE_AREA` and `CORE_AREA` are manually defined. | `4` |
+| **`LEFT_MARGIN_MULT`** | `Decimal` | Sets the left core margin in multiples of site widths. This is ignored if `DIE_AREA` and `CORE_AREA` are manually defined. | `12` |
+| **`RIGHT_MARGIN_MULT`** | `Decimal` | Sets the right core margin in multiples of site widths. This is ignored if `DIE_AREA` and `CORE_AREA` are manually defined. | `12` |
 
 ```{admonition} Relative vs. Absolute Floorplan Sizing
 :class: note
