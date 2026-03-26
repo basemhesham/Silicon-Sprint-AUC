@@ -426,7 +426,7 @@ applied correctly.
 The figure below shows the post-{term}`CTS` layout with standard cells placed and the
 clock tree buffers visible throughout the core area:
 
-```{figure} ./figures/.png
+```{figure} ./figures/Post_CTS_layout.png
 :align: center
 
 *Post-CTS layout of* `aes_wb_wrapper` *— standard cells placed, Wishbone pins constrained to the South edge.*
@@ -454,7 +454,7 @@ the **Display Control** panel on the left sidebar — deselect all entries under
 structure visible in the main canvas.
 ```
 
-```{figure} ./figures/.png
+```{figure} ./figures/Clock_Tree_Viewer.png
 :align: center
 
 *Clock Tree Viewer — synthesised H-Tree topology for* `aes_wb_wrapper`*, with metal layers hidden for clarity.*
@@ -473,21 +473,10 @@ From the menu bar, select **Tools → Heat Maps → Placement Density**.
 Alternatively, expand **Heat Maps → Placement Density** in the **Display Control**
 panel on the left sidebar.
 
-```{figure} ./figures/.png
+```{figure} ./figures/Placement_Density_heat_map.png
 :align: center
 
 *Placement Density heat map — warmer colours indicate higher standard cell density regions.*
-```
-
-**Routing Congestion**
-
-From **Display Control**, expand **Heat Maps** and select **Routing Congestion** to
-visualise congestion selectively on vertical and horizontal routing layers.
-
-```{figure} ./figures/.png
-:align: center
-
-*Routing Congestion heat map — regions approaching saturation may require floorplan adjustment.*
 ```
 
 **Power Density**
@@ -495,7 +484,7 @@ visualise congestion selectively on vertical and horizontal routing layers.
 From **Display Control**, expand **Heat Maps** and select **Power Density** to overlay
 the estimated power dissipation distribution across the core area.
 
-```{figure} ./figures/.png
+```{figure} ./figures/Power_Density_heat_map.png
 :align: center
 
 *Power Density heat map — highlights regions of high switching activity in the AES datapath.*
@@ -515,7 +504,7 @@ From the menu bar, select **Windows → Timing Report**.
 2. Select **Paths → Update**. 
 3. The list shows **Slack**. Positive slack means the design is safe and meets timing.
 
-```{figure} ./figures/Timing Report panel.png
+```{figure} ./figures/Timing_Report_panel.png
 :align: center
 
 *Timing Report panel — ranked list of timing paths after Post-CTS repair.*
@@ -525,7 +514,7 @@ As seen in the panel, the tool has added **delay gates** (like `dlygate`) and **
 **Step 3 — Analyze the Data Path Details:**
 When you select a path, the **Data Path Details** at the bottom show every gate the signal passes through.
 
-```{figure} ./figures/Worst Hold Path.png
+```{figure} ./figures/Worst_Hold_Path.png
 :align: center
 
 *Detailed path in GUI*
@@ -558,7 +547,7 @@ overlaps while preserving the global optimisation. Comparing the two states side
 side is an effective way to understand what the legalisation step contributes.
 ```
 
-```{figure} ./figures/Global Placement state.png
+```{figure} ./figures/Global_Placement_state.png
 :align: center
 
 *Global Placement state — cell overlaps are visible before Detailed Placement legalisation.*
