@@ -354,7 +354,7 @@ to find the smallest feasible footprint.
 
 ```{figure} ./figures/floorplan.png
 :align: center
-
+:scale: 60%
 *Floorplan Boundary and Margin Visualization*
 ```
 ---
