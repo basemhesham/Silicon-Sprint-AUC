@@ -503,42 +503,30 @@ the estimated power dissipation distribution across the core area.
 
 #### Inspecting Timing Paths
 
-The OpenROAD GUI provides an interactive **Timing Report** panel for examining
-individual timing paths after {term}`CTS`.
+The OpenROAD GUI provides an interactive **Timing Report** panel to examine individual timing paths. This is essential for checking that the design meets both **Setup** and **Hold** requirements after {term}`CTS` and optimization.
 
 **Step 1 — Open the Timing Report panel:**
 From the menu bar, select **Windows → Timing Report**.
 
 **Step 2 — Load the paths:**
-In the **Timing Report** panel, select **Paths → Update**. Enter an integer value
-for the number of paths to display (e.g., `20` for the 20 worst paths). The panel
-will populate with a ranked list of timing paths.
+1. In the **Timing Report** panel, select the **Hold** option. This checks if data is moving too fast and arriving at the next flip-flop before it is ready.
+2. Select **Paths → Update**. 
+3. The list shows **Slack**. Positive slack means the design is safe and meets timing.
 
-```{figure} ./figures/.png
+```{figure} ./figures/Timing Report panel.png
 :align: center
 
 *Timing Report panel — ranked list of timing paths after Post-CTS repair.*
 ```
+As seen in the panel, the tool has added **delay gates** (like `dlygate`) and **clock-delay buffers** (`clkdlybuf`). These act as "speed bumps" to slow down the data. The tool automatically inserts these to fix hold violations and ensure the circuit works reliably.
 
-**Step 3 — Analyse Setup and Hold paths:**
-Select the **Setup** or **Hold** tab to switch between path groups. Each path entry
-shows a detailed segment-by-segment breakdown with the following fields:
+**Step 3 — Analyze the Data Path Details:**
+When you select a path, the **Data Path Details** at the bottom show every gate the signal passes through.
 
-| Field | Description |
-| :--- | :--- |
-| **Pin Name** | The specific cell pin at each stage of the timing path. |
-| **Time** | Cumulative arrival time at this pin relative to the clock edge. |
-| **Delay** | Incremental cell or wire delay contributed at this segment. |
-| **Slew** | Signal transition time at this pin — flagged if it exceeds `MAX_TRANSITION_CONSTRAINT`. |
-| **Load** | Capacitive load driven at this pin — flagged if it exceeds the cell's rated maximum. |
-
-Path groups include **clock-to-register**, **register-to-register**, and
-**register-to-output** segments, each with its own arrival time profile and slack value.
-
-```{figure} ./figures/.png
+```{figure} ./figures/Worst Hold Path.png
 :align: center
 
-*Detailed path breakdown — pin-level delay, slew, and load values for a Hold-critical register-to-register path.*
+*Detailed path in GUI*
 ```
 
 ---
@@ -568,7 +556,7 @@ overlaps while preserving the global optimisation. Comparing the two states side
 side is an effective way to understand what the legalisation step contributes.
 ```
 
-```{figure} ./figures/.png
+```{figure} ./figures/Global Placement state.png
 :align: center
 
 *Global Placement state — cell overlaps are visible before Detailed Placement legalisation.*
