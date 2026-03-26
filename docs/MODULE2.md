@@ -180,17 +180,19 @@ paths and degrades the effective Setup margin on long paths.
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
 | `RUN_CTS` | `bool` | Enables the Clock Tree Synthesis step using the `OpenROAD.CTS` engine. | `True` |
-| `CTS_CLK_BUFFERS` | `List[str]` | Defines the specific clock buffer cells to be used during {term}`CTS`. Limiting this to specific drive strengths helps balance the tree. | `None` |
-| `CTS_ROOT_BUFFER` | `str` | Specifies the cell to be inserted at the root of the clock tree — the first buffer driven directly by the clock source pin. | `None` |
-| `CTS_CLK_MAX_WIRE_LENGTH` | `Decimal` | Maximum allowable wire length for clock nets in microns, preventing signal degradation on long clock branches. | `0 µm` |
-| `CTS_SINK_CLUSTERING_SIZE` | `int` | Maximum number of sinks (flip-flop clock pins) allowed in a single cluster during tree construction. | `25` |
-| `RUN_POST_CTS_RESIZER_TIMING` | `bool` | Enables automated timing optimisations (resizing and buffering) after {term}`CTS` to fix residual violations. | `True` |
-| `NON_DEFAULT_RULES` | `Dict` | Defines custom routing rules (width / spacing) to protect critical nets such as the clock from crosstalk and resistive degradation. | `None` |
-| `CTS_APPLY_NDR` | `str` | Level of Non-Default Rule application to the clock net. Valid values: `none`, `root_only`, `half`, `full`. | `none` |
-| `RT_CLOCK_MIN_LAYER` | `str` | Lowest metal layer permitted for routing the clock net (e.g., `met3`). | `None` |
+| `CTS_CLK_BUFFERS` | `List[str]` | Defines specific clock buffer cells to be used during {term}`CTS`. | `None` |
+| `CTS_ROOT_BUFFER` | `str` | Specifies the cell to be inserted at the root of the clock tree (the first buffer). | `None` |
+| `CTS_CLK_MAX_WIRE_LENGTH` | `Decimal` | Maximum allowable wire length for clock nets in microns to prevent signal degradation. | `0 µm` |
+| `CTS_OBSTRUCTION_AWARE` | `bool?` | Enables obstruction-aware buffering so clock buffers are not placed on top of blockages or macros. | `None` |
+| `CTS_SINK_CLUSTERING_ENABLE` | `bool` | Enables pre-clustering of sinks to create a sub-tree level before building the H-tree. | `True` |
+| `CTS_SINK_CLUSTERING_SIZE` | `int` | Maximum number of sinks (flip-flop clock pins) allowed in a single cluster. | `25` |
+| `RUN_POST_CTS_RESIZER_TIMING` | `bool` | Enables automated timing optimizations (resizing/buffering) after {term}`CTS`. | `True` |
+| `NON_DEFAULT_RULES` | `dict[str, NDR]?` | Specifies custom rules to change the width, spacing, and vias of specific nets. | `None` |
+| `CTS_APPLY_NDR` | `str` | Strategy for 2X spacing NDR application (none, root_only, half, full). | `half` |
+| `RT_CLOCK_MIN_LAYER` | `str` | Lowest metal layer permitted for routing the clock net. | `None` |
 | `RT_CLOCK_MAX_LAYER` | `str` | Highest metal layer permitted for routing the clock net. | `None` |
-| `PL_RESIZER_HOLD_SLACK_MARGIN` | `Decimal` | Instructs the post-CTS resizer to target a positive slack margin beyond zero, providing extra guard-band against Hold violations. | `0.1 ns` |
-| `PL_RESIZER_ALLOW_SETUP_VIOS` | `bool` | Permits the tool to introduce Setup violations if necessary to resolve critical Hold violations that cannot otherwise be closed. | `False` |
+| `PL_RESIZER_HOLD_SLACK_MARGIN` | `Decimal` | Instructs the resizer to target a positive slack margin for extra guard-band. | `0.1 ns` |
+| `PL_RESIZER_ALLOW_SETUP_VIOS` | `bool` | Permits the tool to introduce Setup violations to resolve critical Hold violations. | `False` |
 
 ```{note}
 All CTS parameters listed above retain their default values for this workshop run.
