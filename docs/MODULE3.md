@@ -38,25 +38,15 @@ using `--with-initial-state`, so no design work needs to be repeated.
 
 ### 1.1 What Global Routing Does
 
-Global Routing is the first step where the tool reasons about physical wire paths.
-The layout is partitioned into a coarse grid of **G-cells** (routing tiles), and each
-net is assigned to a sequence of G-cells that forms a path from its driver to its
-sinks. No actual metal shapes are drawn yet — this stage produces a *routing plan*
-that estimates congestion and parasitic loading.
+Global Routing is the first stage of the routing process.  
+Given a **detailed placed ODB design**, the router assigns **coarse routing regions**
+for each net so they can later be connected with real metal wires.
 
-The three key outputs of Global Routing are:
+At this stage, no physical wires are created yet. The router only generates a
+high-level routing plan that helps guide the next routing step.
 
-| Output | Used For |
-| :--- | :--- |
-| **Congestion map** | Identifying over-subscribed routing regions before committing to wire paths. |
-| **RC parasitics estimate** | Providing resistance/capacitance data to the {term}`STA` engine for the first physically-aware timing analysis. |
-| **Antenna violation list** | Identifying nets with accumulating metal area that may damage gate oxides during fabrication. |
-
-```{note}
-Global Routing does not produce final wires. Its purpose is to plan and estimate —
-Detailed Routing (Section 4) is where actual {term}`DRC`-correct metal shapes are created.
-Think of GRT as drawing a rough map, and DRT as building the actual roads.
-```
+Global routing also allows the tool to compute **more accurate estimates of
+wire resistance and capacitance**, which improves the timing analysis results.
 
 ---
 
@@ -68,13 +58,13 @@ in Section 6.
 
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
-| `GRT_ADJUSTMENT` | `Decimal` | Fractional reduction in routing capacity per G-cell edge. Values from `0` (no reduction) to `1` (full blockage). A non-zero value reserves headroom for the Detailed Router. | `0.3` |
+| `GRT_ADJUSTMENT` | `Decimal` | Reduction in the routing capacity of the edges between the cells in the global routing graph for all layers. Values range from 0 to 1. 1 = most reduction, 0 = least reduction. | `0.3` |
 | `GRT_ALLOW_CONGESTION` | `bool` | If `True`, allows the router to proceed even if congestion overflows remain unresolved. Useful for highly congested designs where zero overflow is unachievable at the global stage. | `False` |
 | `GRT_OVERFLOW_ITERS` | `int` | Maximum iterations the global router will attempt to resolve routing overflow before stopping. | `50` |
-| `RT_MAX_LAYER` | `str` | The highest metal layer available for signal routing. | PDK Dependent |
-| `RT_MIN_LAYER` | `str` | The lowest metal layer available for signal routing. | PDK Dependent |
-| `RUN_POST_GRT_RESIZER_TIMING` | `bool` | Enables resizer timing optimisations after Global Routing (`OpenROAD.ResizerTimingPostGRT`). Uses real RC parasitics from GRT for more accurate repair. **Experimental — may increase run time significantly.** | `False` |
-| `RUN_HEURISTIC_DIODE_INSERTION` | `bool` | Enables the `Odb.HeuristicDiodeInsertion` step, which inserts antenna diode cells at design pins before Global Routing as a proactive protection strategy. | `False` |
+| `RT_MAX_LAYER` | `str` | The highest metal layer available for signal routing. | met5 |
+| `RT_MIN_LAYER` | `str` | The lowest metal layer available for signal routing. | met1 |
+| `RUN_POST_GRT_RESIZER_TIMING` | `bool` | Enables resizer timing optimizations after Global Routing (`OpenROAD.ResizerTimingPostGRT`). Uses real RC parasitics from GRT for more accurate repair. **Experimental — may increase run time significantly.** | `False` |
+| `RUN_HEURISTIC_DIODE_INSERTION` | `bool` | Enables the `Odb.HeuristicDiodeInsertion` step, which inserts antenna diode cells at design pins before antenna repair step. | `False` |
 
 ---
 
@@ -86,6 +76,12 @@ During chip fabrication, wafers pass through a plasma etching process to pattern
 metal layer. As metal is etched, floating conductor segments accumulate a static charge
 proportional to their exposed area. If this charge exceeds a threshold, it can tunnel
 through the thin gate oxide of connected transistors — permanently damaging them.
+
+```{figure} ./figures/Antenna_Effect.png
+:align: center
+
+*Antenna Effect*
+```
 
 This is the **Antenna Effect** (formally: *Process Antenna Rule* violation). The ratio
 that governs it is:
@@ -113,32 +109,40 @@ is performed immediately after GRT using the `OpenROAD.CheckAntennas` step.
 LibreLane provides two complementary repair mechanisms, which can be used individually
 or together:
 
-::::{grid} 2
-:gutter: 3
-
-:::{grid-item-card} 🔌 Antenna Diode Insertion
+#### Antenna Diode Insertion
 Insert specialised diode cells connected to the violating net. The diode provides a
 controlled discharge path to the substrate during fabrication, protecting the gate oxide.
 This is the **primary repair method** for most violations.
-:::
 
-:::{grid-item-card} 🪜 Metal Jumpering (Layer Hopping)
+```{figure} ./figures/Solution1_Inserting_Diodes.png
+:align: center
+:scale: 50%
+*Solution 1 Inserting Diodes*
+```
+
+#### Metal Jumpering (Layer Hopping)
 Break a long continuous metal segment into shorter sections by routing through a higher
 metal layer and back down. This resets the accumulated charge at the via, allowing the
 net to continue without exceeding the ratio limit.
-:::
 
-::::
+```{figure} ./figures/Solution2_Layer_Jumping.png
+:align: center
+:scale: 50%
+*Solution2 Layer Jumping*
+```
 
 The repair process is **iterative**: after each repair pass, the antenna checker
 re-evaluates the design. Iterations continue until all violations are resolved or the
 configured iteration limit is reached.
 
 ```{tip}
-For the `aes_wb_wrapper`, diode insertion is the more effective strategy because the
-AES datapath has many wide bus signals (`wbs_dat_o`, key registers) that accumulate
-high antenna ratios on lower metal layers. Jumpering works well on isolated long wires
-but is less efficient on wide buses.
+For the `aes_wb_wrapper`, diode insertion is often more effective because the
+AES datapath contains several wide bus signals (such as `wbs_dat_o` and key
+register buses). These buses can accumulate large metal areas on lower routing
+layers, increasing the risk of antenna violations.
+
+Jumper insertion is typically more effective for isolated long nets, but it is
+less efficient when many parallel bus wires are involved.
 ```
 
 ---
