@@ -541,6 +541,80 @@ visualisations in the entire ASIC flow.
 ```
 
 ---
+### **Timing and Design Rule Reports (Post-Placement/CTS)**
+
+After the completion of the `OpenROAD.STAMidPNR-2` step, we analyze several key reports located in `runs/classic_flow/38-openroad-stamidpnr-2/` to verify the health of the design.
+
+#### **1. Design Rule Violations (DRVs)**
+The `checks.rpt` file summarizes the electrical health of the netlist. 
+
+```text
+===========================================================================
+max slew violation count 181
+Writing metric design__max_slew_violation__count__corner:max_ss_100C_1v60: 181
+max fanout violation count 3
+Writing metric design__max_fanout_violation__count__corner:max_ss_100C_1v60: 3
+max cap violation count 0
+Writing metric design__max_cap_violation__count__corner:max_ss_100C_1v60: 0
+============================================================================
+```
+```{note}
+These calculations are currently based on the `max_ss_100C_1v60` corner. While optimizations target this worst-case scenario now, the final Signoff stage will provide results across all corners (PVT variations).
+```
+
+#### **2. Clock Skew Analysis**
+Clock skew is the difference in arrival times of the clock signal at different registers.
+
+* **Setup Skew (`skew.max.rpt`):
+```text
+===========================================================================
+Clock Skew (Setup)
+============================================================================
+Writing metric clock__skew__worst_setup__corner:max_ss_100C_1v60: 0.3982001507904955
+======================= max_ss_100C_1v60 Corner ===================================
+
+Clock clk
+7.592762 source latency _43761_/CLK ^
+-5.939093 target latency _42855_/CLK ^
+0.120000 clock uncertainty
+-1.375470 CRPR
+--------------
+0.398200 setup skew
+```
+
+```{note}
+In setup analysis, the worst skew is theoretically a negative influence on timing. While the tool may display a positive magnitude based on its specific calculation rule, it represents the margin consumed between source and target latencies.
+```
+
+* **Hold Skew (`skew.min.rpt`):
+```text
+===========================================================================
+Clock Skew (Hold)
+============================================================================
+Writing metric clock__skew__worst_hold__corner:max_ss_100C_1v60: -3.2176857644646244
+======================= max_ss_100C_1v60 Corner ===================================
+
+Clock clk
+6.053021 source latency _45282_/CLK ^
+-7.601864 target latency _45282_/CLK ^
+-0.120000 clock uncertainty
+-1.548843 CRPR
+--------------
+-3.217686 hold skew
+```
+
+#### **3. Slack Analysis**
+Slack indicates the margin by which a timing constraint is met (positive) or violated (negative).
+
+| Metric | Report File | Value (ns) |
+| :--- | :--- | :--- |
+| **Worst Slack (Setup)** | `ws.max.rpt` | **0.158** |
+| **Worst Slack (Hold)** | `ws.min.rpt` | **0.897** |
+
+```{note}
+The current hold slack of **0.897 ns** is measured at the "Slow-Slow" (SS) corner. During signoff in "Fast-Fast" (FF) corners—where cells are much faster—this margin will decrease significantly, often dropping near **0.2 ns**.
+```
+
 
 ```{glossary}
 I/O
