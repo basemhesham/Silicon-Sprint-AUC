@@ -173,6 +173,7 @@ Each step in the flow carries a unique **Step ID** in the format `ToolName.StepN
 | | Initial Antenna Check | `OpenROAD.CheckAntennas` |
 | | Design Repair (Post-GRT) | `OpenROAD.RepairDesignPostGRT` |
 | | Diodes on Ports | `Odb.DiodesOnPorts` |
+| | Heuristic Diode Insertion | `Odb.HeuristicDiodeInsertion` |
 | | Antenna Repair | `OpenROAD.RepairAntennas` |
 | | Resizer Timing (Post-GRT) | `OpenROAD.ResizerTimingPostGRT` |
 | | Mid-{term}`PnR` Static Timing Analysis (4) | `OpenROAD.STAMidPNR-3` |
