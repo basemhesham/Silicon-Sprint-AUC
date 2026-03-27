@@ -370,7 +370,7 @@ Your prompt should read `[nix-shell:~]$`. Then execute:
 ```console
 [nix-shell:~]$ librelane \
     --run-tag classic_to_cts \
-    --to OpenROAD.ResizerTimingPostCTS \
+    --to OpenROAD.STAMidPNR-2 \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
 ```
 
