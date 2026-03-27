@@ -312,7 +312,8 @@ Then execute:
 ```console
 [nix-shell:~]$ librelane \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json \
-    --run-tag classic_to_drt \
+    --run-tag classic_flow \
+    --from OpenROAD.GlobalRouting
     --to OpenROAD.STAMidPNR-3 \
     --with-initial-state \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/runs/classic_to_cts/38-openroad-stamidpnr-2/state_out.json
@@ -378,30 +379,18 @@ is expected due to the high logic density of the AES datapath.
 *Routing Congestion heat map — per-layer usage after Detailed Routing of* `aes_wb_wrapper`*.*
 ```
 
-#### Verifying Metal Layer Usage
-
-To confirm that `RT_MAX_LAYER: "met4"` was respected and no signal wires appear on
-`met5`, navigate to the **Display Control** panel and disable all layers except `met5`.
-The canvas should show only power strap shapes — no signal routing.
-
-```{figure} ./figures/.png
-:align: center
-
-*Metal 5 layer view — only PDN straps visible, confirming no signal routes on met5.*
-```
-
 ---
 
 ### 7.2 Antenna Summary Report
 
 After the run, navigate to the antenna check reports:
 
-- **Post-GRT:** `runs/classic_to_drt/40-openroad-checkantennas/antenna.rpt`
-- **Post-DRT:** `runs/classic_to_drt/44-openroad-checkantennas-1/antenna.rpt`
+ `runs/classic_flow/47-openroad-checkantennas-1/reports/antenna_summary.rpt`
 
 The report provides a per-net breakdown of antenna ratios across each metal layer and via.
 
 ```text
+
 ```
 
 Comparing the post-GRT and post-DRT antenna reports directly shows whether the repair
