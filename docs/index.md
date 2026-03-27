@@ -47,6 +47,7 @@ on the output of the previous one — complete them in order.
 MODULE0
 MODULE1
 MODULE2
+MODULE3
 ```
 
 ### Module Overview
@@ -88,7 +89,7 @@ closure using the OpenROAD toolchain.
 :::
 
 :::{grid-item-card} 🚦 Module 3 — Routing & Signoff *(Coming Soon)*
-:link: #
+:link: MODULE3
 :link-type: url
 
 Full routing execution, antenna repair, parasitic extraction, and final physical signoff
