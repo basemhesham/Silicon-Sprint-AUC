@@ -61,16 +61,37 @@ in Section 6.
 | `GRT_ADJUSTMENT` | `Decimal` | Reduction in the routing capacity of the edges between the cells in the global routing graph for all layers. Values range from 0 to 1. 1 = most reduction, 0 = least reduction. | `0.3` |
 | `GRT_ALLOW_CONGESTION` | `bool` | If `True`, allows the router to proceed even if congestion overflows remain unresolved. Useful for highly congested designs where zero overflow is unachievable at the global stage. | `False` |
 | `GRT_OVERFLOW_ITERS` | `int` | Maximum iterations the global router will attempt to resolve routing overflow before stopping. | `50` |
-| `RT_MAX_LAYER` | `str` | The highest metal layer available for signal routing. | met5 |
-| `RT_MIN_LAYER` | `str` | The lowest metal layer available for signal routing. | met1 |
-| `RUN_POST_GRT_RESIZER_TIMING` | `bool` | Enables resizer timing optimizations after Global Routing (`OpenROAD.ResizerTimingPostGRT`). Uses real RC parasitics from GRT for more accurate repair. **Experimental — may increase run time significantly.** | `False` |
-| `RUN_HEURISTIC_DIODE_INSERTION` | `bool` | Enables the `Odb.HeuristicDiodeInsertion` step, which inserts antenna diode cells at design pins before antenna repair step. | `False` |
+| `RT_MAX_LAYER` | `str` | The highest metal layer available for signal routing. | `met5` |
+| `RT_MIN_LAYER` | `str` | The lowest metal layer available for signal routing. | `met1` |
 
 ---
+## 2. Post-GRT Design Repair
 
-## 2. Antenna Verification
+After Global Routing assigns approximate wire paths, routing-aware RC estimates
+become available. LibreLane can optionally run a design repair pass
+(`OpenROAD.RepairDesignPostGRT`) to address violations that appear once these
+routing estimates are considered.
 
-### 2.1 What is an Antenna Violation?
+This step performs similar optimizations to the post-CTS repair from Module 2,
+such as buffer insertion and gate resizing. However, it now uses
+routing-aware parasitic estimates from Global Routing instead of purely
+placement-based estimates, allowing more targeted timing fixes.
+
+**Key repair parameter:**
+
+| Parameter | Type | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `RUN_POST_GRT_RESIZER_TIMING` | `bool` | Enables resizer timing optimizations after global routing using the `OpenROAD.ResizerTimingPostGRT` step. | `False` |
+| `RUN_POST_GRT_DESIGN_REPAIR` | `bool` | Enables the `OpenROAD.RepairDesignPostGRT` step. When enabled, the Resizer uses GRT-derived RC parasitics to insert buffers and resize gates. | `False` |
+| `GRT_DESIGN_REPAIR_MAX_WIRE_LENGTH` | `Decimal` | Maximum wire length in µm that the post-GRT Resizer will allow before inserting a repeater buffer. | `0` (disabled) |
+| `GRT_DESIGN_REPAIR_RUN_GRT` | `bool` | Enables running GRT before and after running resizer | `True` |
+| `GRT_DESIGN_REPAIR_MAX_SLEW_PCT` | `Decimal` | Specifies a margin for the slews during post-grt design repair. | `10` |
+| `GRT_DESIGN_REPAIR_MAX_CAP_PCT` | `Decimal` | Specifies a margin for the capacitances during design post-grt repair. | `10` |
+
+---
+## 3. Antenna Verification
+
+### 3.1 What is an Antenna Violation?
 
 During chip fabrication, wafers pass through a plasma etching process to pattern each
 metal layer. As metal is etched, floating conductor segments accumulate a static charge
@@ -104,7 +125,7 @@ is performed immediately after GRT using the `OpenROAD.CheckAntennas` step.
 
 ---
 
-### 2.2 Antenna Repair Strategies
+### 3.2 Antenna Repair Strategies
 
 LibreLane provides two complementary repair mechanisms, which can be used individually
 or together:
@@ -147,7 +168,7 @@ less efficient when many parallel bus wires are involved.
 
 ---
 
-### 2.3 Antenna Repair Configuration
+### 3.3 Antenna Repair Configuration
 
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
@@ -157,38 +178,7 @@ less efficient when many parallel bus wires are involved.
 | `GRT_ANTENNA_REPAIR_DIODE_ONLY` | `bool` | Restricts repair to diode insertion only. | `False` |
 | `DRT_ANTENNA_REPAIR_ITERS` | `int` | Maximum antenna repair iterations during Detailed Routing. | `0` |
 | `DRT_ANTENNA_REPAIR_MARGIN` | `int` | Margin percentage for over-fixing violations during Detailed Routing. | `10` |
-
----
-
-## 3. Post-GRT Design Repair
-
-After Global Routing assigns wire paths and RC parasitics become physically meaningful
-for the first time, LibreLane runs an optional design repair pass
-(`OpenROAD.RepairDesignPostGRT`) to address violations that only became apparent after
-wire capacitance was known.
-
-This step performs the same type of buffer insertion and gate resizing as the
-post-CTS repair from Module 2, but now uses real routing-aware parasitics instead of
-statistical estimates. This makes the repairs more targeted and less likely to
-introduce regressions.
-
-```{admonition} Why Enable This Step?
-:class: tip
-
-At the pre-placement and post-CTS stages, capacitance values are estimated from
-statistical wire-length models. After Global Routing, the tool has real path-specific
-RC values for every net. Enabling `RUN_POST_GRT_DESIGN_REPAIR` allows the Resizer to
-correct violations that were previously invisible — particularly on long, high-fanout
-nets in the AES datapath where the actual routed wire length differs significantly
-from the statistical estimate.
-```
-
-**Key repair parameter:**
-
-| Parameter | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `RUN_POST_GRT_DESIGN_REPAIR` | `bool` | Enables the `OpenROAD.RepairDesignPostGRT` step. When enabled, the Resizer uses GRT-derived RC parasitics to insert buffers and resize gates. | `False` |
-| `GRT_DESIGN_REPAIR_MAX_WIRE_LENGTH` | `Decimal` | Maximum wire length in µm that the post-GRT Resizer will allow before inserting a repeater buffer. Setting this to `800 µm` is a reasonable starting point for the AES core at 40 MHz. | `0` (disabled) |
+| `RUN_HEURISTIC_DIODE_INSERTION` | `bool` | Enables the `Odb.HeuristicDiodeInsertion` step to insert antenna diodes  | `False` |
 
 ---
 
@@ -225,28 +215,12 @@ must be resolved before the design can proceed to Physical Signoff.
 | `DRT_THREADS` | `int` | Number of CPU threads used by TritonRoute. If unset, defaults to the machine's available thread count. Increase this on multi-core workstations to reduce run time. | `None` |
 | `DRT_OPT_ITERS` | `int` | Maximum optimisation iterations TritonRoute will attempt to achieve 0 DRC violations. | `64` |
 | `DRT_SAVE_SNAPSHOTS` | `bool` | Saves an `.odb` snapshot of the layout at each routing iteration. Useful for debugging persistent DRC violations but produces large output files. | `False` |
-| `DRT_ANTENNA_REPAIR_ITERS` | `int` | Maximum antenna repair iterations during Detailed Routing. | `0` |
 | `DRT_SAVE_DRC_REPORT_ITERS` | `int?` | Write a DRC report every N iterations. Defaults to `1` if `DRT_SAVE_SNAPSHOTS` is enabled. | `None` |
+| `NON_DEFAULT_RULES` | `dict[str, NDR]?` | Specify non-default rules. Can be used to change the width, spacing and vias of a net. | `None` |
+| `DRT_ASSIGN_NDR` | `dict[str, str]?` | Specify which nets should be assigned to which non-default rule. The net name is a regular expression. Use ‘^name$’ to match an exact name. | `None` |
 
 ---
 
-## 5. Mid-PnR STA (Post-Routing)
-
-After Detailed Routing completes and antenna diodes are inserted, LibreLane performs
-a **Mid-PnR Static Timing Analysis** (`OpenROAD.STAMidPNR-3`) using the fully routed
-RC parasitics.
-
-This is the first {term}`STA` checkpoint where every wire's resistance and capacitance
-is derived from actual physical geometry — not statistical models. Key things to look
-for at this stage:
-
-| Metric | What to Expect |
-| :--- | :--- |
-| **Setup {term}`WNS`** | Should remain zero or positive from the CTS run. Any regression indicates the routing added unexpected delay on a critical path. |
-| **Hold {term}`WNS`** | Should remain closed from the post-CTS repair. New hold violations here are uncommon but indicate antenna diode insertion added parasitic load to a tight hold path. |
-| **Max Slew / Max Cap** | May be higher than the post-CTS report due to real wire parasitics exceeding statistical estimates. The post-GRT design repair (if enabled) reduces these. |
-
----
 
 ## 6. Configuration Summary and Execution
 
@@ -261,7 +235,7 @@ Three parameters are added or modified relative to the Module 2 configuration:
 | `GRT_DESIGN_REPAIR_MAX_WIRE_LENGTH` | `800` | Caps the maximum wire segment length at 800 µm, triggering repeater buffer insertion on long AES datapath wires where routing-aware capacitance exceeds the post-CTS repair estimates. |
 | `RUN_POST_GRT_DESIGN_REPAIR` | `true` | Enables the post-GRT design repair step, allowing the Resizer to fix violations using real RC parasitics from Global Routing. |
 
-```{admonition} Why `met4` as the Maximum Routing Layer?
+```{admonition} Why met4 as the Maximum Routing Layer?
 :class: important
 
 The SkyWater 130nm metal stack for the `sky130_fd_sc_hd` library has five signal
