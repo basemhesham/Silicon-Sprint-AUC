@@ -316,7 +316,7 @@ Then execute:
     --from OpenROAD.GlobalRouting
     --to OpenROAD.STAMidPNR-3 \
     --with-initial-state \
-    ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/runs/classic_to_cts/38-openroad-stamidpnr-2/state_out.json
+    ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/runs/classic_flow/38-openroad-stamidpnr-2/state_out.json
 ```
 
 ```{tip}
