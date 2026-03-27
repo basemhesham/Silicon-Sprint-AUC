@@ -572,8 +572,8 @@ Execute the following command in your terminal. The `--to` flag halts the flow i
 
 ```console
 [nix-shell:~]$ librelane \
-    --run-tag classic_to_pdn \
-    --to Odb.RemovePDNObstructions \
+    --run-tag classic_flow \
+    --to Checker.PowerGridViolations \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
 ```
 
