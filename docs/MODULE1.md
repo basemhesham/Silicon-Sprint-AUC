@@ -154,13 +154,13 @@ Each step in the flow carries a unique **Step ID** in the format `ToolName.StepN
 | | Power Distribution Network Generation | `OpenROAD.GeneratePDN` |
 | | Remove PDN Obstructions | `Odb.RemovePDNObstructions` |
 | | Add Routing Obstructions | `Odb.AddRoutingObstructions` |
-| | Power Grid Violation Check | `Checker.PowerGridViolations` |
 | **Placement** | Global Placement (Skip IO) | `OpenROAD.GlobalPlacementSkipIO` |
 | | IO Pin Placement | `OpenROAD.IOPlacement` |
 | | Custom IO Pin Placement | `Odb.CustomIOPlacement` |
 | | Apply DEF Template | `Odb.ApplyDEFTemplate` |
 | | Global Placement | `OpenROAD.GlobalPlacement` |
 | | Write Verilog Header | `Odb.WriteVerilogHeader` |
+| | Power Grid Violation Check | `Checker.PowerGridViolations` |
 | | Mid-{term}`PnR` Static Timing Analysis (1) | `OpenROAD.STAMidPNR` |
 | | Design Repair (Post-GPL) | `OpenROAD.RepairDesignPostGPL` |
 | | Manual Global Placement | `Odb.ManualGlobalPlacement` |
@@ -205,6 +205,7 @@ Each step in the flow carries a unique **Step ID** in the format `ToolName.StepN
 | | Illegal Overlap Check | `Checker.IllegalOverlap` |
 | | Layout vs. Schematic ({term}`LVS`) | `Netgen.LVS` |
 | | LVS Comparison Check | `Checker.LVS` |
+| | Formal Equivalence Check | `Yosys.EQY` |
 | | Setup Violations Check | `Checker.SetupViolations` |
 | | Hold Violations Check | `Checker.HoldViolations` |
 | | Max Slew Violations Check | `Checker.MaxSlewViolations` |
