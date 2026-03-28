@@ -403,7 +403,7 @@ The parameters below govern the trade-off between gate count and achievable cloc
 | :--- | :--- | :--- | :--- |
 | `SYNTH_STRATEGY` | `str` | Selects the ABC logic synthesis strategy. `AREA 0–3` targets compactness; `DELAY 0–4` targets higher clock frequencies. | `AREA 0` |
 | `SYNTH_HIERARCHY_MODE` | `str` | Controls hierarchy handling: `flatten` (merges all modules), `deferred_flatten` (flattens after synthesis), or `keep` (preserves hierarchy). | `flatten` |
-| `SYNTH_ABC_BUFFERING` | `bool` | Enables automated cell buffering within ABC to improve signal integrity and timing margins. | `True` |
+| `SYNTH_ABC_BUFFERING` | `bool` | Enables automated cell buffering within ABC to improve signal integrity and timing margins. | `False` |
 | `SYNTH_SIZING` | `bool` | Enables ABC cell sizing to optimise gate drive strength. | `False` |
 | `SYNTH_SHARE_RESOURCES` | `bool` | Allows Yosys to identify and merge shareable hardware resources (e.g., adders) to reduce total area. | `True` |
 | `SYNTH_AUTONAME` | `bool` | Generates human-readable instance names in the netlist. Useful for debugging; may produce very long names. | `False` |
@@ -422,7 +422,7 @@ routing resources.
 
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
-| `FP_CORE_UTIL` | `Decimal` | Core utilisation percentage. Typical values: 25%–60%. We use **40%** to leave routing headroom for the dense AES logic. | `50` |
+| `FP_CORE_UTIL` | `Decimal` | Core utilisation percentage. | `50` |
 | `FP_ASPECT_RATIO` | `Decimal` | Core aspect ratio (height ÷ width). A value of 1 creates a square floorplan. | `1` |
 | `FP_SIZING` | `str` | `'relative'` calculates area from utilisation; `'absolute'` uses fixed user-defined coordinates. | `'relative'` |
 | `DIE_AREA` | `Tuple?` | Fixed die boundary as `"x0 y0 x1 y1"`. Required when `FP_SIZING` is `absolute`. | `None` |
@@ -591,7 +591,7 @@ Exploration** flow.
 
 ---
 
-### 6.1 Task — Synthesis Exploration
+### 6.1 Synthesis Exploration
 
 When hardening a new design, it is essential to first identify the optimal synthesis
 strategy. Synthesis strategies are scripts for the **ABC** utility that handle fine-grained
@@ -921,7 +921,7 @@ parasitics.
   produce slower signal transitions and higher effective net loads.
 
 - **Corner coverage:** The pre-{term}`PnR` STA analyses **3 corners**. In later
-  stages (post-CTS, post-routing, signoff), the tool expands to **6 corners** for
+  stages (post-CTS, post-routing, signoff), the tool expands to **9 corners** for
   a more comprehensive {term}`PVT` sweep.
 ```
 
