@@ -155,7 +155,7 @@ individual stages (see [Section 5](#the-librelane-command-syntax)).
 | | Validate Macro Instances | `OpenROAD.CheckMacroInstances` |
 | | Pre-{term}`PnR` Static Timing Analysis | `OpenROAD.STAPrePNR` |
 | | Initial Floorplan Generation | `OpenROAD.Floorplan` |
-| | Dump RC Values | `OpenROAD.DumpRCValues` |
+| | Dump Resistance/Capacitance Values | `OpenROAD.DumpRCValues` |
 | | Check Macro Antenna Properties | `Odb.CheckMacroAntennaProperties` |
 | | Macro Power Connections | `Odb.SetPowerConnections` |
 | | Manual Macro Placement | `Odb.ManualMacroPlacement` |
@@ -168,39 +168,59 @@ individual stages (see [Section 5](#the-librelane-command-syntax)).
 | **Placement** | Global Placement (Skip IO) | `OpenROAD.GlobalPlacementSkipIO` |
 | | IO Pin Placement | `OpenROAD.IOPlacement` |
 | | Custom IO Pin Placement | `Odb.CustomIOPlacement` |
+| | Apply DEF Template | `Odb.ApplyDEFTemplate` |
 | | Global Placement | `OpenROAD.GlobalPlacement` |
+| | Write Verilog Header | `Odb.WriteVerilogHeader` |
 | | Power Grid Violation Check | `Checker.PowerGridViolations` |
-| | Mid-{term}`PnR` STA (1) | `OpenROAD.STAMidPNR` |
+| | Mid-{term}`PnR` Static Timing Analysis (1) | `OpenROAD.STAMidPNR` |
 | | Design Repair (Post-GPL) | `OpenROAD.RepairDesignPostGPL` |
+| | Manual Global Placement | `Odb.ManualGlobalPlacement` |
 | | Detailed Placement | `OpenROAD.DetailedPlacement` |
 | **CTS** | Clock Tree Synthesis | `OpenROAD.CTS` |
-| | Mid-{term}`PnR` STA (2) | `OpenROAD.STAMidPNR-1` |
+| | Mid-{term}`PnR` Static Timing Analysis (2) | `OpenROAD.STAMidPNR-1` |
 | | Resizer Timing (Post-CTS) | `OpenROAD.ResizerTimingPostCTS` |
-| | Mid-{term}`PnR` STA (3) | `OpenROAD.STAMidPNR-2` |
+| | Mid-{term}`PnR` Static Timing Analysis (3) | `OpenROAD.STAMidPNR-2` |
 | **Routing** | Global Routing | `OpenROAD.GlobalRouting` |
 | | Initial Antenna Check | `OpenROAD.CheckAntennas` |
 | | Design Repair (Post-GRT) | `OpenROAD.RepairDesignPostGRT` |
+| | Diodes on Ports | `Odb.DiodesOnPorts` |
+| | Heuristic Diode Insertion | `Odb.HeuristicDiodeInsertion` |
 | | Antenna Repair | `OpenROAD.RepairAntennas` |
 | | Resizer Timing (Post-GRT) | `OpenROAD.ResizerTimingPostGRT` |
-| | Mid-{term}`PnR` STA (4) | `OpenROAD.STAMidPNR-3` |
+| | Mid-{term}`PnR` Static Timing Analysis (4) | `OpenROAD.STAMidPNR-3` |
 | | Detailed Routing | `OpenROAD.DetailedRouting` |
+| | Remove Routing Obstructions | `Odb.RemoveRoutingObstructions` |
 | | Final Antenna Check | `OpenROAD.CheckAntennas-1` |
 | | Detailed Routing {term}`DRC` Check | `Checker.TrDRC` |
+| | Report Disconnected Pins | `Odb.ReportDisconnectedPins` |
+| | Disconnected Pins Check | `Checker.DisconnectedPins` |
+| | Report Wire Length | `Odb.ReportWireLength` |
 | | Wire Length Check | `Checker.WireLength` |
 | **Signoff Prep** | Fill Cell Insertion | `OpenROAD.FillInsertion` |
+| | Cell Frequency Tables | `Odb.CellFrequencyTables` |
 | | Parasitics Extraction | `OpenROAD.RCX` |
 | | Post-PnR {term}`STA` | `OpenROAD.STAPostPNR` |
 | | IR Drop Reporting | `OpenROAD.IRDropReport` |
 | **Physical Signoff** | {term}`GDSII` Stream Out (Magic) | `Magic.StreamOut` |
 | | GDSII Stream Out (KLayout) | `KLayout.StreamOut` |
+| | KLayout Render | `KLayout.Render` |
 | | Write Macro {term}`LEF` | `Magic.WriteLEF` |
+| | Check Design Antenna Properties | `Odb.CheckDesignAntennaProperties` |
 | | XOR GDS Comparison | `KLayout.XOR` |
+| | XOR Comparison Check | `Checker.XOR` |
 | | Physical {term}`DRC` (Magic) | `Magic.DRC` |
 | | Physical DRC (KLayout) | `KLayout.DRC` |
+| | Magic DRC Check | `Checker.MagicDRC` |
+| | KLayout DRC Check | `Checker.KLayoutDRC` |
 | | {term}`SPICE` Netlist Extraction | `Magic.SpiceExtraction` |
+| | Illegal Overlap Check | `Checker.IllegalOverlap` |
 | | Layout vs. Schematic ({term}`LVS`) | `Netgen.LVS` |
-| | Setup / Hold Violation Checks | `Checker.SetupViolations` / `Checker.HoldViolations` |
-| | Max Slew / Cap Violation Checks | `Checker.MaxSlewViolations` / `Checker.MaxCapViolations` |
+| | LVS Comparison Check | `Checker.LVS` |
+| | Formal Equivalence Check | `Yosys.EQY` |
+| | Setup Violations Check | `Checker.SetupViolations` |
+| | Hold Violations Check | `Checker.HoldViolations` |
+| | Max Slew Violations Check | `Checker.MaxSlewViolations` |
+| | Max Cap Violations Check | `Checker.MaxCapViolations` |
 | | Final Manufacturability Report | `Misc.ReportManufacturability` |
 
 ---
