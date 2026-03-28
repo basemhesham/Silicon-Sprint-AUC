@@ -313,7 +313,7 @@ Then execute:
 [nix-shell:~]$ librelane \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json \
     --run-tag classic_flow \
-    --from OpenROAD.GlobalRouting
+    --from OpenROAD.GlobalRouting\
     --to OpenROAD.STAMidPNR-3 \
     --with-initial-state \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/runs/classic_flow/38-openroad-stamidpnr-2/state_out.json
