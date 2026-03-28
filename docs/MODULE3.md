@@ -373,7 +373,7 @@ Regions displayed in warm colours (orange / red) are approaching the routing cap
 limit of that layer. For the `aes_wb_wrapper`, moderate congestion on `met1` and `met2`
 is expected due to the high logic density of the AES datapath.
 
-```{figure} ./figures/.png
+```{figure} ./figures/Routing_Congestion.png
 :align: center
 
 *Routing Congestion heat map — per-layer usage after Detailed Routing of* `aes_wb_wrapper`*.*
@@ -383,21 +383,48 @@ is expected due to the high logic density of the AES datapath.
 
 ### 7.2 Antenna Summary Report
 
-To verify the effectiveness of the antenna repair pass, the summary reports are analyzed at two distinct stages: before and after the repair iterations.
+To evaluate the effectiveness of the antenna repair process, antenna reports are
+analyzed at two stages: **before** and **after** the repair iterations.
 
-#### **Report Locations**
-* **Initial Check (Pre-Repair):** `runs/<run_name>/40-openroad-checkantennas/reports/antenna_summary.rpt`
-* **Post-Repair Check:** `runs/<run_name>/47-openroad-checkantennas-1/reports/antenna_summary.rpt`
+---
 
-### **Technical Metric Definitions**
-The antenna report evaluates the risk of electrostatic discharge (ESD) damage to transistor gates during the plasma etching process using the following metrics:
+### 📁 Report Locations
 
-* **Partial:** The actual calculated **Antenna Area Ratio** for a specific net on a specific layer. It is the ratio of the metal area (collector) to the total gate area connected to that net.
-* **Required:** The maximum allowable **Antenna Ratio** defined by the PDK (e.g., Sky130). This is the safety threshold.
-* **P / R (Partial / Required):** The **Violation Factor**.
-    * **P/R > 1.0**: The net is in violation and requires repair (diode insertion or layer hopping).
-    * **P/R < 1.0**: The net meets safety requirements.
+- **Pre-Repair (Initial Check)**  
+  `runs/<run_name>/40-openroad-checkantennas/reports/antenna_summary.rpt`
 
+- **Post-Repair (Final Check)**  
+  `runs/<run_name>/47-openroad-checkantennas-1/reports/antenna_summary.rpt`
+
+---
+
+### 📊 Metric Definitions
+
+The antenna report evaluates the risk of gate damage during fabrication using
+the following metrics:
+
+- **Partial**  
+  The computed **Antenna Area Ratio** for a given net on a specific layer.  
+  It represents the ratio between:
+  - metal area (collector)
+  - total connected gate area
+
+- **Required**  
+  The maximum allowed **Antenna Ratio** defined by the PDK (e.g., Sky130).  
+  This is the **safety limit**.
+
+- **P / R (Partial / Required)**  
+  The **Violation Factor**, used to determine whether a net is safe:
+
+  ```{list-table}
+  :header-rows: 1
+
+  * - Condition
+    - Interpretation
+  * - P/R > 1.0
+    - ❌ Violation — repair required (diodes or layer hopping)
+  * - P/R < 1.0
+    - ✅ Safe — within allowed limits
 ---
 
 ### **Initial Antenna Violations (Pre-Repair)**
