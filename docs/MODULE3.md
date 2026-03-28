@@ -383,14 +383,52 @@ is expected due to the high logic density of the AES datapath.
 
 ### 7.2 Antenna Summary Report
 
-After the run, navigate to the antenna check reports:
+To verify the effectiveness of the antenna repair pass, the summary reports are analyzed at two distinct stages: before and after the repair iterations.
 
- `runs/classic_flow/47-openroad-checkantennas-1/reports/antenna_summary.rpt`
+#### **Report Locations**
+* **Initial Check (Pre-Repair):** `runs/<run_name>/40-openroad-checkantennas/reports/antenna_summary.rpt`
+* **Post-Repair Check:** `runs/<run_name>/47-openroad-checkantennas-1/reports/antenna_summary.rpt`
 
-The report provides a per-net breakdown of antenna ratios across each metal layer and via.
+### **Technical Metric Definitions**
+The antenna report evaluates the risk of electrostatic discharge (ESD) damage to transistor gates during the plasma etching process using the following metrics:
+
+* **Partial:** The actual calculated **Antenna Area Ratio** for a specific net on a specific layer. It is the ratio of the metal area (collector) to the total gate area connected to that net.
+* **Required:** The maximum allowable **Antenna Ratio** defined by the PDK (e.g., Sky130). This is the safety threshold.
+* **P / R (Partial / Required):** The **Violation Factor**.
+    * **P/R > 1.0**: The net is in violation and requires repair (diode insertion or layer hopping).
+    * **P/R < 1.0**: The net meets safety requirements.
+
+---
+
+### **Initial Antenna Violations (Pre-Repair)**
+The following table illustrates the status after Global Routing but before the repair pass. Multiple nets, particularly in the AES core, show high violation factors on `met3`.
 
 ```text
+┏━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃ P / R ┃ Partial ┃ Required ┃ Net                                  ┃ Pin              ┃ Layer ┃
+┡━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│ 10.91 │ 4364.32 │ 400.00   │ _13723_                              │ _32156_/A        │ met3  │
+│ 9.90  │ 3960.57 │ 400.00   │ aes.core.key[239\]                   │ _29805_/A1       │ met3  │
+│ 8.37  │ 3347.81 │ 400.00   │ net1327                              │ _30458_/C        │ met3  │
+│ 8.20  │ 3281.01 │ 400.00   │ _12804_                              │ _31204_/A        │ met3  │
+│ 8.06  │ 3224.00 │ 400.00   │ _14664_                              │ _33146_/A        │ met3  │
+│ 7.47  │ 2988.00 │ 400.00   │ aes.core.key[238\]                   │ _29807_/A1       │ met3  │
+│ 7.27  │ 2909.14 │ 400.00   │ aes.core.key[236\]                   │ _29811_/A1       │ met3  │
+│ 7.14  │ 2856.00 │ 400.00   │ net2783                              │ fanout2054/A     │ met3  │
+│ 6.88  │ 2752.34 │ 400.00   │ net2819                              │ fanout2076/A     │ met3  │
+│ 6.49  │ 2596.17 │ 400.00   │ aes.core.keymem.key_mem[1\][24\]     │ _31533_/B2       │ met3  │
+│ 6.25  │ 2498.37 │ 400.00   │ _13579_                              │ _32005_/A        │ met3  │
+│ 6.13  │ 2451.76 │ 400.00   │ _14816_                              │ _33306_/A        │ met3  │
 
+```
+#### **Post-Repair Results**
+After the repair stage (utilizing diode insertion), the report is empty, confirming that all violations were successfully mitigated.
+
+```text
+┏━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━┳━━━━━┳━━━━━━━┓
+┃ P / R ┃ Partial ┃ Required ┃ Net ┃ Pin ┃ Layer ┃
+┡━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━╇━━━━━╇━━━━━━━┩
+└───────┴─────────┴──────────┴─────┴─────┴───────┘
 ```
 
 Comparing the post-GRT and post-DRT antenna reports directly shows whether the repair
