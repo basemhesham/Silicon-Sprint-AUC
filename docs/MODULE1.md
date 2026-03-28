@@ -89,19 +89,12 @@ Once the editor opens, paste the Wishbone wrapper implementation into the file. 
 
 After pasting, **save the file** and close the editor.
 
-````{dropdown} aes_wb_wrapper.v — Click to expand
+````{dropdown} aes_wb_wrapper.v 
 ```{literalinclude} ./code/aes_wb_wrapper.v
 :language: verilog
 :linenos:
 ```
 ````
-
-
-```{tip}
- If you prefer to download the verified source file directly into your code directory, use the link below:
-
-{download}`⬇ Download aes_wb_wrapper.v <./code/aes_wb_wrapper.v>`
-```
 
 ---
 
@@ -242,7 +235,7 @@ must satisfy during {term}`PnR`.
 
 #### PnR Constraint File (`pnr.sdc`)
 
-Used during **Placement and Routing**. Specifies the clock period, identifies multicycle paths, and establishes {term}`DRC`-related rules such as maximum fanout and signal transition time.
+during all implementation (PnR) steps. Specifies the clock period, identifies multicycle paths, and establishes {term}`DRC`-related rules such as maximum fanout and signal transition time.
 
 ```console
 $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/pnr.sdc
@@ -250,9 +243,9 @@ $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/pnr.sdc
 
 Paste the following code into the editor and save:
 
-````{dropdown} 📄 pnr.sdc — Click to expand
+````{dropdown} pnr.sdc
 ```{literalinclude} ./code/pnr.sdc
-:language: verilog
+:language: tcl
 ```
 ````
 
@@ -266,7 +259,7 @@ $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/signoff.sdc
 
 Paste the following code into the editor and save:
 
-````{dropdown} 📄 signoff.sdc — Click to expand
+````{dropdown} signoff.sdc
 ```{literalinclude} ./code/signoff.sdc
 :language: tcl
 ```
