@@ -411,18 +411,18 @@ The {term}`PDN` is the grid of metal conductors delivering `VDD` and `GND` to ev
 
 The following values are the **SkyWater 130nm** defaults used by LibreLane when not explicitly overridden. They ensure compliance with the metal stack rules of the `sky130_fd_sc_hd` library.
 
-| Feature / Layer | Parameter | Default Value | Description |
+| Design Element | Parameter | Default Value | Technical Description |
 | :--- | :--- | :--- | :--- |
-| **Standard Cell Rail (M1)** | `FP_PDN_RAIL_WIDTH` | **0.48 µm** | Width of the M1 power rail inside each cell row. |
-| **Standard Cell Rail (M1)** | `FP_PDN_RAIL_OFFSET` | **0** | Offset for the starting rail position. |
-| **Vertical Strap (M4)** | `FP_PDN_VWIDTH` | **1.6 µm** | Width of the main vertical power delivery lines. |
-| **Vertical Strap (M4)** | `FP_PDN_VSPACING` | **1.7 µm** | Minimum spacing between parallel vertical straps. |
-| **Vertical Strap (M4)** | `FP_PDN_VPITCH` | **153.6 µm** | Center-to-center distance between vertical straps. |
-| **Vertical Strap (M4)** | `FP_PDN_VOFFSET` | **16.32 µm** | Distance of the first strap from the left core boundary. |
-| **Horizontal Strap (M5)** | `FP_PDN_HWIDTH` | **1.6 µm** | Width of horizontal straps (active when `PDN_MULTILAYER` is `True`). |
-| **Horizontal Strap (M5)** | `FP_PDN_HPITCH` | **153.18 µm** | Center-to-center distance between horizontal straps. |
-| **Core Ring (M4/M5)** | `CORE_RING_VWIDTH` | **1.6 µm** | Width of the vertical portions of the power ring. |
-| **Core Ring (M4/M5)** | `CORE_RING_VOFFSET` | **6.0 µm** | Offset of the ring from the core boundary. |
+| **Metal 1 (M1) Rails** | `FP_PDN_RAIL_WIDTH` | **0.48 µm** | Standard cell power rail width within rows. |
+| | `FP_PDN_RAIL_OFFSET` | **0** | Initial offset for the starting rail position. |
+| **Metal 4 (M4) Straps** | `FP_PDN_VWIDTH` | **1.6 µm** | Width of vertical power delivery lines. |
+| | `FP_PDN_VSPACING` | **1.7 µm** | Minimum spacing between parallel vertical straps. |
+| | `FP_PDN_VPITCH` | **153.6 µm** | Pitch (center-to-center) between vertical straps. |
+| | `FP_PDN_VOFFSET` | **16.32 µm** | X-axis offset from the left core boundary. |
+| **Metal 5 (M5) Straps** | `FP_PDN_HWIDTH` | **1.6 µm** | Width of horizontal power delivery lines. |
+| | `FP_PDN_HPITCH` | **153.18 µm** | Y-axis pitch between horizontal straps. |
+| **M4/M5 Core Ring** | `CORE_RING_VWIDTH` | **1.6 µm** | Width of the vertical portions of the ring. |
+| | `CORE_RING_VOFFSET` | **6.0 µm** | Ring offset distance from the core boundary. |
 
 #### Critical Parameter: `PDN_MULTILAYER`
 
