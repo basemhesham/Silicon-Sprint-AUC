@@ -137,7 +137,7 @@ and real capacitance (from its proximity to adjacent wires and the substrate). P
 extraction captures these values precisely so the downstream {term}`STA` uses actual
 physical delays rather than statistical estimates.
 
-```{figure} ./figures/OpenRCX.png.png
+```{figure} ./figures/OpenRCX.png
 :align: center
 
 *OpenRCX inputs and outputs*
