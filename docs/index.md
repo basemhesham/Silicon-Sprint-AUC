@@ -28,7 +28,7 @@ manufacturable {term}`GDSII` layout.
 ## Modules
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 1
 :caption: Workshop Modules
 
 MODULE0
