@@ -91,6 +91,7 @@ placement-based estimates, allowing more targeted timing fixes.
 | `GRT_RESIZER_HOLD_SLACK_MARGIN` | `Decimal` | Specifies a time margin for the slack when fixing hold violations. Normally the resizer will stop when it reaches zero slack. This option allows you to overfix. | `0.05` |
 | `GRT_RESIZER_HOLD_MAX_BUFFER_PCT` | `Decimal` | Specifies a max number of buffers to insert to fix hold violations. This number is calculated as a percentage of the number of instances in the design. | `50` |
 | `GRT_RESIZER_SETUP_MAX_BUFFER_PCT` | `Decimal` | Specifies a max number of buffers to insert to fix setup violations. This number is calculated as a percentage of the number of instances in the design. | `50` |
+| `GRT_RESIZER_ALLOW_SETUP_VIOS` | `bool` | Allow setup violations while fixing hold violations after global routing. | `False` |
 
 ---
 ## 3. Antenna Verification
