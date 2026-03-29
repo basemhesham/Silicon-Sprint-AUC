@@ -87,6 +87,10 @@ placement-based estimates, allowing more targeted timing fixes.
 | `GRT_DESIGN_REPAIR_RUN_GRT` | `bool` | Enables running GRT before and after running resizer | `True` |
 | `GRT_DESIGN_REPAIR_MAX_SLEW_PCT` | `Decimal` | Specifies a margin for the slews during post-grt design repair. | `10` |
 | `GRT_DESIGN_REPAIR_MAX_CAP_PCT` | `Decimal` | Specifies a margin for the capacitances during design post-grt repair. | `10` |
+| `GRT_RESIZER_SETUP_SLACK_MARGIN` | `Decimal` | Used to guide timing optimization after global routing. It instructs the optimizer not to stop at zero setup slack and try to achieve a positive setup slack (the specified margin). | `0.025` |
+| `GRT_RESIZER_HOLD_SLACK_MARGIN` | `Decimal` | Specifies a time margin for the slack when fixing hold violations. Normally the resizer will stop when it reaches zero slack. This option allows you to overfix. | `0.05` |
+| `GRT_RESIZER_HOLD_MAX_BUFFER_PCT` | `Decimal` | Specifies a max number of buffers to insert to fix hold violations. This number is calculated as a percentage of the number of instances in the design. | `50` |
+| `GRT_RESIZER_SETUP_MAX_BUFFER_PCT` | `Decimal` | Specifies a max number of buffers to insert to fix setup violations. This number is calculated as a percentage of the number of instances in the design. | `50` |
 
 ---
 ## 3. Antenna Verification
