@@ -676,42 +676,10 @@ most direct measure of whether every cell is receiving adequate voltage. A unifo
 colour map confirms no high-resistance hotspots, consistent with the 0.05% drop
 measured analytically.
 
-```{figure} ./figures/.png
+```{figure} ./figures/IR_drop_met1.png.png
 :align: center
 
 *IR Drop heat map (Metal 1) — uniform colour confirms no voltage hotspots across the macro.*
-```
-
----
-
-#### Routing Congestion Map
-
-Navigate to **Heat Maps → Routing Congestion → Rebuild Data**.
-
-This map identifies areas where routing tracks are overcrowded. The ECO buffers
-were placed in available white space; verify that their routing did not create new
-congestion pockets in adjacent regions.
-
-```{figure} ./figures/.png
-:align: center
-
-*Routing Congestion heat map — confirms ECO buffer routing did not introduce congestion.*
-```
-
----
-
-#### Pin Density Map
-
-Navigate to **Heat Maps → Pin Density**.
-
-Pin density is a critical metric for cell placement health. An even distribution
-ensures the router can reach every input/output without detours that increase wire
-length and capacitance.
-
-```{figure} ./figures/.png
-:align: center
-
-*Pin Density heat map — confirms even distribution of cell pins across the core.*
 ```
 
 ---
