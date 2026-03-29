@@ -393,43 +393,14 @@ analyzed at two stages: **before** and **after** the repair iterations.
 
 ---
 
-### 📁 Report Locations
+#### 📁 Report Locations
 
 - **Pre-Repair (Initial Check)**  
-  `runs/<run_name>/40-openroad-checkantennas/reports/antenna_summary.rpt`
+  `runs/classic_flow/40-openroad-checkantennas/reports/antenna_summary.rpt`
 
 - **Post-Repair (Final Check)**  
-  `runs/<run_name>/47-openroad-checkantennas-1/reports/antenna_summary.rpt`
+  `runs/classic_flow/47-openroad-checkantennas-1/reports/antenna_summary.rpt`
 
----
-
-### 📊 Metric Definitions
-
-The antenna report evaluates the risk of gate damage during fabrication using
-the following metrics:
-
-- **Partial**  
-  The computed **Antenna Area Ratio** for a given net on a specific layer.  
-  It represents the ratio between:
-  - metal area (collector)
-  - total connected gate area
-
-- **Required**  
-  The maximum allowed **Antenna Ratio** defined by the PDK (e.g., Sky130).  
-  This is the **safety limit**.
-
-- **P / R (Partial / Required)**  
-  The **Violation Factor**, used to determine whether a net is safe:
-
-  ```{list-table}
-  :header-rows: 1
-
-  * - Condition
-    - Interpretation
-  * - P/R > 1.0
-    - ❌ Violation — repair required (diodes or layer hopping)
-  * - P/R < 1.0
-    - ✅ Safe — within allowed limits
 ---
 
 ### **Initial Antenna Violations (Pre-Repair)**
@@ -462,7 +433,23 @@ After the repair stage (utilizing diode insertion), the report is empty, confirm
 ┡━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━╇━━━━━╇━━━━━━━┩
 └───────┴─────────┴──────────┴─────┴─────┴───────┘
 ```
+- **Required**  
+  The maximum allowed **Antenna Ratio** defined by the PDK (e.g., Sky130).  
+  This is the **safety limit**.
 
+- **P / R (Partial / Required)**  
+  The **Violation Factor**, used to determine whether a net is safe:
+
+  ```{list-table}
+  :header-rows: 1
+
+  * - Condition
+    - Interpretation
+  * - P/R > 1.0
+    - ❌ Violation — repair required (diodes or layer hopping)
+  * - P/R < 1.0
+    - ✅ Safe — within allowed limits
+ 
 Comparing the post-GRT and post-DRT antenna reports directly shows whether the repair
 pass eliminated all violations before Detailed Routing committed them to physical wires.
 
