@@ -490,6 +490,17 @@ drives. Fixing the cap violation will simultaneously resolve the corresponding s
 violation on the same net.
 ```
 
+**Worst Hold Slack:**
+In the Post-PnR stage, we analyze the **Fast Corner** (Minimum Delay) to ensure data does not move through the logic too quickly, which would cause a race condition.
+
+To find the most critical hold path, we inspect the timing report generated for the best-case silicon conditions:
+
+* **File:** `runs/classic_flow/56-openroad-stapostpnr/max_ff_n40C_1v95/min.rpt`
+* **Analysis:** We locate the first path in the report, which shows the worst slack of **0.108581**.
+* **Target Pin:** By tracing the **Arrival Path**, we identify the output of the launch Flip-Flop: **`_45051_/Q`**.
+
+**2. The Fix: Hold Buffer Insertion**
+To increase the hold margin, we must intentionally add delay to this specific path. By inserting a buffer immediately after the launch pin, we ensure the data stays stable long enough to meet the hold requirement of the capturing register.
 ---
 
 ### 5.2 ECO Buffer Insertion — Side Load Isolation
