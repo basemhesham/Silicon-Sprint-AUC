@@ -503,37 +503,30 @@ Passed ✅
 ┃                      ┃ Worst    ┃ Reg      ┃          ┃ Hold Vio ┃ reg to    ┃ Worst    ┃ Reg to    ┃ Setup    ┃ Setup Vio ┃ reg to   ┃ Max Cap   ┃ Max Slew ┃
 ┃ Corner/Group         ┃ Slack    ┃ Paths    ┃ Hold TNS ┃ Count    ┃ reg       ┃ Slack    ┃ Reg Paths ┃ TNS      ┃ Count     ┃ reg      ┃ Violatio… ┃ Violati… ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
-│ Overall              │ 0.1470   │ 0.1470   │ 0.0000   │ 0        │ 0         │ -0.1455  │ -0.1455   │ -0.2302  │ 2         │ 2        │ 7         │ 31       │
-│ nom_tt_025C_1v80     │ 0.2846   │ 0.2846   │ 0.0000   │ 0        │ 0         │ 8.5010   │ 12.1043   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ nom_ss_100C_1v60     │ 0.6792   │ 0.6792   │ 0.0000   │ 0        │ 0         │ 0.9815   │ 0.9815    │ 0.0000   │ 0         │ 0        │ 2         │ 4        │
-│ nom_ff_n40C_1v95     │ 0.1477   │ 0.1477   │ 0.0000   │ 0        │ 0         │ 9.4759   │ 16.5409   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_tt_025C_1v80     │ 0.2836   │ 0.2836   │ 0.0000   │ 0        │ 0         │ 8.6093   │ 12.7176   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_ss_100C_1v60     │ 0.6771   │ 0.6771   │ 0.0000   │ 0        │ 0         │ 1.4319   │ 2.0856    │ 0.0000   │ 0         │ 0        │ 2         │ 4        │
-│ min_ff_n40C_1v95     │ 0.1470   │ 0.1470   │ 0.0000   │ 0        │ 0         │ 9.5472   │ 16.9444   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_tt_025C_1v80     │ 0.2848   │ 0.2848   │ 0.0000   │ 0        │ 0         │ 8.4058   │ 11.4998   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_ss_100C_1v60     │ 0.6802   │ 0.6802   │ 0.0000   │ 0        │ 0         │ -0.1455  │ -0.1455   │ -0.2302  │ 2         │ 2        │ 7         │ 31       │
-│ max_ff_n40C_1v95     │ 0.1479   │ 0.1479   │ 0.0000   │ 0        │ 0         │ 9.4155   │ 16.1424   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ Overall              │ 0.1086   │ 0.1086   │ 0.0000   │ 0        │ 0         │ 2.8526   │ 3.3638    │ 0.0000   │ 0         │ 0        │ 5         │ 14       │
+│ nom_tt_025C_1v80     │ 0.2519   │ 0.2519   │ 0.0000   │ 0        │ 0         │ 8.6625   │ 14.0341   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ nom_ss_100C_1v60     │ 0.6405   │ 0.6405   │ 0.0000   │ 0        │ 0         │ 3.0600   │ 3.9852    │ 0.0000   │ 0         │ 0        │ 2         │ 2        │
+│ nom_ff_n40C_1v95     │ 0.1224   │ 0.1224   │ 0.0000   │ 0        │ 0         │ 9.5746   │ 17.8370   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_tt_025C_1v80     │ 0.2631   │ 0.2631   │ 0.0000   │ 0        │ 0         │ 8.7799   │ 14.5271   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_ss_100C_1v60     │ 0.6565   │ 0.6565   │ 0.0000   │ 0        │ 0         │ 3.3348   │ 4.6175    │ 0.0000   │ 0         │ 0        │ 1         │ 2        │
+│ min_ff_n40C_1v95     │ 0.1306   │ 0.1306   │ 0.0000   │ 0        │ 0         │ 9.6545   │ 18.2251   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_tt_025C_1v80     │ 0.2320   │ 0.2320   │ 0.0000   │ 0        │ 0         │ 8.5517   │ 13.5138   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_ss_100C_1v60     │ 0.6118   │ 0.6118   │ 0.0000   │ 0        │ 0         │ 2.8526   │ 3.3638    │ 0.0000   │ 0         │ 0        │ 5         │ 14       │
+│ max_ff_n40C_1v95     │ 0.1086   │ 0.1086   │ 0.0000   │ 0        │ 0         │ 9.4982   │ 17.4806   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
 └──────────────────────┴──────────┴──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
 ```
 
 ```{admonition} Interpreting the Post-PnR STA Results
 :class: tip
 
-**Hold violations: fully resolved.** All corners show positive Hold WNS (≥ 0.147 ns),
+**Hold violations: fully resolved.** All corners show positive Hold WNS (≥ 0.1086 ns),
 confirming that the CTS and post-CTS repair passes from Module 2 successfully closed
 every hold path. This result applies across all 9 corners.
 
-**Setup violations: 2 remain in `max_ss_100C_1v60`.** The Setup WNS of **-0.1455 ns**
-with a TNS of **-0.2302 ns** indicates 2 register-to-register paths failing timing by
-a small margin at the worst-case corner. All other 8 corners show zero setup violations
-with comfortable positive slack.
-
 **Max Slew and Max Cap: reduced significantly.** Compared to the pre-{term}`PnR` STA
-(2,379 slew violations), the post-{term}`PnR` count of 31 violations demonstrates the
+, the post-{term}`PnR` count of 14 violations demonstrates the
 effectiveness of the `signoff.sdc` 1.5 ns transition limit applied at this stage.
 
-The 2 remaining setup violations in `max_ss_100C_1v60` are addressed in
-[Section 7](#resolving-the-remaining-setup-violations).
 ```
 
 ---
@@ -547,30 +540,35 @@ transistors at low temperature and high voltage switch at their maximum rate, pr
 the highest dynamic power:
 
 ```text
+
+===========================================================================
+ report_power
+============================================================================
 ======================= max_ff_n40C_1v95 Corner ===================================
+
 Group                    Internal    Switching      Leakage        Total
                             Power        Power        Power        Power (Watts)
 ------------------------------------------------------------------------
-Sequential           5.654275e-03 5.247708e-05 6.859135e-08 5.706821e-03  28.2%
-Combinational        3.142535e-03 6.200964e-03 2.692677e-07 9.343768e-03  46.2%
-Clock                2.409271e-03 2.762205e-03 3.317228e-07 5.171807e-03  25.6%
+Sequential           5.653847e-03 6.869405e-05 6.859135e-08 5.722610e-03  30.8%
+Combinational        2.391679e-03 5.279127e-03 2.687200e-07 7.671075e-03  41.3%
+Clock                2.375699e-03 2.799051e-03 3.273007e-07 5.175077e-03  27.9%
 Macro                0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00   0.0%
 Pad                  0.000000e+00 0.000000e+00 0.000000e+00 0.000000e+00   0.0%
 ------------------------------------------------------------------------
-Total                1.120604e-02 9.015639e-03 6.697635e-07 2.022235e-02 100.0%
-                            55.4%        44.6%         0.0%
+Total                1.042120e-02 8.146887e-03 6.646642e-07 1.856875e-02 100.0%
+                            56.1%        43.9%         0.0%
 ```
 
 ```{note}
-The **combinational logic** (46.2%) dominates total power, driven primarily by
+The **combinational logic** (41.3%) dominates total power, driven primarily by
 switching activity in the AES datapath — the repeated XOR, shift, and substitution
-operations of the cipher. The **clock network** (25.6%) represents a significant
-investment from distributing the clock to all 2,995 flip-flops; this is typical for
+operations of the cipher. The **clock network** (27.9%) represents a significant
+investment from distributing the clock to all flip-flops; this is typical for
 a design with a balanced H-Tree of this scale. **Leakage power** (0.0%) is negligible
 at this corner, as fast transistors have higher leakage than slow ones but the dynamic
 component overwhelms it.
 
-Total power of **~20 mW** is well within the Caravel User Project power budget.
+Total power of **~18 mW** is well within the Caravel User Project power budget.
 ```
 
 ---
@@ -739,20 +737,6 @@ Each output format serves a specific role in the handoff to the next integration
 
 ---
 
-## 7. Resolving the Remaining Setup Violations
-
-```{admonition} Section Under Development
-:class: note
-
-The Post-{term}`PnR` STA report shows **2 Setup violations** in the
-`max_ss_100C_1v60` corner with a {term}`WNS` of **-0.1455 ns** and a
-{term}`TNS` of **-0.2302 ns**. Both failing paths are register-to-register
-paths — internal datapath violations, not I/O-constrained paths.
-
-This section will document the analysis and resolution of these violations,
-including the identification of the failing paths from `violator_list.rpt`
-and the specific configuration or SDC changes applied to close timing.
-```
 
 ---
 
