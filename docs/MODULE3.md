@@ -319,7 +319,7 @@ Then execute:
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json \
     --run-tag classic_flow \
     --from OpenROAD.GlobalRouting\
-    --to OpenROAD.STAMidPNR-3 \
+    --to Checker.WireLength \
     --with-initial-state \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/runs/classic_flow/38-openroad-stamidpnr-2/state_out.json
 ```
