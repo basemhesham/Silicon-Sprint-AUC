@@ -500,6 +500,7 @@ To find the most critical hold path, we inspect the timing report generated for 
 * **Target Pin:** By tracing the **Arrival Path**, we identify the output of the launch Flip-Flop: **`_45051_/Q`**.
 
 To increase the hold margin, we must intentionally add delay to this specific path. By inserting a buffer immediately after the launch pin, we ensure the data stays stable long enough to meet the hold requirement of the capturing register.
+
 ---
 
 ### 5.2 ECO Buffer Insertion — Side Load Isolation
