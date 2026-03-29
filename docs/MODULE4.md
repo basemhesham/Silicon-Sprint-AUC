@@ -338,7 +338,7 @@ component in a larger SoC. Their place-and-route tools can connect to the pins a
 route around the macro without having to process or understand the 135,000+ internal
 cells.
 
-```{figure} ./figures/.png
+```{figure} ./figures/LEF.png
 :align: center
 
 *LEF abstract view of* `aes_wb_wrapper` *in KLayout — only the boundary, pins, and blockage layers are visible.*
@@ -424,7 +424,7 @@ complete coverage of the foundry's rule set.
 that the physical chip — as represented by the routed GDSII layout — is electrically
 identical to the logical design — as represented by the post-synthesis Verilog netlist.
 
-```{figure} ./figures/.png
+```{figure} ./figures/LVS.png
 :align: center
 
 *LVS flow diagram — SPICE extraction from layout feeds into Netgen comparison against the power-aware netlist.*
