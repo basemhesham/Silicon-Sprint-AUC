@@ -97,38 +97,20 @@ Despite being non-functional, filler cells serve three essential physical roles:
 
 | Role | Why It Matters |
 | :--- | :--- |
-| **N-well / P-well Continuity** | Standard cells require continuous substrate wells across every row. Gaps break these wells, creating expensive discontinuities in the implant mask. Filler cells bridge the wells, ensuring a single uninterrupted mask layer across each row. |
+| **N-well / P-well Continuity** | Standard cells require continuous substrate wells across every row. Gaps break these wells, creating discontinuities in the implant mask. Filler cells bridge the wells, ensuring a single uninterrupted mask layer across each row. |
 | **Power Rail Continuity (VDD/VSS)** | Horizontal Metal 1 power rails must be electrically connected across the entire row. Without fillers, these rails "float" in the empty spaces, creating localised IR drop that degrades switching performance. Fillers act as a physical conductor bridge for the power grid. |
 | **Manufacturing Yield** | Empty spaces create density gradients during chemical-mechanical polishing (CMP). Non-uniform density leads to surface defects during etching, reducing the ratio of functional dies per wafer. Filling all gaps ensures uniform density and maximises yield. |
 
-Filler cells are available in a range of widths (1×, 2×, 4×, etc.) so that any gap —
+Filler cells are available in a range of widths so that any gap —
 regardless of size — can be packed exactly. The tool automatically selects the correct
 combination of cell widths to fill every space without overlap.
-
-For the `aes_wb_wrapper`, the insertion log confirms the following cell population
-after this step:
-
-```text
-Cell type report:                       Count       Area
-  Fill cell                             98361  336197.44
-  Tap cell                               9176   11481.01
-  Antenna cell                            658    1646.58
-  Buffer                                 4273   19159.63
-  Clock buffer                            569    7495.94
-  Timing Repair Buffer                   2718   23019.58
-  Inverter                               3113   11684.96
-  Clock inverter                           86    1071.03
-  Sequential cell                        2995   78694.22
-  Multi-Input combinational cell        13795  150717.05
-  Total                                135744  641167.43
-```
 
 The figures below show the layout before and after fill insertion in the OpenROAD GUI:
 
 ::::{grid} 2
 
 :::{grid-item}
-```{figure} ./figures/.png
+```{figure} ./figures/Before_Fill_Insertion.png
 :align: center
 
 *Before fill insertion — visible gaps between functional cells.*
@@ -136,7 +118,7 @@ The figures below show the layout before and after fill insertion in the OpenROA
 :::
 
 :::{grid-item}
-```{figure} ./figures/.png
+```{figure} ./figures/After_Fill_Insertion.png
 :align: center
 
 *After fill insertion — all gaps sealed with filler and decap cells.*
@@ -155,25 +137,17 @@ and real capacitance (from its proximity to adjacent wires and the substrate). P
 extraction captures these values precisely so the downstream {term}`STA` uses actual
 physical delays rather than statistical estimates.
 
-```{figure} ./figures/.png
+```{figure} ./figures/OpenRCX.png.png
 :align: center
 
-*OpenRCX inputs and outputs — the extraction bridge between physical geometry and electrical models.*
+*OpenRCX inputs and outputs*
 ```
-
-#### Inputs
-
-| Input | Description |
-| :--- | :--- |
-| **Physical Design (DEF/LEF)** | The finalised routing and library definitions specifying the exact geometry, layer stack, and spacing of every wire. |
-| **RC Calibration Model** | A technology-specific rules file (`rules.openrcx.sky130A.max.calibre`) containing pre-measured resistance and capacitance coefficients for the SkyWater 130nm process. |
 
 #### The Extraction Process
 
 **RC Segment Generation** — The engine breaks each physical wire into a series of smaller
 electrical segments. It calculates the resistance of each segment based on its layer,
 width, and length, and adds the resistance of every via used to transition between layers.
-For the `aes_wb_wrapper`, this produces **161,601 RC segments** across 27,332 nets.
 
 **Capacitance Calculation** — Two types of capacitance are modelled:
 
@@ -216,7 +190,7 @@ analysis of the physical design.
 
 ### 2.3 Post-PnR Static Timing Analysis (`OpenROAD.STAPostPNR`)
 
-```{figure} ./figures/.png
+```{figure} ./figures/OpenSTA.png
 :align: center
 
 *Post-PnR STA flow — SPEF parasitics enable physically accurate timing analysis for the first time.*
@@ -263,7 +237,7 @@ runs/classic_flow/56-openroad-stapostpnr/
     ├── min.rpt                                 ← Constrained paths for Hold (min) checks
     ├── wns.max.rpt / wns.min.rpt              ← Worst Negative Setup / Hold Slack
     ├── tns.max.rpt / tns.min.rpt              ← Total Negative Setup / Hold Slack
-    ├── ws.max.rpt / ws.min.rpt                ← Worst Setup / Hold Slack (including positive)
+    ├── ws.max.rpt / ws.min.rpt                ← Worst Setup / Hold Slack 
     ├── skew.max.rpt / skew.min.rpt            ← Clock skew for Setup / Hold
     ├── power.rpt                               ← Corner-specific power breakdown
     ├── checks.rpt                              ← Max Cap, Slew, Fanout, unconstrained paths
