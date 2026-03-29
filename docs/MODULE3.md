@@ -385,7 +385,21 @@ is expected due to the high logic density of the AES datapath.
 ```
 
 ---
+#### Pin Density Map
 
+Navigate to **Heat Maps → Pin Density**.
+
+Pin density is a critical metric for cell placement health. An even distribution
+ensures the router can reach every input/output without detours that increase wire
+length and capacitance.
+
+```{figure} ./figures/Pin_Density.png.png
+:align: center
+
+*Pin Density heat map — confirms even distribution of cell pins across the core.*
+```
+
+---
 ### 7.2 Antenna Summary Report
 
 To evaluate the effectiveness of the antenna repair process, antenna reports are
