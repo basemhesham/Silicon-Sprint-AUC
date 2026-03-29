@@ -27,16 +27,6 @@ manufacturable {term}`GDSII` layout.
 
 ## Modules
 
-```{toctree}
-:maxdepth: 1
-:caption: Workshop Modules
-
-MODULE0
-MODULE1
-MODULE2
-MODULE3
-MODULE4
-```
 
 ::::{grid} 1 1 2 2
 :gutter: 3
