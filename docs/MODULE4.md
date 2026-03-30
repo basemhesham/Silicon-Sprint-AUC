@@ -687,7 +687,7 @@ most direct measure of whether every cell is receiving adequate voltage. A unifo
 colour map confirms no high-resistance hotspots, consistent with the 0.05% drop
 measured analytically.
 
-```{figure} ./figures/IR_drop_met1.png.png
+```{figure} ./figures/IR_drop_met1.png
 :align: center
 
 *IR Drop heat map (Metal 1) — uniform colour confirms no voltage hotspots across the macro.*
@@ -784,7 +784,7 @@ violations at the boundary of one tool's interpretation may be caught by the oth
 
 **LVS** proves that the physical chip is electrically identical to the logical design.
 
-```{figure} ./figures/LVS.png
+```{figure} ./figures/LVS.webp
 :align: center
 
 *LVS flow — SPICE extraction from layout feeds into Netgen comparison against the power-aware netlist.*
