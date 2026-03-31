@@ -423,7 +423,7 @@ in the core.
 
 ---
 
-## 5. Resolving Max Slew, Max Cap & Hold Slack Violations
+## 5. Resolving Max Slew and Max Cap
 
 The STA report reveals two categories of issues that must be addressed before physical
 signoff can proceed:
@@ -758,6 +758,12 @@ independently generated GDS files:
 
 1. `aes_wb_wrapper.magic.gds`
 2. `aes_wb_wrapper.klayout.gds`
+
+```{figure} ./figures/XOR.png
+:align: center
+
+*XOR Geometric Verification*
+```
 
 If both tools interpreted the design identically, all polygons overlap exactly and
 the XOR produces zero remaining geometry. Any tool disagreement produces a "leftover"
