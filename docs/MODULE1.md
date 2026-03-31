@@ -464,12 +464,17 @@ integrate correctly with the Caravel SoC hierarchy.
 
 | Parameter | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
-| `PDN_MULTILAYER` | `bool` | Controls whether the PDN generates both vertical (M4) and horizontal (M5) power straps. **Must be `False` for Caravel integration** — see below. | `False` |
+| `PDN_MULTILAYER` | `bool` | Controls whether the PDN generates both vertical (M4) and horizontal (M5) power straps. **Must be `False` for Caravel integration.** | `False` |
 | `PDN_SKIPTRIM` | `bool` | Prevents removal of metal stubs not connected to macros, reducing top-level routing congestion. | `False` |
 | `PDN_CORE_RING` | `bool` | Generates a power ring around the core area. Required for macros using the "ring method" for power integration. | `False` |
 | `PDN_ENABLE_RAILS` | `bool` | Enables creation of standard cell power rails (Metal 1) across every cell row. | `True` |
+| `PDN_RAIL_LAYER` | `str` | Defines the metal layer used for PDN rails (standard cell power rails). | `met1` |
+| `PDN_HORIZONTAL_LAYER` | `str` | Defines the horizontal PDN metal layer (typically for power straps). | `met5` |
+| `PDN_VERTICAL_LAYER` | `str` | Defines the vertical PDN metal layer (typically for power straps). | `met4` |
 | `PDN_HORIZONTAL_HALO` | `Decimal` | Horizontal keep-out distance around macros where rows are cut to prevent shorts. | `10 µm` |
 | `PDN_VERTICAL_HALO` | `Decimal` | Vertical keep-out distance around macros where rows are cut during power grid insertion. | `10 µm` |
+| `PDN_EXTEND_TO` | `str` | Defines how far the stripes and rings extend (e.g., `core_ring` or `boundary`). | `core_ring` |
+| `PDN_CFG` | `Path?` | A custom PDN configuration file path. If not provided, the default PDN config is used. | `None` |
 
 #### SkyWater 130nm PDN Layer Defaults
 
