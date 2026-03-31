@@ -393,7 +393,7 @@ Pin density is a critical metric for cell placement health. An even distribution
 ensures the router can reach every input/output without detours that increase wire
 length and capacitance.
 
-```{figure} ./figures/Pin_Density.png.png
+```{figure} ./figures/Pin_Density.png
 :align: center
 
 *Pin Density heat map — confirms even distribution of cell pins across the core.*
