@@ -237,7 +237,6 @@ Three parameters are added or modified relative to the Module 2 configuration:
 | :--- | :---: | :--- |
 | `RT_MAX_LAYER` | `"met4"` | Prevents signal routes from being placed on Metal 5. Since the Caravel User Project Wrapper uses `met5` for its top-level {term}`PDN`, any signal routing on that layer would create {term}`DRC` shorts when the macro is integrated. |
 | `GRT_ANTENNA_REPAIR_MARGIN` | `15` | Increases the repair over-fix margin from the default 10% to 15%, proactively protecting nets that are close to the antenna limit from violations introduced during Detailed Routing. |
-| `GRT_DESIGN_REPAIR_MAX_WIRE_LENGTH` | `800` | Caps the maximum wire segment length at 800 µm, triggering repeater buffer insertion on long AES datapath wires where routing-aware capacitance exceeds the post-CTS repair estimates. |
 | `RUN_POST_GRT_DESIGN_REPAIR` | `true` | Enables the post-GRT design repair step, allowing the Resizer to fix violations using real RC parasitics from Global Routing. |
 
 ```{admonition} Why met4 as the Maximum Routing Layer?
@@ -271,14 +270,8 @@ Your complete `config.json` should now read:
 {
     "DESIGN_NAME": "aes_wb_wrapper",
     "VERILOG_FILES": [
-        "dir::../../../secworks_aes/src/rtl/aes.v",
-        "dir::../../../secworks_aes/src/rtl/aes_core.v",
-        "dir::../../../secworks_aes/src/rtl/aes_decipher_block.v",
-        "dir::../../../secworks_aes/src/rtl/aes_encipher_block.v",
-        "dir::../../../secworks_aes/src/rtl/aes_inv_sbox.v",
-        "dir::../../../secworks_aes/src/rtl/aes_key_mem.v",
-        "dir::../../../secworks_aes/src/rtl/aes_sbox.v",
-        "dir::../../verilog/rtl/aes_wb_wrapper.v"
+       "dir::../../../aes/secworks_aes/rtl/*.v",
+    "dir::../../verilog/rtl/aes_wb_wrapper.v"
     ],
     "CLOCK_PORT": "wb_clk_i",
     "CLOCK_PERIOD": 25,
@@ -289,11 +282,8 @@ Your complete `config.json` should now read:
     "FP_CORE_UTIL": 40,
     "SYNTH_STRATEGY": "DELAY 4",
     "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
-    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
-    "DESIGN_REPAIR_MAX_CAP_PCT": 30,
     "RT_MAX_LAYER": "met4",
     "GRT_ANTENNA_REPAIR_MARGIN": 15,
-    "GRT_DESIGN_REPAIR_MAX_WIRE_LENGTH": 800,
     "RUN_POST_GRT_DESIGN_REPAIR": true
 }
 ```
