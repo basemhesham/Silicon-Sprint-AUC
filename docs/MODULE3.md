@@ -236,7 +236,7 @@ Three parameters are added or modified relative to the Module 2 configuration:
 | Parameter | Value | Rationale |
 | :--- | :---: | :--- |
 | `RT_MAX_LAYER` | `"met4"` | Prevents signal routes from being placed on Metal 5. Since the Caravel User Project Wrapper uses `met5` for its top-level {term}`PDN`, any signal routing on that layer would create {term}`DRC` shorts when the macro is integrated. |
-| `GRT_ANTENNA_REPAIR_MARGIN` | `15` | Increases the repair over-fix margin from the default 10% to 15%, proactively protecting nets that are close to the antenna limit from violations introduced during Detailed Routing. |
+| `GRT_ANTENNA_REPAIR_MARGIN` | `15` | Increases the repair over-fix margin from the default 10% to 15%, proactively protecting nets that are close to the antenna limit from violations introduced during Detailed Routing. | `GRT_ANTENNA_REPAIR_ITERS` | `10` | Increase the number of iterations for antenna repair. The default value is 3. |
 | `RUN_POST_GRT_DESIGN_REPAIR` | `true` | Enables the post-GRT design repair step, allowing the Resizer to fix violations using real RC parasitics from Global Routing. |
 
 ```{admonition} Why met4 as the Maximum Routing Layer?
@@ -268,23 +268,24 @@ Your complete `config.json` should now read:
 
 ```json
 {
-    "DESIGN_NAME": "aes_wb_wrapper",
-    "VERILOG_FILES": [
-       "dir::../../../aes/secworks_aes/rtl/*.v",
-    "dir::../../verilog/rtl/aes_wb_wrapper.v"
-    ],
+       "DESIGN_NAME": "aes_wb_wrapper",
+    "PDN_MULTILAYER": false,
     "CLOCK_PORT": "wb_clk_i",
     "CLOCK_PERIOD": 25,
+    "VERILOG_FILES": [
+        "dir::../../../secworks_aes/src/rtl/*.v",
+        "dir::../../verilog/rtl/aes_wb_wrapper.v"
+    ],
+    "FP_CORE_UTIL": 40,
+    "RT_MAX_LAYER": "met4",
+    "SYNTH_STRATEGY": "DELAY 4",
+    "DEFAULT_CORNER": "max_ss_100C_1v60",
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
     "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
-    "DEFAULT_CORNER": "max_ss_100C_1v60",
-    "PDN_MULTILAYER": false,
-    "FP_CORE_UTIL": 40,
-    "SYNTH_STRATEGY": "DELAY 4",
     "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
-    "RT_MAX_LAYER": "met4",
-    "GRT_ANTENNA_REPAIR_MARGIN": 15,
-    "RUN_POST_GRT_DESIGN_REPAIR": true
+    "GRT_ANTENNA_REPAIR_ITERS": 10,
+    "GRT_ANTENNA_REPAIR_MARGIN": 15
 }
 ```
 
