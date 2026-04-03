@@ -457,75 +457,47 @@ cavity of the SoC.
 ### 4.3 Power Distribution Network ({term}`PDN`) Configuration Reference
 
 The {term}`PDN` is the grid of metal conductors delivering `VDD` and `GND` to every
-standard cell. For the `aes_wb_wrapper`, the PDN must be configured specifically to
-integrate correctly with the Caravel SoC hierarchy.
+standard cell in the design. LibreLane supports two fundamentally different methods
+for constructing the PDN of a macro, and the choice between them affects which metal
+layers are available for signal routing.
 
-#### PDN Control Parameters
+---
 
-| Parameter | Type | Description | Default |
-| :--- | :--- | :--- | :--- |
-| `PDN_MULTILAYER` | `bool` | Controls whether the PDN generates both vertical (M4) and horizontal (M5) power straps. **Must be `False` for Caravel integration.** | `False` |
-| `PDN_SKIPTRIM` | `bool` | Prevents removal of metal stubs not connected to macros, reducing top-level routing congestion. | `False` |
-| `PDN_CORE_RING` | `bool` | Generates a power ring around the core area. Required for macros using the "ring method" for power integration. | `False` |
-| `PDN_ENABLE_RAILS` | `bool` | Enables creation of standard cell power rails (Metal 1) across every cell row. | `True` |
-| `PDN_RAIL_LAYER` | `str` | Defines the metal layer used for PDN rails (standard cell power rails). | `met1` |
-| `PDN_HORIZONTAL_LAYER` | `str` | Defines the horizontal PDN metal layer (typically for power straps). | `met5` |
-| `PDN_VERTICAL_LAYER` | `str` | Defines the vertical PDN metal layer (typically for power straps). | `met4` |
-| `PDN_HORIZONTAL_HALO` | `Decimal` | Horizontal keep-out distance around macros where rows are cut to prevent shorts. | `10 µm` |
-| `PDN_VERTICAL_HALO` | `Decimal` | Vertical keep-out distance around macros where rows are cut during power grid insertion. | `10 µm` |
-| `PDN_EXTEND_TO` | `str` | Defines how far the stripes and rings extend (e.g., `core_ring` or `boundary`). | `core_ring` |
-| `PDN_CFG` | `Path?` | A custom PDN configuration file path. If not provided, the default PDN config is used. | `None` |
+#### PDN Method 1 — Hierarchical
 
-#### SkyWater 130nm PDN Layer Defaults
+In the **Hierarchical method**, power is delivered through stacked metal straps: each
+level of the design hierarchy uses a different metal layer for power straps, and the
+macro boundary is deliberately kept clear of the topmost used layer so that the
+parent-level integration can connect through vias.
 
-The following values are the **SkyWater 130nm** defaults applied by LibreLane when not
-explicitly overridden, ensuring compliance with the `sky130_fd_sc_hd` metal stack rules.
+```{figure} ./figures/pdn_hierarchical.webp
+:align: center
 
-| Design Element | Parameter | Default Value | Description |
-| :--- | :--- | :--- | :--- |
-| **M1 Rails** | `PDN_RAIL_WIDTH` | **0.48 µm** | Standard cell power rail width within rows. |
-| | `PDN_RAIL_OFFSET` | **0** | Initial offset for the starting rail position. |
-| **M4 Vertical Straps** | `PDN_VWIDTH` | **1.6 µm** | Width of main vertical power delivery lines. |
-| | `PDN_VSPACING` | **1.7 µm** | Minimum spacing between parallel vertical straps. |
-| | `PDN_VPITCH` | **153.6 µm** | Centre-to-centre pitch between vertical straps. |
-| | `PDN_VOFFSET` | **16.32 µm** | X-axis offset from the left core boundary. |
-| **M5 Horizontal Straps** | `PDN_HWIDTH` | **1.6 µm** | Width of horizontal straps (active only when `PDN_MULTILAYER: True`). |
-| | `PDN_HPITCH` | **153.18 µm** | Y-axis pitch between horizontal straps. |
-| **Core Ring (M4/M5)** | `CORE_RING_VWIDTH` | **1.6 µm** | Width of the vertical ring segments. |
-| | `CORE_RING_VOFFSET` | **6.0 µm** | Ring offset from the core boundary. |
-
-#### Critical Parameter: `PDN_MULTILAYER` and `RT_MAX_LAYER`
-
-```{warning}
-**Both `PDN_MULTILAYER: false` and `RT_MAX_LAYER: "met4"` are mandatory for correct
-Caravel integration** — and they address the same underlying constraint from two
-complementary directions.
-
-**The Problem — Metal 5 Conflicts:**
-
-The Caravel User Project Wrapper uses **Metal 5 (met5)** for its top-level horizontal
-power distribution straps. If the `aes_wb_wrapper` macro also places any shapes on
-Metal 5 — either PDN straps or signal wires — they will collide with the wrapper's
-power grid, causing fatal {term}`DRC` violations that cannot be resolved post-integration.
-
-**The Two-Part Solution:**
-
-- **`PDN_MULTILAYER: false`** — Prevents the PDN generator from creating horizontal
-  straps on Metal 5. The macro's power grid is restricted to **Metal 4 (vertical only)**.
-  Horizontal power connectivity within the macro is provided by the Metal 1 standard
-  cell rails.
-
-- **`RT_MAX_LAYER: "met4"`** — Prevents the router from placing any signal wire on
-  Metal 5. This ensures that even after Detailed Routing, no signal path uses the
-  layer reserved for top-level power delivery.
-
-Together, these two settings guarantee that the entire Metal 5 layer remains completely
-clear inside the macro boundary, leaving it available exclusively for the Caravel wrapper's
-horizontal power straps. This is the correct and safe configuration for any macro intended
-for Caravel tape-out.
+*Hierarchical PDN — each level of hierarchy gives up the topmost metal layer so the
+level above can connect through.*
 ```
 
-The figures below illustrate the visual difference in KLayout for `PDN_MULTILAYER`:
+The rule is simple: if your macro will be placed inside a top-level wrapper that uses
+**met5** for horizontal power straps, your macro must not use met5 — for either PDN
+or signal routing.
+
+```{admonition} Critical Parameters for Hierarchical Method
+:class: warning
+
+When using the hierarchical method for a macro that will be integrated into the
+OpenFrame multiproject wrapper, two parameters **must** be set together:
+
+- **`PDN_MULTILAYER: false`** — Restricts the macro's PDN to vertical straps on
+  Metal 4 only. Metal 5 is left completely clear for the top-level wrapper's
+  horizontal power straps.
+
+- **`RT_MAX_LAYER: "met4"`** — Prevents the router from placing any signal wire on
+  Metal 5. Without this, detailed routing may use met5 for signal wires, creating
+  DRC conflicts with the wrapper's power grid.
+
+Omitting either parameter will result in met5 conflicts and fatal {term}`DRC`
+violations when the macro is integrated into the top level.
+```
 
 ::::{grid} 2
 
@@ -533,7 +505,7 @@ The figures below illustrate the visual difference in KLayout for `PDN_MULTILAYE
 ```{figure} ./figures/multilayer_true.png
 :align: center
 
-**Case A — Avoid:** `PDN_MULTILAYER: True`. A conflicting M4/M5 mesh pattern will cause {term}`DRC` shorts with the Caravel wrapper.
+**Avoid:** `PDN_MULTILAYER: True` — M4/M5 mesh conflicts with the top-level wrapper straps.
 ```
 :::
 
@@ -541,14 +513,70 @@ The figures below illustrate the visual difference in KLayout for `PDN_MULTILAYE
 ```{figure} ./figures/multilayer_false.png
 :align: center
 
-**Case B — Correct:** `PDN_MULTILAYER: False`. Only vertical M4 straps are present; Metal 5 is left clear for top-level routing.
+**Correct:** `PDN_MULTILAYER: False` — Only vertical M4 straps; Metal 5 is clear.
 ```
 :::
 
 ::::
 
-For further reading, refer to the [LibreLane PDN documentation](https://librelane.readthedocs.io/en/stable/usage/pdn.html).
+---
 
+#### PDN Method 2 — Ring
+
+In the **Ring method**, a closed power ring is built around the perimeter of the macro
+core area. This ring is connected to the top-level integration by abutment — the top
+level connects to the ring edges rather than running straps through the macro.
+
+```{figure} ./figures/pdn_ring.webp
+:align: center
+
+*Ring PDN — a closed power ring surrounds the core; the full metal layer stack is
+available for internal routing.*
+```
+
+The key advantage is that the macro can use **all available metal layers for signal
+routing** — including met5 — because the power ring does not depend on reserving the
+topmost layer for vertical strap continuity. The trade-off is that the ring occupies
+additional area around the core perimeter.
+
+```json
+"PDN_CORE_RING": true
+```
+
+---
+
+#### PDN Control Parameters
+
+| Parameter | Type | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `PDN_MULTILAYER` | `bool` | Generates both vertical (M4) and horizontal (M5) straps. Set `false` for hierarchical method. | `False` |
+| `PDN_CORE_RING` | `bool` | Enables the ring method — builds a power ring around the core perimeter. | `False` |
+| `PDN_CORE_RING_VWIDTH` | `Decimal` | Width of vertical ring segments. | `1.6 µm` |
+| `PDN_CORE_RING_HWIDTH` | `Decimal` | Width of horizontal ring segments. | `1.6 µm` |
+| `PDN_CORE_RING_VSPACING` | `Decimal` | Spacing between the VDD and GND vertical ring straps. | `1.7 µm` |
+| `PDN_CORE_RING_HSPACING` | `Decimal` | Spacing between the VDD and GND horizontal ring straps. | `1.7 µm` |
+| `PDN_CORE_RING_VOFFSET` | `Decimal` | Offset of the vertical ring from the core boundary. | `6 µm` |
+| `PDN_CORE_RING_HOFFSET` | `Decimal` | Offset of the horizontal ring from the core boundary. | `6 µm` |
+| `PDN_ENABLE_RAILS` | `bool` | Enables Metal 1 standard cell power rails across every cell row. | `True` |
+| `PDN_SKIPTRIM` | `bool` | Prevents removal of metal stubs not connected to macros. | `False` |
+| `PDN_HORIZONTAL_HALO` | `Decimal` | Horizontal keep-out distance around macros. | `10 µm` |
+| `PDN_VERTICAL_HALO` | `Decimal` | Vertical keep-out distance around macros. | `10 µm` |
+| `PDN_CFG` | `Path?` | Custom PDN Tcl configuration file. Uses built-in defaults if not set. | `None` |
+
+#### SkyWater 130nm PDN Layer Defaults
+
+| Design Element | Parameter | Default Value | Description |
+| :--- | :--- | :--- | :--- |
+| **M1 Rails** | `PDN_RAIL_WIDTH` | **0.48 µm** | Standard cell power rail width. |
+| | `PDN_RAIL_OFFSET` | **0** | Starting rail offset. |
+| **M4 Vertical Straps** | `PDN_VWIDTH` | **1.6 µm** | Width of vertical power lines. |
+| | `PDN_VSPACING` | **1.7 µm** | Spacing between parallel vertical straps. |
+| | `PDN_VPITCH` | **153.6 µm** | Centre-to-centre pitch. |
+| | `PDN_VOFFSET` | **16.32 µm** | X-axis offset from the left core boundary. |
+| **M5 Horizontal Straps** | `PDN_HWIDTH` | **1.6 µm** | Width (active only when `PDN_MULTILAYER: True`). |
+| | `PDN_HPITCH` | **153.18 µm** | Y-axis pitch. |
+
+For further reading, refer to the [LibreLane PDN documentation](https://librelane.readthedocs.io/en/stable/usage/pdn.html).
 ---
 
 ## 5. The `librelane` Command Syntax
