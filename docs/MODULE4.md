@@ -322,16 +322,16 @@ runs/classic_flow/
 ┃                      ┃ Worst    ┃ Reg      ┃          ┃ Hold Vio ┃ reg to    ┃ Worst    ┃ Reg to    ┃ Setup    ┃ Setup Vio ┃ reg to   ┃ Max Cap   ┃ Max Slew ┃
 ┃ Corner/Group         ┃ Slack    ┃ Paths    ┃ Hold TNS ┃ Count    ┃ reg       ┃ Slack    ┃ Reg Paths ┃ TNS      ┃ Count     ┃ reg      ┃ Violatio… ┃ Violati… ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
-│ Overall              │ 0.1086   │ 0.1086   │ 0.0000   │ 0        │ 0         │ 2.8526   │ 3.3638    │ 0.0000   │ 0         │ 0        │ 5         │ 14       │
-│ nom_tt_025C_1v80     │ 0.2519   │ 0.2519   │ 0.0000   │ 0        │ 0         │ 8.6625   │ 14.0341   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ nom_ss_100C_1v60     │ 0.6405   │ 0.6405   │ 0.0000   │ 0        │ 0         │ 3.0600   │ 3.9852    │ 0.0000   │ 0         │ 0        │ 2         │ 2        │
-│ nom_ff_n40C_1v95     │ 0.1224   │ 0.1224   │ 0.0000   │ 0        │ 0         │ 9.5746   │ 17.8370   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_tt_025C_1v80     │ 0.2631   │ 0.2631   │ 0.0000   │ 0        │ 0         │ 8.7799   │ 14.5271   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_ss_100C_1v60     │ 0.6565   │ 0.6565   │ 0.0000   │ 0        │ 0         │ 3.3348   │ 4.6175    │ 0.0000   │ 0         │ 0        │ 1         │ 2        │
-│ min_ff_n40C_1v95     │ 0.1306   │ 0.1306   │ 0.0000   │ 0        │ 0         │ 9.6545   │ 18.2251   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_tt_025C_1v80     │ 0.2320   │ 0.2320   │ 0.0000   │ 0        │ 0         │ 8.5517   │ 13.5138   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_ss_100C_1v60     │ 0.6118   │ 0.6118   │ 0.0000   │ 0        │ 0         │ 2.8526   │ 3.3638    │ 0.0000   │ 0         │ 0        │ 5         │ 14       │
-│ max_ff_n40C_1v95     │ 0.1086   │ 0.1086   │ 0.0000   │ 0        │ 0         │ 9.4982   │ 17.4806   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ Overall              │ 0.1132   │ 0.1132   │ 0.0000   │ 0        │ 0         │ 2.8295   │ 3.3870    │ 0.0000   │ 0         │ 0        │ 5         │ 20       │
+│ nom_tt_025C_1v80     │ 0.2551   │ 0.2551   │ 0.0000   │ 0        │ 0         │ 8.6880   │ 14.0837   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ nom_ss_100C_1v60     │ 0.6440   │ 0.6440   │ 0.0000   │ 0        │ 0         │ 3.0461   │ 4.0124    │ 0.0000   │ 0         │ 0        │ 4         │ 3        │
+│ nom_ff_n40C_1v95     │ 0.1267   │ 0.1267   │ 0.0000   │ 0        │ 0         │ 9.5940   │ 17.8656   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_tt_025C_1v80     │ 0.2667   │ 0.2667   │ 0.0000   │ 0        │ 0         │ 8.8014   │ 14.5390   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_ss_100C_1v60     │ 0.6571   │ 0.6571   │ 0.0000   │ 0        │ 0         │ 3.3317   │ 4.6459    │ 0.0000   │ 0         │ 0        │ 1         │ 3        │
+│ min_ff_n40C_1v95     │ 0.1311   │ 0.1311   │ 0.0000   │ 0        │ 0         │ 9.6721   │ 18.2459   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_tt_025C_1v80     │ 0.2353   │ 0.2353   │ 0.0000   │ 0        │ 0         │ 8.5847   │ 13.5553   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_ss_100C_1v60     │ 0.6146   │ 0.6146   │ 0.0000   │ 0        │ 0         │ 2.8295   │ 3.3870    │ 0.0000   │ 0         │ 0        │ 5         │ 20       │
+│ max_ff_n40C_1v95     │ 0.1132   │ 0.1132   │ 0.0000   │ 0        │ 0         │ 9.5217   │ 17.5069   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
 └──────────────────────┴──────────┴──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
 ```
 
@@ -428,8 +428,8 @@ in the core.
 The STA report reveals two categories of issues that must be addressed before physical
 signoff can proceed:
 
-1. **Max Slew (14) and Max Cap (5) violations** in the `max_ss_100C_1v60` corner.
-2. **Narrow Hold WNS (+0.1086 ns)** in the `max_ff_n40C_1v95` corner — technically
+1. **Max Slew (20) and Max Cap (5) violations** in the `max_ss_100C_1v60` corner.
+2. **Narrow Hold WNS (+0.11 ns)** in the `max_ff_n40C_1v95` corner — technically
    passing, but at risk of becoming a Hold violation when integrated into Caravel due
    to additional clock path delays introduced by the top-level wrapper routing.
 
@@ -452,20 +452,26 @@ max slew
 
 Pin                                        Limit        Slew       Slack
 ------------------------------------------------------------------------
-wire709/A                               1.500000    2.140449   -0.640449 (VIOLATED)
-_33732_/Y                               1.500000    2.140219   -0.640219 (VIOLATED)
-_32081_/Y                               1.496182    1.590252   -0.094070 (VIOLATED)
-wire412/A                               1.500000    1.590497   -0.090497 (VIOLATED)
-_33024_/X                               1.495224    1.551253   -0.056029 (VIOLATED)
-ANTENNA_216/DIODE                       1.500000    1.555177   -0.055177 (VIOLATED)
-ANTENNA_214/DIODE                       1.500000    1.555174   -0.055174 (VIOLATED)
-ANTENNA_212/DIODE                       1.500000    1.555173   -0.055173 (VIOLATED)
-_33025_/A                               1.500000    1.555165   -0.055165 (VIOLATED)
-ANTENNA_211/DIODE                       1.500000    1.555138   -0.055138 (VIOLATED)
-ANTENNA_213/DIODE                       1.500000    1.555100   -0.055100 (VIOLATED)
-ANTENNA_215/DIODE                       1.500000    1.555096   -0.055096 (VIOLATED)
-ANTENNA_217/DIODE                       1.500000    1.555091   -0.055091 (VIOLATED)
-_30855_/Y                               1.495589    1.496218   -0.000629 (VIOLATED)
+wire709/A                               1.500000    2.257302   -0.757302 (VIOLATED)
+ANTENNA_332/DIODE                       1.500000    2.257299   -0.757300 (VIOLATED)
+_33732_/Y                               1.500000    2.256935   -0.756935 (VIOLATED)
+_30855_/Y                               1.495589    1.599141   -0.103552 (VIOLATED)
+wire899/A                               1.500000    1.599223   -0.099223 (VIOLATED)
+ANTENNA_123/DIODE                       1.500000    1.599221   -0.099221 (VIOLATED)
+_32081_/Y                               1.496182    1.579847   -0.083665 (VIOLATED)
+wire412/A                               1.500000    1.580099   -0.080099 (VIOLATED)
+_33205_/X                               1.494952    1.554909   -0.059957 (VIOLATED)
+_33206_/B                               1.500000    1.555457   -0.055457 (VIOLATED)
+_33024_/X                               1.495224    1.501552   -0.006328 (VIOLATED)
+ANTENNA_262/DIODE                       1.500000    1.505202   -0.005203 (VIOLATED)
+ANTENNA_260/DIODE                       1.500000    1.505192   -0.005192 (VIOLATED)
+_33025_/A                               1.500000    1.505189   -0.005189 (VIOLATED)
+ANTENNA_255/DIODE                       1.500000    1.505184   -0.005184 (VIOLATED)
+ANTENNA_258/DIODE                       1.500000    1.505184   -0.005184 (VIOLATED)
+ANTENNA_256/DIODE                       1.500000    1.505182   -0.005182 (VIOLATED)
+ANTENNA_257/DIODE                       1.500000    1.505175   -0.005175 (VIOLATED)
+ANTENNA_259/DIODE                       1.500000    1.505171   -0.005171 (VIOLATED)
+ANTENNA_261/DIODE                       1.500000    1.505165   -0.005165 (VIOLATED)
 ```
 
 **Max Cap Violations:**
@@ -473,13 +479,15 @@ _30855_/Y                               1.495589    1.496218   -0.000629 (VIOLAT
 ```text
 max capacitance
 
+max capacitance
+
 Pin                                        Limit         Cap       Slack
 ------------------------------------------------------------------------
-_33732_/Y                               0.052195    0.078192   -0.025997 (VIOLATED)
-_33024_/X                               0.172129    0.179231   -0.007102 (VIOLATED)
-_32081_/Y                               0.065012    0.071731   -0.006719 (VIOLATED)
-_30855_/Y                               0.059519    0.062032   -0.002513 (VIOLATED)
-fanout2499/X                            0.081492    0.081709   -0.000217 (VIOLATED)
+_33732_/Y                               0.052195    0.082704   -0.030509 (VIOLATED)
+_30855_/Y                               0.059519    0.067199   -0.007679 (VIOLATED)
+_32081_/Y                               0.065012    0.071197   -0.006185 (VIOLATED)
+_33205_/X                               0.108042    0.113083   -0.005041 (VIOLATED)
+_33024_/X                               0.172129    0.173386   -0.001257 (VIOLATED)
 ```
 
 ```{note}
@@ -495,11 +503,11 @@ In the Post-PnR stage, we analyze the **Fast Corner** (Minimum Delay) to ensure 
 
 To find the most critical hold path, we inspect the timing report generated for the best-case silicon conditions:
 
-* **File:** `runs/classic_flow/56-openroad-stapostpnr/max_ff_n40C_1v95/min.rpt`
-* **Analysis:** We locate the first path in the report, which shows the worst slack of **0.108581**.
-* **Target Pin:** By tracing the **Arrival Path**, we identify the output of the launch Flip-Flop: **`_45051_/Q`**.
+* **File:** `runs/classic_flow/56-openroad-stapostpnr/max_ff_n40C_1v95/min.rpt` and `runs/classic_flow/56-openroad-stapostpnr/min_ff_n40C_1v95/min.rpt`
+* **Analysis:** We locate the first path in the report, which shows the worst slack of **0.11**.
+* **Target Pin:** By tracing the **Arrival Path**, we identify the output of the launch Flip-Flop: **`_45051_/Q`** for `max_ff_n40C_1v95/min.rpt` and _42587_/Q for `min_ff_n40C_1v95`.
 
-To increase the hold margin, we must intentionally add delay to this specific path. By inserting a buffer immediately after the launch pin, we ensure the data stays stable long enough to meet the hold requirement of the capturing register.
+To increase the hold margin, we must intentionally add delay to this specific path. By inserting 2 buffers immediately after the launch pin, we ensure the data stays stable long enough to meet the hold requirement of the capturing register.
 
 ---
 
@@ -530,6 +538,7 @@ just before the final Detailed Routing re-run. Add the `meta` flow substitution 
 to your `config.json`:
 
 ```json
+
 {
     "DESIGN_NAME": "aes_wb_wrapper",
     "PDN_MULTILAYER": false,
@@ -547,9 +556,13 @@ to your `config.json`:
     "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
+    
+         "DIODE_ON_PORTS": "both",
     "GRT_ANTENNA_REPAIR_ITERS": 10,
     "GRT_ANTENNA_REPAIR_MARGIN": 15,
-
+    
+    
+    
     "meta": {
         "flow": "Classic",
         "substituting_steps": {
@@ -559,24 +572,26 @@ to your `config.json`:
     },
 
     "INSERT_ECO_BUFFERS": [
-        { "target": "wire709/A",       "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_33732_/Y",       "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_32081_/Y",       "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "wire412/A",       "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_33024_/X",       "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "ANTENNA_216/DIODE", "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "ANTENNA_214/DIODE", "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "ANTENNA_212/DIODE", "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_33025_/A",       "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "ANTENNA_211/DIODE", "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "ANTENNA_213/DIODE", "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "ANTENNA_215/DIODE", "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "ANTENNA_217/DIODE", "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_30855_/Y",       "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "fanout2499/X",    "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_45051_/Q",       "buffer": "sky130_fd_sc_hd__buf_4" }
+        { "target": "wire709/A",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "ANTENNA_332/DIODE",  "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_33732_/Y",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_30855_/Y",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "wire899/A",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "ANTENNA_123/DIODE",  "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_32081_/Y",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "wire412/A",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_33025_/A",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_33205_/X",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_33206_/B",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        
+        { "target": "_45051_/Q",          "buffer": "sky130_fd_sc_hd__buf_1" },
+        { "target": "_45051_/Q",          "buffer": "sky130_fd_sc_hd__buf_1" },
+        { "target": "_42587_/Q",          "buffer": "sky130_fd_sc_hd__buf_1" },
+        { "target": "_42587_/Q",          "buffer": "sky130_fd_sc_hd__buf_1" }      
+        
     ]
 }
+
 ```
 
 ---
@@ -634,29 +649,27 @@ and that’s because it only has to route nets that have been modified as part o
 ┃                      ┃ Worst    ┃ Reg      ┃          ┃ Hold Vio ┃ reg to    ┃ Worst    ┃ Reg to    ┃ Setup    ┃ Setup Vio ┃ reg to   ┃ Max Cap   ┃ Max Slew ┃
 ┃ Corner/Group         ┃ Slack    ┃ Paths    ┃ Hold TNS ┃ Count    ┃ reg       ┃ Slack    ┃ Reg Paths ┃ TNS      ┃ Count     ┃ reg      ┃ Violatio… ┃ Violati… ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
-│ Overall              │ 0.1309   │ 0.1309   │ 0.0000   │ 0        │ 0         │ 2.8575   │ 3.3804    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ nom_tt_025C_1v80     │ 0.2699   │ 0.2699   │ 0.0000   │ 0        │ 0         │ 8.6689   │ 14.0678   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ nom_ss_100C_1v60     │ 0.6585   │ 0.6585   │ 0.0000   │ 0        │ 0         │ 3.0645   │ 4.0035    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ nom_ff_n40C_1v95     │ 0.1317   │ 0.1317   │ 0.0000   │ 0        │ 0         │ 9.5788   │ 17.8579   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_tt_025C_1v80     │ 0.2688   │ 0.2688   │ 0.0000   │ 0        │ 0         │ 8.7852   │ 14.5363   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_ss_100C_1v60     │ 0.6565   │ 0.6565   │ 0.0000   │ 0        │ 0         │ 3.3383   │ 4.6340    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_ff_n40C_1v95     │ 0.1309   │ 0.1309   │ 0.0000   │ 0        │ 0         │ 9.6581   │ 18.2404   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_tt_025C_1v80     │ 0.2711   │ 0.2711   │ 0.0000   │ 0        │ 0         │ 8.5571   │ 13.5450   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_ss_100C_1v60     │ 0.6603   │ 0.6603   │ 0.0000   │ 0        │ 0         │ 2.8575   │ 3.3804    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_ff_n40C_1v95     │ 0.1326   │ 0.1326   │ 0.0000   │ 0        │ 0         │ 9.5009   │ 17.5000   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ Overall              │ 0.1451   │ 0.1451   │ 0.0000   │ 0        │ 0         │ 2.8287   │ 3.3910    │ 0.0000   │ 0         │ 0        │ 1         │ 11       │
+│ nom_tt_025C_1v80     │ 0.2823   │ 0.2823   │ 0.0000   │ 0        │ 0         │ 8.6862   │ 14.1227   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ nom_ss_100C_1v60     │ 0.6736   │ 0.6736   │ 0.0000   │ 0        │ 0         │ 3.0443   │ 4.0152    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ nom_ff_n40C_1v95     │ 0.1458   │ 0.1458   │ 0.0000   │ 0        │ 0         │ 9.5928   │ 17.8895   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_tt_025C_1v80     │ 0.2814   │ 0.2814   │ 0.0000   │ 0        │ 0         │ 8.7999   │ 14.5404   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_ss_100C_1v60     │ 0.6720   │ 0.6720   │ 0.0000   │ 0        │ 0         │ 3.3300   │ 4.6491    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_ff_n40C_1v95     │ 0.1451   │ 0.1451   │ 0.0000   │ 0        │ 0         │ 9.6711   │ 18.2639   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_tt_025C_1v80     │ 0.2833   │ 0.2833   │ 0.0000   │ 0        │ 0         │ 8.5824   │ 13.5922   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_ss_100C_1v60     │ 0.6754   │ 0.6754   │ 0.0000   │ 0        │ 0         │ 2.8287   │ 3.3910    │ 0.0000   │ 0         │ 0        │ 1         │ 11       │
+│ max_ff_n40C_1v95     │ 0.1466   │ 0.1466   │ 0.0000   │ 0        │ 0         │ 9.5201   │ 17.5297   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
 └──────────────────────┴──────────┴──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
 ```
 
-```{admonition} ECO Results — All Violations Resolved
+```{admonition} ECO Results
 :class: tip
 
-**Max Slew and Max Cap: fully cleared.** Every violation in the `max_ss_100C_1v60`
-corner has been eliminated. The `buf_4` cells absorb the excessive capacitive loads
+**Max Slew and Max Cap: we eliminate the largest 9 slew violations and 4 capacitance violations. The `buf_4` cells absorb the excessive capacitive loads
 that previously caused slow transitions on the flagged driver outputs.
 
-**Hold WNS improved.** The worst Hold slack increased from **+0.1086 ns** to
-**+0.1309 ns** across all corners — a ~20% improvement that provides better
-guard-band against Hold violations when integrating into the Caravel top level.
+**Hold WNS improved.** The worst Hold slack increased from **+0.11 ns** to
+**+0.145 ns** due to 2 buffers added in the worst 2 paths.
 
 **Setup timing unchanged.** The ECO buffers added no delay to the critical setup
 paths; worst Setup {term}`WNS` remains clean across all 9 corners.
