@@ -1,4 +1,4 @@
-# Silicon Sprint — AUC ASIC Design Workshop
+<img width="65" height="65" alt="image" src="https://github.com/user-attachments/assets/4833ca7c-e9bf-452d-a195-255cb94d9b04" /># Silicon Sprint — AUC ASIC Design Workshop
 
 ```{admonition} About This Workshop
 :class: note
@@ -36,12 +36,13 @@ MODULE1
 MODULE2
 MODULE3
 MODULE4
+MODULE5
 ```
 ---
 ::::{grid} 1 1 2 2
 :gutter: 3
 
-:::{grid-item-card} 📦 Module 0 — Environment Setup
+:::{grid-item-card}  Module 0 — Environment Setup
 :link: MODULE0
 :link-type: doc
 
@@ -51,7 +52,7 @@ Nix installation, LibreLane setup, repository cloning, and environment verificat
 *Start here before anything else.*
 :::
 
-:::{grid-item-card} ⚙️ Module 1 — RTL Integration & ASIC Flow
+:::{grid-item-card}  Module 1 — RTL Integration & ASIC Flow
 :link: MODULE1
 :link-type: doc
 
@@ -61,7 +62,7 @@ Wishbone wrapper integration, synthesis exploration, floorplan, and PDN generati
 *Requires Module 0.*
 :::
 
-:::{grid-item-card} 🔄 Module 2 — Placement & CTS
+:::{grid-item-card}  Module 2 — Placement & CTS
 :link: MODULE2
 :link-type: doc
 
@@ -72,7 +73,7 @@ timing repair.
 *Requires Module 1.*
 :::
 
-:::{grid-item-card} 🌐 Module 3 — Routing
+:::{grid-item-card}  Module 3 — Routing
 :link: MODULE3
 :link-type: doc
 
@@ -83,7 +84,7 @@ TritonRoute.
 *Requires Module 2.*
 :::
 
-:::{grid-item-card} ✅ Module 4 — Physical Signoff
+:::{grid-item-card}  Module 4 — Physical Signoff
 :link: MODULE4
 :link-type: doc
 
@@ -94,6 +95,16 @@ analysis, {term}`DRC`, {term}`LVS`, and final {term}`GDSII` generation.
 *Requires Module 3.*
 :::
 
+:::{grid-item-card}  Module 5 — Macro-First Hardening strategy
+:link: MODULE5
+:link-type: doc
+
+Hardening the aes core with the Wishbone wrapper as a macro
+
++++
+*completed full physical signoff in
+Module 4 and that the `classic_flow_eco`*
+:::
 ::::
 
 ---
