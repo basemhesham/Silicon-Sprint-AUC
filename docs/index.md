@@ -1,4 +1,4 @@
-<img width="65" height="65" alt="image" src="https://github.com/user-attachments/assets/4833ca7c-e9bf-452d-a195-255cb94d9b04" /># Silicon Sprint — AUC ASIC Design Workshop
+# Silicon Sprint — AUC ASIC Design Workshop
 
 ```{admonition} About This Workshop
 :class: note
