@@ -618,6 +618,10 @@ runs/classic_flow_eco/
     └── 14-openroad-irdropreport/
 ```
 
+```{note}
+You will notice that the new OpenROAD.DetailedRouting step added has a much faster runtime;
+and that’s because it only has to route nets that have been modified as part of the ECO.
+```
 ---
 
 ### 5.4 Post-ECO STA Results
