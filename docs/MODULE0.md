@@ -22,10 +22,8 @@ toolchain functionality before beginning the design flow.
 4. [Verification & Smoke Test](#verification-and-smoke-test)
    - [4.1 Version Check](#step-41-version-check)
    - [4.2 Running the Smoke Test](#step-42-running-the-smoke-test)
-5. [Repository Preparation & SSH Configuration](#repository-preparation-and-ssh-configuration)
-   - [5.1 Remote Repository Setup (SSH & Git)](#remote-repository-setup-ssh-and-git)
-   - [5.2 Cloning the Project Repositories](#cloning-the-project-repositories)
-
+5. [ Cloning the Project Repositories](#cloning-the-project-repositories)
+ 
 ---
 
 ## 1. Overview
@@ -207,88 +205,16 @@ without re-downloading.
 
 ---
 
-## 5. Repository Preparation and SSH Configuration
+## 5. Cloning the Project Repositories
 
-**Objective:** Establish a secure, authenticated connection to GitHub and clone the
-hardware design repositories required for the workshop.
-
----
-
-### 5.1 Remote Repository Setup (SSH and Git)
-
-To manage design files and interact with GitHub without entering a password for every
-operation, you must configure **SSH (Secure Shell)**. This establishes a persistent
-encrypted link between your local machine and your GitHub account.
-
-#### Step 1 — Generate an SSH Key
-
-First, check whether an existing key is already present:
-
-```console
-$ ls ~/.ssh/id_ed25519.pub
-```
-
-If the file does not exist, generate a new key using the **Ed25519** algorithm — the current
-recommended standard for security and performance. Replace the placeholder with your
-GitHub-registered email address:
-
-```console
-$ ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-When prompted:
-
-| Prompt | Recommended Action |
-| :--- | :--- |
-| **Save location** | Press **Enter** to accept the default (`~/.ssh/id_ed25519`). |
-| **Passphrase** | Enter a passphrase for added security, or press **Enter** twice to leave it empty. |
-
----
-
-#### Step 2 — Add the Public Key to GitHub
-
-GitHub requires your **public key** to authenticate your machine.
-
-**1. Display the public key:**
-
-```console
-$ cat ~/.ssh/id_ed25519.pub
-```
-
-**2. Copy the full output** — the entire string beginning with `ssh-ed25519`.
-
-**3. Register the key on GitHub:**
-
-- Navigate to **Settings → SSH and GPG keys → New SSH key**.
-- Set a recognizable title (e.g., `Lab_Workstation`).
-- Paste the copied key into the **Key** field and click **Add SSH key**.
-
-**4. Verify the connection:**
-
-```console
-$ ssh -T git@github.com
-```
-
-A successful response will read: `Hi <username>! You've successfully authenticated...`
-
-```{tip}
-If the verification step times out or returns a `Permission denied` error, revisit
-**Step 1** to confirm the key was generated at the correct path, and **Step 2** to
-confirm the correct public key was pasted into GitHub.
-```
-
----
-
-### 5.2 Cloning the Project Repositories
-
-With SSH authentication configured, clone both repositories required for this workshop.
+clone both repositories required for this workshop.
 
 #### Step 1 — Clone the Silicon-Sprint-AUC Project
 
-This repository contains the Caravel user project template pre-configured for the LibreLane flow:
+This repository contains the Carvel user project template pre-configured for the LibreLane flow:
 
 ```console
-$ git clone git@github.com:basemhesham/Silicon-Sprint-AUC.git ~/Silicon-Sprint-AUC
+$ git clone https://github.com/basemhesham/Silicon-Sprint-AUC ~/Silicon-Sprint-AUC
 ```
 
 #### Step 2 — Clone the AES Source Code
@@ -296,7 +222,7 @@ $ git clone git@github.com:basemhesham/Silicon-Sprint-AUC.git ~/Silicon-Sprint-A
 This repository contains the AES-128 RTL implementation that will be hardened during the workshop:
 
 ```console
-$ git clone git@github.com:secworks/aes.git ~/secworks_aes
+$ git clone https://github.com/secworks/aes ~/secworks_aes
 ```
 
 #### Step 3 — Verify the Directory Structure
