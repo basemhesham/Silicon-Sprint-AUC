@@ -184,7 +184,16 @@ less efficient when many parallel bus wires are involved.
 | `DRT_ANTENNA_REPAIR_ITERS` | `int` | Maximum antenna repair iterations during Detailed Routing. | `0` |
 | `DRT_ANTENNA_REPAIR_MARGIN` | `int` | Margin percentage for over-fixing violations during Detailed Routing. | `10` |
 | `RUN_HEURISTIC_DIODE_INSERTION` | `bool` | Enables the `Odb.HeuristicDiodeInsertion` step to insert antenna diodes  | `False` |
+| `HEURISTIC_ANTENNA_THRESHOLD ` | `Decimal?` | A Manhattan distance above which a diode is recommended to be inserted by the heuristic inserter.  | `None` |
+| `DIODE_ON_PORTS` | `none` ,`in`, `out` , `both` | Unconditionally inserts diodes on design ports diodes on ports, to mitigate the antenna effect.  | `None` |
 
+
+```{admonition}
+:class: important
+When hardening a macro for integration into a larger project (like the User Project Wrapper), **`DIODE_ON_PORTS`** is critical. Setting this to `all` ensures that diodes are placed on every input port to protect the internal gates from "antenna" discharge during top-level routing.
+
+Additionally, while **`RUN_HEURISTIC_DIODE_INSERTION`** helps protect the overall design by placing diodes inside the macro where tap cells are available, the default behavior often inserts an excessive number of diodes, which wastes area and increases leakage. To optimize this, it is highly recommended to use **`HEURISTIC_ANTENNA_THRESHOLD`** (e.g., set to `200` or `150`). This limits diode insertion to only those nets exceeding the specified length, effectively minimizing the diode count while maintaining safety.
+```
 ---
 
 ## 4. Detailed Routing (DRT)
@@ -268,7 +277,7 @@ Your complete `config.json` should now read:
 
 ```json
 {
-       "DESIGN_NAME": "aes_wb_wrapper",
+   "DESIGN_NAME": "aes_wb_wrapper",
     "PDN_MULTILAYER": false,
     "CLOCK_PORT": "wb_clk_i",
     "CLOCK_PERIOD": 25,
@@ -285,7 +294,8 @@ Your complete `config.json` should now read:
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
     "GRT_ANTENNA_REPAIR_ITERS": 10,
-    "GRT_ANTENNA_REPAIR_MARGIN": 15
+    "GRT_ANTENNA_REPAIR_MARGIN": 15,
+     "DIODE_ON_PORTS": "both"
 }
 ```
 
