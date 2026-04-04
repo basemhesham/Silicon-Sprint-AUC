@@ -18,7 +18,7 @@ manufacturable {term}`GDSII` layout.
 | Stage | Tool |
 | :--- | :--- |
 | RTL Linting & Synthesis | Yosys / Verilator |
-| Floorplan & Power Grid | OpenROAD |
+| Floorplan & Power Network | OpenROAD |
 | Placement & Clock Tree | OpenROAD |
 | Routing | OpenROAD / TritonRoute |
 | Physical Signoff ({term}`DRC` · {term}`LVS` · {term}`GDSII`) | Magic / KLayout / Netgen |
