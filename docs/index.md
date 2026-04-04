@@ -113,13 +113,13 @@ Module 4 and that the `classic_flow_eco`*
 
 | Tool | Role |
 | :--- | :--- |
+| **Verilator** | RTL linting |
 | **LibreLane** | RTL-to-GDSII flow orchestrator |
 | **Yosys** | Synthesis and technology mapping |
 | **OpenROAD** | Floorplan, placement, CTS, routing, and {term}`STA` |
 | **Magic** | Layout editor, {term}`DRC`, and {term}`SPICE` extraction |
 | **KLayout** | {term}`GDSII` viewer, {term}`DRC`, and XOR verification |
 | **Netgen** | {term}`LVS` netlist comparison |
-| **Verilator** | RTL linting |
 | **SkyWater 130nm PDK** | `sky130_fd_sc_hd` standard cell library |
 
 ---
