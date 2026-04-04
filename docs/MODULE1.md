@@ -701,7 +701,7 @@ $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
     "CLOCK_PORT": "wb_clk_i",
     "CLOCK_PERIOD": 25,
     "VERILOG_FILES": [
-        "dir::../../../aes/secworks_aes/rtl/*.v",
+        "dir::../../../secworks_aes/src/rtl/*.v",
         "dir::../../verilog/rtl/aes_wb_wrapper.v"
     ],
     "PNR_SDC_FILE": "dir::pnr.sdc",
