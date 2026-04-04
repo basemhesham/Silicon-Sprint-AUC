@@ -1,4 +1,4 @@
-# Module 1: RTL Integration & ASIC Flow for the AES Accelerator
+# Module 1: LibreLane Flow & Execution to PDN
 
 ```{admonition} Prerequisites
 :class: important
