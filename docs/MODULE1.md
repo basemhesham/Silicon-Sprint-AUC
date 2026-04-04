@@ -347,7 +347,9 @@ Paste the following base configuration:
         "dir::../../verilog/rtl/aes_wb_wrapper.v"
     ],
     "FP_CORE_UTIL": 40,
-    "RT_MAX_LAYER": "met4"
+    "RT_MAX_LAYER": "met4",
+    "PNR_SDC_FILE": "dir::pnr.sdc",
+    "SIGNOFF_SDC_FILE": "dir::signoff.sdc"
 }
 ```
 
