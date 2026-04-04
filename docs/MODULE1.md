@@ -343,7 +343,7 @@ Paste the following base configuration:
     "CLOCK_PORT": "wb_clk_i",
     "CLOCK_PERIOD": 25,
     "VERILOG_FILES": [
-        "dir::../../../aes/secworks_aes/rtl/*.v",
+        "dir::../../../secworks_aes/src/rtl/*.v",
         "dir::../../verilog/rtl/aes_wb_wrapper.v"
     ],
     "FP_CORE_UTIL": 40,
