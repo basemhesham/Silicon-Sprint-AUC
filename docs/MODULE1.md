@@ -26,7 +26,7 @@ Your repository must be cloned and the Nix-shell verified before starting the AS
    - [4.3 Power Distribution Network Parameters](#power-distribution-network-pdn-configuration-reference)
 5. [The `librelane` Command Syntax](#the-librelane-command-syntax)
 6. [Run 1: Execution to Power Network (Classic Flow)](#run-1-execution-to-power-network-classic-flow)
-   - [6.1 Task — Synthesis Exploration](#task-synthesis-exploration)
+   - [6.1 Synthesis Exploration](#task-synthesis-exploration)
    - [6.2 Final Configuration Setup](#final-configuration-setup)
    - [6.3 Entering the Nix Shell](#entering-the-nix-shell)
    - [6.4 Flow Execution](#flow-execution)
@@ -643,7 +643,8 @@ Ensure you are inside the Nix shell, then run:
 ```console
 [nix-shell:~]$ librelane \
     ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json \
-    --flow SynthesisExploration
+    --flow SynthesisExploration \
+    --run-tag synexp
 ```
 
 The exploration flow tests all nine strategies and prints a ranked summary table. For the
