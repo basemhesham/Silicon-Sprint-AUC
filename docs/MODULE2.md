@@ -286,7 +286,9 @@ Your complete `config.json` should now read:
     "RUN_POST_GRT_DESIGN_REPAIR": true,
     "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
-    "IO_PIN_ORDER_CFG": "dir::pin_order.cfg"
+    "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 30
 }
 ```
 
@@ -500,14 +502,14 @@ routing begins.
 **Location:** `38-openroad-stamidpnr-2/max_ss_100C_1v60/checks.rpt`
 
 ```text
-max slew violation count 256
-max fanout violation count 0
+max slew violation count 121
+max fanout violation count 2
 max cap violation count 0
 ```
 
 ```{note}
 All violations are evaluated at the `max_ss_100C_1v60` corner — the worst-case
-combination of slow transistors, high temperature, and low voltage. The 256 remaining
+combination of slow transistors, high temperature, and low voltage. The 121 remaining
 Max Slew violations are expected at this mid-flow stage; the post-GRT repair pass in
 Module 3 and ECO buffers in Module 4 resolve them before signoff.
 ```
@@ -518,11 +520,11 @@ Module 3 and ECO buffers in Module 4 resolve them before signoff.
 
 | Metric | Report File | Value (ns) |
 | :--- | :--- | :--- |
-| Worst Setup Slack | `ws.max.rpt` | **+0.158** |
-| Worst Hold Slack | `ws.min.rpt` | **+0.897** |
+| Worst Setup Slack | `ws.max.rpt` | **+3.58** |
+| Worst Hold Slack | `ws.min.rpt` | **+0.589** |
 
 ```{note}
-The Hold {term}`WNS` of **+0.897 ns** is measured at the Slow-Slow corner. At the
+The Hold {term}`WNS` of **+0.589 ns** is measured at the Slow-Slow corner. At the
 Fast-Fast corner (`max_ff_n40C_1v95`) — where cells switch faster and hold paths
 become harder to meet — this margin decreases significantly, often approaching
 **+0.1–0.2 ns** at signoff. The post-CTS hold repair pass tightens this further.
@@ -540,13 +542,20 @@ physical placement. In setup analysis, the worst case is when the launch clock
 arrives **later** and the capture clock arrives **earlier** — consuming setup margin.
 
 ```text
+
+===========================================================================
+Clock Skew (Setup)
+============================================================================
+Writing metric clock__skew__worst_setup__corner:max_ss_100C_1v60: 0.40678306319200896
+======================= max_ss_100C_1v60 Corner ===================================
+
 Clock clk
- 7.593835   source latency   _43010_/CLK  ^   ← Launch FF (data departs here)
--5.955407   target latency   _43570_/CLK  ^   ← Capture FF (data must arrive)
- 0.120000   clock uncertainty
--1.375574   CRPR
+7.624432 source latency _42992_/CLK ^
+-5.961826 target latency _43086_/CLK ^
+0.120000 clock uncertainty
+-1.375823 CRPR
 --------------
- 0.382855   setup skew
+0.406783 setup skew
 ```
 
 ---
