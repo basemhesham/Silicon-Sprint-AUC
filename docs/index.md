@@ -37,6 +37,7 @@ MODULE2
 MODULE3
 MODULE4
 MODULE5
+MODULE6
 ```
 ---
 ::::{grid} 1 1 2 2
