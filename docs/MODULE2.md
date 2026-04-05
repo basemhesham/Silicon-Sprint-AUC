@@ -257,55 +257,11 @@ consequence of a well-built clock tree. Track whether `STAMidPNR-2` brings Hold
 
 ---
 
-## 3. Optimizing Design Repair and Constraints
-
-This section introduces targeted configuration parameters to improve timing health,
-reduce electrical violations, and produce a more efficient placement for the
-`aes_wb_wrapper`.
-
----
-
-### 3.1 Modified Configuration Parameters
-
-| Parameter | Default | New Value | Rationale |
-| :--- | :---: | :---: | :--- |
-| `PL_WIRE_LENGTH_COEF` | `0.25` | **`0.05`** | Decreasing the variable will modify the initial placement of the standard cells to reduce the wirelengths. |
-| `DESIGN_REPAIR_MAX_WIRE_LENGTH` | `0` | **`800`** µm | Constrains the maximum wire segment length. Nets longer than 800 µm will have a repeater buffer inserted, preventing excessive capacitance on long AES datapath wires. |
-| `DESIGN_REPAIR_MAX_SLEW_PCT` | `20%` | **`30%`** | Increases the proactive slew repair margin, catching borderline paths before post-routing parasitics push them into hard violation. |
-| `DESIGN_REPAIR_MAX_CAP_PCT` | `20%` | **`30%`** | Increases the proactive capacitance repair margin, reducing Max Cap violations after routing adds real parasitic load. |
-| `PL_RESIZER_HOLD_SLACK_MARGIN` | `0.1 ns` | **`0.2 ns`** | Increases the Hold guard-band, instructing the Resizer to over-fix violations to a 0.2 ns positive slack margin — providing extra protection against Hold violations that emerge during post-CTS routing. |
-
-```{note}
-**Transition Constraints — How the SDC Files Work Together**
-
-The transition (slew) limit for this design is controlled entirely by the {term}`SDC`
-files. During all {term}`PnR` stages (placement, CTS, routing),
-`pnr.sdc` is active, which sets a strict **0.75 ns** transition limit. This aggressive
-value drives the Resizer to fix slew violations thoroughly during physical implementation.
-
-At signoff (`OpenROAD.STAPostPNR`), `signoff.sdc` takes over with a relaxed limit of
-**1.5 ns** — consistent with the `sky130_fd_sc_hd` library characterisation boundary.
-Since the tool has already corrected violations against the tighter 0.75 ns constraint
-during {term}`PnR`, the vast majority of slew violations disappear at signoff when
-evaluated against the more realistic 1.5 ns limit.
-
-This two-file strategy — strict constraint during implementation, realistic constraint
-at signoff — is a deliberate design choice that leads to a cleaner final timing report.
-```
-
-```{warning}
-**`DESIGN_REPAIR_MAX_SLEW_PCT` and `DESIGN_REPAIR_MAX_CAP_PCT` above 30% is not
-recommended.** Values beyond 30% can cause the Resizer to insert an excessive number
-of buffers in a single pass, which may significantly extend runtime, cause tool hangs,
-or trigger memory issues. The 30% value provides a good balance between repair
-aggressiveness and flow stability for the AES core.
-```
-
----
+## 3. Executing the Placement and CTS Run
 
 ### 3.2 Final `config.json`
 
-Open your configuration file and apply all changes:
+Open your configuration file to add "IO_PIN_ORDER_CFG": "dir::pin_order.cfg":
 
 ```console
 $ gedit ~/Silicon-Sprint-AUC/openlane/aes_wb_wrapper/config.json
@@ -316,31 +272,21 @@ Your complete `config.json` should now read:
 ```json
 {
     "DESIGN_NAME": "aes_wb_wrapper",
-    "VERILOG_FILES": [
-        "dir::../../../secworks_aes/src/rtl/aes.v",
-        "dir::../../../secworks_aes/src/rtl/aes_core.v",
-        "dir::../../../secworks_aes/src/rtl/aes_decipher_block.v",
-        "dir::../../../secworks_aes/src/rtl/aes_encipher_block.v",
-        "dir::../../../secworks_aes/src/rtl/aes_inv_sbox.v",
-        "dir::../../../secworks_aes/src/rtl/aes_key_mem.v",
-        "dir::../../../secworks_aes/src/rtl/aes_sbox.v",
-        "dir::../../verilog/rtl/aes_wb_wrapper.v"
-    ],
+    "PDN_MULTILAYER": false,
     "CLOCK_PORT": "wb_clk_i",
     "CLOCK_PERIOD": 25,
+    "VERILOG_FILES": [
+        "dir::../../../secworks_aes/src/rtl/*.v",
+        "dir::../../verilog/rtl/aes_wb_wrapper.v"
+    ],
+    "FP_CORE_UTIL": 40,
+    "RT_MAX_LAYER": "met4",
+    "SYNTH_STRATEGY": "DELAY 4",
+    "DEFAULT_CORNER": "max_ss_100C_1v60",
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
     "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
-    "DEFAULT_CORNER": "max_ss_100C_1v60",
-    "PDN_MULTILAYER": false,
-    "FP_CORE_UTIL": 40,
-    "SYNTH_STRATEGY": "DELAY 4",
-    "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
-    "RT_MAX_LAYER": "met4",
-    "PL_WIRE_LENGTH_COEF": 0.05,
-    "DESIGN_REPAIR_MAX_WIRE_LENGTH": 800,
-    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
-    "DESIGN_REPAIR_MAX_CAP_PCT": 30,
-    "PL_RESIZER_HOLD_SLACK_MARGIN": 0.2
+    "IO_PIN_ORDER_CFG": "dir::pin_order.cfg"
 }
 ```
 
@@ -550,10 +496,10 @@ The `checks.rpt` file summarizes the electrical health of the netlist.
 
 ```text
 ===========================================================================
-max slew violation count 181
-Writing metric design__max_slew_violation__count__corner:max_ss_100C_1v60: 181
-max fanout violation count 3
-Writing metric design__max_fanout_violation__count__corner:max_ss_100C_1v60: 3
+max slew violation count 256
+Writing metric design__max_slew_violation__count__corner:max_ss_100C_1v60: 256
+max fanout violation count 0
+Writing metric design__max_fanout_violation__count__corner:max_ss_100C_1v60: 0
 max cap violation count 0
 Writing metric design__max_cap_violation__count__corner:max_ss_100C_1v60: 0
 ============================================================================
@@ -570,16 +516,17 @@ Clock skew is the difference in arrival times of the clock signal at different r
 ===========================================================================
 Clock Skew (Setup)
 ============================================================================
-Writing metric clock__skew__worst_setup__corner:max_ss_100C_1v60: 0.3982001507904955
+Writing metric clock__skew__worst_setup__corner:max_ss_100C_1v60: 0.38285464771012606
 ======================= max_ss_100C_1v60 Corner ===================================
 
 Clock clk
-7.592762 source latency _43761_/CLK ^
--5.939093 target latency _42855_/CLK ^
+7.593835 source latency _43010_/CLK ^
+-5.955407 target latency _43570_/CLK ^
 0.120000 clock uncertainty
--1.375470 CRPR
+-1.375574 CRPR
 --------------
-0.398200 setup skew
+0.382855 setup skew
+
 ```
 
 ```{note}
