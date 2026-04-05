@@ -168,7 +168,7 @@ the same SPI interface.
 Copy the provided RTL file into your project:
 
 ```console
-$ cp project_macro.v ~/openframe_silicon_sprint/verilog/rtl/project_macro.v
+$ gedit ~/openframe_silicon_sprint/verilog/rtl/project_macro.v
 ```
 
 ````{dropdown} project_macro.v
