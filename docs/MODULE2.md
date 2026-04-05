@@ -366,10 +366,9 @@ Launch the OpenROAD GUI for the last completed run:
 ```
 
 ```{tip}
-**Standard cells not visible?** Press `F` to fit the view, or navigate to **Display
-Control → Instances** on the left sidebar and enable the **stdCells** checkbox.
-Also verify that Wishbone interface pins appear clustered along the **South (bottom)**
-edge — confirming that `pin_order.cfg` was applied correctly.
+**Standard cells not visible?** navigate to **Display Control → Instances** on the left
+sidebar and enable the **stdCells** checkbox. Also verify that Wishbone interface pins
+appear clustered along the **South (bottom)** edge — confirming that `pin_order.cfg` was applied correctly.
 ```
 
 The figure below shows the post-{term}`CTS` layout with standard cells placed and
@@ -487,81 +486,244 @@ visualisations in the entire ASIC flow.
 ```
 
 ---
-### **Timing and Design Rule Reports (Post-Placement/CTS)**
 
-After the completion of the `OpenROAD.STAMidPNR-2` step, we analyze several key reports located in `runs/classic_flow/38-openroad-stamidpnr-2/` to verify the health of the design.
+### Timing and Design Rule Reports (Post-CTS)
 
-#### **1. Design Rule Violations (DRVs)**
-The `checks.rpt` file summarizes the electrical health of the netlist. 
+After `OpenROAD.STAMidPNR-2` completes, analyse the reports in
+`runs/classic_flow/38-openroad-stamidpnr-2/` to verify design health before
+routing begins.
+
+---
+
+#### Design Rule Violations (DRVs)
+
+**Location:** `38-openroad-stamidpnr-2/max_ss_100C_1v60/checks.rpt`
 
 ```text
-===========================================================================
 max slew violation count 256
-Writing metric design__max_slew_violation__count__corner:max_ss_100C_1v60: 256
 max fanout violation count 0
-Writing metric design__max_fanout_violation__count__corner:max_ss_100C_1v60: 0
 max cap violation count 0
-Writing metric design__max_cap_violation__count__corner:max_ss_100C_1v60: 0
-============================================================================
-```
-```{note}
-These calculations are currently based on the `max_ss_100C_1v60` corner. While optimizations target this worst-case scenario now, the final Signoff stage will provide results across all corners (PVT variations).
-```
-
-#### **2. Clock Skew Analysis**
-Clock skew is the difference in arrival times of the clock signal at different registers.
-
-* **Setup Skew (`skew.max.rpt`):
-```text
-===========================================================================
-Clock Skew (Setup)
-============================================================================
-Writing metric clock__skew__worst_setup__corner:max_ss_100C_1v60: 0.38285464771012606
-======================= max_ss_100C_1v60 Corner ===================================
-
-Clock clk
-7.593835 source latency _43010_/CLK ^
--5.955407 target latency _43570_/CLK ^
-0.120000 clock uncertainty
--1.375574 CRPR
---------------
-0.382855 setup skew
-
 ```
 
 ```{note}
-In setup analysis, the worst skew is theoretically a negative influence on timing. While the tool may display a positive magnitude based on its specific calculation rule, it represents the margin consumed between source and target latencies.
+All violations are evaluated at the `max_ss_100C_1v60` corner — the worst-case
+combination of slow transistors, high temperature, and low voltage. The 256 remaining
+Max Slew violations are expected at this mid-flow stage; the post-GRT repair pass in
+Module 3 and ECO buffers in Module 4 resolve them before signoff.
 ```
 
-* **Hold Skew (`skew.min.rpt`):
-```text
-===========================================================================
-Clock Skew (Hold)
-============================================================================
-Writing metric clock__skew__worst_hold__corner:max_ss_100C_1v60: -3.2176857644646244
-======================= max_ss_100C_1v60 Corner ===================================
+---
 
-Clock clk
-6.053021 source latency _45282_/CLK ^
--7.601864 target latency _45282_/CLK ^
--0.120000 clock uncertainty
--1.548843 CRPR
---------------
--3.217686 hold skew
-```
-
-#### **3. Slack Analysis**
-Slack indicates the margin by which a timing constraint is met (positive) or violated (negative).
+#### Slack Analysis
 
 | Metric | Report File | Value (ns) |
 | :--- | :--- | :--- |
-| **Worst Slack (Setup)** | `ws.max.rpt` | **0.158** |
-| **Worst Slack (Hold)** | `ws.min.rpt` | **0.897** |
+| Worst Setup Slack | `ws.max.rpt` | **+0.158** |
+| Worst Hold Slack | `ws.min.rpt` | **+0.897** |
 
 ```{note}
-The current hold slack of **0.897 ns** is measured at the "Slow-Slow" (SS) corner. During signoff in "Fast-Fast" (FF) corners—where cells are much faster—this margin will decrease significantly, often dropping near **0.2 ns**.
+The Hold {term}`WNS` of **+0.897 ns** is measured at the Slow-Slow corner. At the
+Fast-Fast corner (`max_ff_n40C_1v95`) — where cells switch faster and hold paths
+become harder to meet — this margin decreases significantly, often approaching
+**+0.1–0.2 ns** at signoff. The post-CTS hold repair pass tightens this further.
 ```
 
+---
+
+#### Clock Skew Analysis
+
+**Location:** `38-openroad-stamidpnr-2/max_ss_100C_1v60/skew.max.rpt`
+
+Clock skew is the difference in arrival time of the clock edge at two different
+flip-flop clock pins, caused by imbalances in the clock tree buffers or their
+physical placement. In setup analysis, the worst case is when the launch clock
+arrives **later** and the capture clock arrives **earlier** — consuming setup margin.
+
+```text
+Clock clk
+ 7.593835   source latency   _43010_/CLK  ^   ← Launch FF (data departs here)
+-5.955407   target latency   _43570_/CLK  ^   ← Capture FF (data must arrive)
+ 0.120000   clock uncertainty
+-1.375574   CRPR
+--------------
+ 0.382855   setup skew
+```
+
+---
+
+##### Calculating Skew — A Worked Example
+
+The numbers in the skew report can be verified by tracing a real timing path. The
+following report shows the complete launch and capture clock paths for a
+register-to-register setup check.
+
+````{dropdown} Timing Path Report — Setup Analysis
+```text
+Startpoint: _42738_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint:   _44942_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type:  max
+
+Fanout         Cap        Slew       Delay        Time   Description
+---------------------------------------------------------------------------------------------
+                                  0.000000    0.000000   clock clk (rise edge)
+                                  5.700000    5.700000   clock source latency
+     1    0.072162    0.610000    0.000000    5.700000 ^ wb_clk_i (in)
+                      0.629538    0.010453    5.710453 ^ clkbuf_0_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_16)
+     4    0.079672    0.152720    0.567149    6.277601 ^ clkbuf_0_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_16)
+                      0.152780    0.003065    6.280666 ^ clkbuf_2_1_0_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_8)
+     8    0.135697    0.363312    0.525664    6.806330 ^ clkbuf_2_1_0_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_8)
+                      0.363338    0.003589    6.809919 ^ clkbuf_5_9__f_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_16)
+     9    0.070258    0.136613    0.440059    7.249978 ^ clkbuf_5_9__f_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_16)
+                      0.136615    0.000813    7.250791 ^ clkbuf_leaf_302_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_8)
+    10    0.026497    0.098846    0.300852    7.551643 ^ clkbuf_leaf_302_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_8)
+                      0.098846    0.000025    7.551668 ^ _42738_/CLK (sky130_fd_sc_hd__dfrtp_2)
+     1    0.002784    0.071394    0.733986    8.285654 ^ _42738_/Q (sky130_fd_sc_hd__dfrtp_2)
+                      0.071394    0.000009    8.285663 ^ fanout1794/A (sky130_fd_sc_hd__clkdlybuf4s25_1)
+     5    0.015919    0.275160    0.652499    8.938162 ^ fanout1794/X (sky130_fd_sc_hd__clkdlybuf4s25_1)
+                      0.275160    0.000074    8.938235 ^ wire1795/A (sky130_fd_sc_hd__clkbuf_4)
+     5    0.036924    0.191644    0.460672    9.398907 ^ wire1795/X (sky130_fd_sc_hd__clkbuf_4)
+...
+                      0.042380    0.000007   24.621771 v _44942_/D (sky130_fd_sc_hd__dfrtp_2)
+                                             24.621771   data arrival time
+
+                                 25.000000   25.000000   clock clk (rise edge)
+                                  4.400000   29.400000   clock source latency
+     1    0.072162    0.610000    0.000000   29.400000 ^ wb_clk_i (in)
+                      0.629538    0.009084   29.409084 ^ clkbuf_0_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_16)
+     4    0.079672    0.152720    0.492943   29.902027 ^ clkbuf_0_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_16)
+                      0.152806    0.003087   29.905113 ^ clkbuf_2_2_0_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_8)
+     8    0.124382    0.337152    0.438025   30.343138 ^ clkbuf_2_2_0_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_8)
+                      0.337194    0.003560   30.346699 ^ clkbuf_5_20__f_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_16)
+    16    0.107587    0.187924    0.410296   30.756994 ^ clkbuf_5_20__f_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_16)
+                      0.187930    0.001226   30.758221 ^ clkbuf_leaf_67_wb_clk_i/A (sky130_fd_sc_hd__clkbuf_8)
+    11    0.027302    0.100911    0.285311   31.043531 ^ clkbuf_leaf_67_wb_clk_i/X (sky130_fd_sc_hd__clkbuf_8)
+                      0.100911    0.000046   31.043577 ^ _44942_/CLK (sky130_fd_sc_hd__dfrtp_2)
+                                 -0.120000   30.923578   clock uncertainty
+                                  1.375574   32.299152   clock reconvergence pessimism
+                                 -0.256838   32.042316   library setup time
+                                             32.042316   data required time
+---------------------------------------------------------------------------------------------
+                                             32.042316   data required time
+                                            -24.621771   data arrival time
+---------------------------------------------------------------------------------------------
+                                              7.420546   slack (MET)
+```
+````
+
+**Step 1 — Launch clock latency** (time from clock source to `_42738_/CLK`):
+
+$$t_{\text{launch}} = 7.551668 \text{ ns}$$
+
+**Step 2 — Capture clock latency** (absolute time to `_44942_/CLK`, minus one clock period to find the insertion delay):
+
+$$t_{\text{capture}} = 31.043577 - 25.000000 = 6.043577 \text{ ns}$$
+
+**Step 3 — Adjustments applied to the capture path:**
+
+| Adjustment | Value (ns) | Direction | Effect on Setup Analysis |
+| :--- | :---: | :--- | :--- |
+| Clock uncertainty | −0.120 | Subtracted from capture | Models worst-case early arrival of capture edge — makes setup harder to meet |
+| CRPR | +1.375574 | Added to capture | Removes artificial pessimism from shared clock path buffers (see below) |
+
+**Step 4 — Skew calculation:**
+
+$$\text{Skew} = t_{\text{capture}} + \text{CRPR} - \text{Uncertainty} - t_{\text{launch}}$$
+
+$$= 6.043577 + 1.375574 - 0.120000 - 7.551668 = \mathbf{-0.252517 \text{ ns}}$$
+
+The negative result confirms that the launch path (`_42738_`) is **slower** than the
+capture path (`_44942_`). Data must therefore travel a longer absolute time to reach
+the endpoint, which is the adverse skew scenario for setup timing.
+
+---
+
+##### Clock Reconvergence Pessimism Removal (CRPR)
+
+The launch and capture clock paths both originate from the same root buffers —
+`clkbuf_0_wb_clk_i` and `clkbuf_2_x_0_wb_clk_i` are visible in both sections of
+the timing report. In worst-case analysis, {term}`STA` independently assumes the
+shared portion of the launch path is **slow** and the shared portion of the capture
+path is **fast** simultaneously — which is physically impossible. A single buffer
+cannot be both fast and slow at the same time.
+
+**CRPR** corrects this by adding back the maximum variation that was double-counted
+on the shared path segment, making the analysis physically realistic.
+
+```{figure} ./figures/CRP.webp
+:align: center
+
+*Clock Reconvergence Pessimism — shared root buffers cannot simultaneously be slow
+for the launch path and fast for the capture path. CRPR credits back the over-counted
+variation, improving setup slack.*
+```
+
+---
+
+#### Non-Default Routing Rules (NDR) for the Clock
+
+OpenROAD can route clock nets using **Non-Default Rules (NDR)** — wider metal tracks
+and increased spacing compared to standard signal wires. Wider, more widely spaced
+clock routes are less susceptible to crosstalk coupling from adjacent signal nets and
+to electromigration effects under high switching currents.
+
+```{figure} ./figures/NDR.png
+:align: center
+
+*Non-Default Routing Rule — clock net routed with 2× width and 2× spacing compared
+to a signal wire, reducing capacitive crosstalk coupling.*
+```
+
+NDRs are defined in `config.json`. The example below defines a rule named `clkndr`
+with doubled width and spacing on Metal 2–4, and applies it to the `wb_clk_i` net:
+
+```json
+"NON_DEFAULT_RULES": {
+    "clkndr": {
+        "width":   "met2 0.28 met3 0.6 met4 0.6",
+        "spacing": "met2 0.28 met3 0.6 met4 0.6",
+        "via": "None"
+    }
+},
+"CTS_APPLY_NDR": "full",
+"DRT_ASSIGN_NDR": {
+    "wb_clk_i": "clkndr"
+}
+```
+
+```{note}
+**This example is for explanation only — it is not used in the workshop configuration.**
+
+The default value of `CTS_APPLY_NDR` is `"half"`, which applies the NDR only to the
+second half of the clock tree (the leaf-level buffers closest to flip-flops). This is
+where crosstalk sensitivity is highest, as leaf wires run near dense logic. The
+`"full"` option extends the rule to the entire tree.
+```
+
+The default metal dimensions for SkyWater 130nm are found in the technology LEF:
+
+```console
+$ cat ~/.ciel/sky130/versions/8afc8346a57fe1ab7934ba5a6056ea8b43078e71/sky130B/\
+libs.ref/sky130_fd_sc_hd/techlef/sky130_fd_sc_hd__nom.tlef
+```
+
+The Metal 2 entry (the default vertical clock routing layer) shows:
+
+```text
+LAYER met2
+  TYPE ROUTING ;
+  DIRECTION VERTICAL ;
+  PITCH 0.46 ;
+  WIDTH 0.14 ;
+  SPACINGTABLE
+     PARALLELRUNLENGTH 0
+     WIDTH 0   0.14
+     WIDTH 3   0.28 ;
+```
+
+The NDR in the example above doubles both the width (`0.14` → `0.28 µm`) and the
+minimum spacing (`0.14` → `0.28 µm`) on Metal 2, providing a 2× crosstalk guard-band
+for the clock net at the cost of consuming twice as many routing tracks on that layer.
 
 ```{glossary}
 I/O
