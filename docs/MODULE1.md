@@ -641,7 +641,24 @@ optimise timing, the best choice is design-specific and cannot be reliably predi
 in advance.
 ```
 
-Ensure you are inside the Nix shell, then run:
+#### Entering the Nix Shell
+
+Before running any LibreLane commands, activate the Nix environment to ensure all EDA
+tools (Yosys, OpenROAD, Magic, etc.) are loaded at the correct versions.
+
+```console
+$ nix-shell --pure ~/librelane/shell.nix
+```
+
+Your prompt will change to `[nix-shell:~]$`, confirming the environment is active.
+
+```{tip}
+Always verify you are inside the Nix shell before invoking `librelane`. Commands
+executed outside the shell may use incompatible system-level tool versions, producing
+non-reproducible results.
+```
+
+Run the following command:
 
 ```console
 [nix-shell:~]$ librelane \
@@ -717,26 +734,7 @@ violations. This is covered in [Section 8.2](#timing-and-electrical-summary).
 
 ---
 
-### 6.3 Entering the Nix Shell
-
-Before running any LibreLane commands, activate the Nix environment to ensure all EDA
-tools (Yosys, OpenROAD, Magic, etc.) are loaded at the correct versions.
-
-```console
-$ nix-shell --pure ~/librelane/shell.nix
-```
-
-Your prompt will change to `[nix-shell:~]$`, confirming the environment is active.
-
-```{tip}
-Always verify you are inside the Nix shell before invoking `librelane`. Commands
-executed outside the shell may use incompatible system-level tool versions, producing
-non-reproducible results.
-```
-
----
-
-### 6.4 Flow Execution
+### 6.3 Flow Execution
 
 Execute the following command. The `--to` flag halts the flow after
 `Odb.AddRoutingObstructions` — the final step of the Power Network phase, which prepares
@@ -751,7 +749,7 @@ the design for placement in Module 2.
 
 ---
 
-### 6.5 Output Directory Structure
+### 6.4 Output Directory Structure
 
 Upon execution, LibreLane generates a structured run directory inside `runs/`. Each stage
 is captured in a numbered subdirectory, providing full traceability of every design
