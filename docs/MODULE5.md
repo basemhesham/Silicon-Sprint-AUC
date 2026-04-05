@@ -488,9 +488,7 @@ functional correctness but represent a known limitation of the current implement
 
 To inspect the specific violating pins, open:
 
-```text
 runs/project_wrapper/XX-openroad-stapostpnr/max_ss_100C_1v60/checks.rpt
-```
 ```
 
 ---
