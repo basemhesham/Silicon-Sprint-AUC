@@ -293,6 +293,9 @@ Your complete `config.json` should now read:
     "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "IO_PIN_ORDER_CFG": "dir::pin_order.cfg",
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 30,
+
     "GRT_ANTENNA_REPAIR_ITERS": 10,
     "GRT_ANTENNA_REPAIR_MARGIN": 15,
      "DIODE_ON_PORTS": "both"
