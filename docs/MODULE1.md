@@ -579,6 +579,7 @@ additional area around the core perimeter.
 | | `PDN_HPITCH` | **153.18 µm** | Y-axis pitch. |
 
 For further reading, refer to the [LibreLane PDN documentation](https://librelane.readthedocs.io/en/stable/usage/pdn.html).
+
 ---
 
 ## 5. The `librelane` Command Syntax
