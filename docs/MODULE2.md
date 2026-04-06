@@ -703,10 +703,9 @@ with doubled width and spacing on Metal 2–4, and applies it to the `wb_clk_i` 
 ```{note}
 **This example is for explanation only — it is not used in the workshop configuration.**
 
-The default value of `CTS_APPLY_NDR` is `"half"`, which applies the NDR only to the
-second half of the clock tree (the leaf-level buffers closest to flip-flops). This is
-where crosstalk sensitivity is highest, as leaf wires run near dense logic. The
-`"full"` option extends the rule to the entire tree.
+The default value of CTS_APPLY_NDR is "half", which applies the 2X spacing NDR to clock nets except for the leaf-level nets
+This strategy protects the main branches of the clock tree from crosstalk while preventing routing congestion near the dense
+logic where leaf wires reside. The "full" option extends the rule to the entire tree, including the leaves
 ```
 
 The default metal dimensions for SkyWater 130nm are found in the technology LEF:
