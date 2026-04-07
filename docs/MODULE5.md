@@ -458,37 +458,17 @@ introduced at the wrapper level:
 ┃                      ┃ Worst    ┃ Reg      ┃          ┃ Hold Vio ┃ reg to    ┃ Worst    ┃ Reg to    ┃ Setup    ┃ Setup Vio ┃ reg to   ┃ Max Cap   ┃ Max Slew ┃
 ┃ Corner/Group         ┃ Slack    ┃ Paths    ┃ Hold TNS ┃ Count    ┃ reg       ┃ Slack    ┃ Reg Paths ┃ TNS      ┃ Count     ┃ reg      ┃ Violatio… ┃ Violati… ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
-│ Overall              │ 0.0068   │ 0.0068   │ 0.0000   │ 0        │ 0         │ 3.7165   │ 4.4084    │ 0.0000   │ 0         │ 0        │ 1         │ 11       │
-│ nom_tt_025C_1v80     │ 0.1510   │ 0.1510   │ 0.0000   │ 0        │ 0         │ 8.8029   │ 14.5253   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ nom_ss_100C_1v60     │ 0.5607   │ 0.5607   │ 0.0000   │ 0        │ 0         │ 3.9078   │ 4.9941    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ nom_ff_n40C_1v95     │ 0.0076   │ 0.0076   │ 0.0000   │ 0        │ 0         │ 9.6207   │ 18.0993   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_tt_025C_1v80     │ 0.1500   │ 0.1500   │ 0.0000   │ 0        │ 0         │ 8.9049   │ 14.9589   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_ss_100C_1v60     │ 0.5589   │ 0.5589   │ 0.0000   │ 0        │ 0         │ 4.1683   │ 5.5905    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ min_ff_n40C_1v95     │ 0.0068   │ 0.0068   │ 0.0000   │ 0        │ 0         │ 9.6906   │ 18.4544   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_tt_025C_1v80     │ 0.1522   │ 0.1522   │ 0.0000   │ 0        │ 0         │ 8.7121   │ 14.0229   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
-│ max_ss_100C_1v60     │ 0.5627   │ 0.5627   │ 0.0000   │ 0        │ 0         │ 3.7165   │ 4.4084    │ 0.0000   │ 0         │ 0        │ 1         │ 11       │
-│ max_ff_n40C_1v95     │ 0.0086   │ 0.0086   │ 0.0000   │ 0        │ 0         │ 9.5575   │ 17.7586   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ Overall              │ -0.0080  │ -0.0080  │ -0.0080  │ 3        │ 3         │ 2.1031   │ 2.1031    │ 0.0000   │ 0         │ 0        │ 1         │ 2        │
+│ nom_tt_025C_1v80     │ 0.1376   │ 0.1376   │ 0.0000   │ 0        │ 0         │ 8.4844   │ 13.3835   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ nom_ss_100C_1v60     │ 0.5444   │ 0.5444   │ 0.0000   │ 0        │ 0         │ 2.5754   │ 2.5754    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ nom_ff_n40C_1v95     │ -0.0071  │ -0.0071  │ -0.0071  │ 1        │ 1         │ 9.4299   │ 17.4713   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_tt_025C_1v80     │ 0.1363   │ 0.1363   │ 0.0000   │ 0        │ 0         │ 8.6085   │ 13.6543   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_ss_100C_1v60     │ 0.5424   │ 0.5424   │ 0.0000   │ 0        │ 0         │ 3.0669   │ 3.0669    │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ min_ff_n40C_1v95     │ -0.0080  │ -0.0080  │ -0.0080  │ 1        │ 1         │ 9.5112   │ 17.7108   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_tt_025C_1v80     │ 0.1388   │ 0.1388   │ 0.0000   │ 0        │ 0         │ 8.3850   │ 13.1143   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
+│ max_ss_100C_1v60     │ 0.5464   │ 0.5464   │ 0.0000   │ 0        │ 0         │ 2.1031   │ 2.1031    │ 0.0000   │ 0         │ 0        │ 1         │ 2        │
+│ max_ff_n40C_1v95     │ -0.0062  │ -0.0062  │ -0.0062  │ 1        │ 1         │ 9.3610   │ 17.2354   │ 0.0000   │ 0         │ 0        │ 0         │ 0        │
 └──────────────────────┴──────────┴──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
-```
-
-```{admonition} Interpreting the Results
-:class: tip
-
-**Hold violations: none.** All 9 corners show positive Hold {term}`WNS`, confirming
-hold timing is clean end-to-end after integration.
-
-**Setup timing: clean.** Zero Setup violation count across all corners. The 40 MHz
-target is met at the wrapper level.
-
-**Max Slew (11) and Max Cap (1) in `max_ss_100C_1v60`:** These violations are
-inherited from the `aes_wb_wrapper` macro's interface pins. They were present in the
-macro's standalone STA and were not fully resolved because they originate on internal
-nets that are not accessible for ECO repair at the wrapper level. They do not affect
-functional correctness but represent a known limitation of the current implementation.
-
-To inspect the specific violating pins, open:
-
-runs/project_wrapper/XX-openroad-stapostpnr/max_ss_100C_1v60/checks.rpt
 ```
 
 ---
