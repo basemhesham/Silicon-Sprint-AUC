@@ -555,8 +555,7 @@ to your `config.json`:
 
     "GRT_ANTENNA_REPAIR_ITERS": 10,
     "GRT_ANTENNA_REPAIR_MARGIN": 15,
-     "DIODE_ON_PORTS": "both",
-     
+     "DIODE_ON_PORTS": "in",
      
       "meta": {
         "flow": "Classic",
@@ -568,23 +567,23 @@ to your `config.json`:
 
     "INSERT_ECO_BUFFERS": [
         { "target": "wire640/A",          "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_32342_/Y",  "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_32342_/Y",          "buffer": "sky130_fd_sc_hd__buf_4" },
         { "target": "wire815/A",          "buffer": "sky130_fd_sc_hd__buf_4" },
         { "target": "_31400_/Y",          "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "fanout1989/A",          "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_21421_/S1",  "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "fanout1989/A",       "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_21421_/S1",           "buffer": "sky130_fd_sc_hd__buf_4" },
         { "target": "_23566_/S1",          "buffer": "sky130_fd_sc_hd__buf_4" },
         { "target": "_23576_/S1",          "buffer": "sky130_fd_sc_hd__buf_4" },
         { "target": "_31836_/A1",          "buffer": "sky130_fd_sc_hd__buf_4" },
         { "target": "_33183_/A1",          "buffer": "sky130_fd_sc_hd__buf_4" },
         
         { "target": "_45051_/Q",          "buffer": "sky130_fd_sc_hd__buf_4" },
-        { "target": "_45051_/Q",          "buffer": "sky130_fd_sc_hd__buf_4" }   
+        { "target": "_45051_/Q",          "buffer": "sky130_fd_sc_hd__buf_4" },   
+        { "target": "_42587_/Q",          "buffer": "sky130_fd_sc_hd__buf_4" },
+        { "target": "_42587_/Q",          "buffer": "sky130_fd_sc_hd__buf_4" }   
         
     ]
 }
-
-
 ```
 
 ---
