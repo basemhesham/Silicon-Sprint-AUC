@@ -68,7 +68,7 @@ The RTL wrapper connects the Caravel-provided Wishbone and GPIO signals to the
 `aes_wb_wrapper` macro, instantiated as `mprj`. Copy the file into your project:
 
 ```console
-$ cp user_project_wrapper.v ~/Silicon-Sprint-AUC/verilog/rtl/user_project_wrapper.v
+$ gedit ~/Silicon-Sprint-AUC/verilog/rtl/user_project_wrapper.v
 ```
 
 ````{dropdown} user_project_wrapper.v
