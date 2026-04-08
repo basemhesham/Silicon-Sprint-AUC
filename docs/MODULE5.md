@@ -547,10 +547,10 @@ flow for the AES accelerator as a Caravel user project.
 ```{admonition} Congratulations!
 :class: tip
 
-You have successfully hardened an AES-128 accelerator as a Caravel User Project —
+You have successfully hardened an AES-128 accelerator as a user project wrapper —
 from RTL through synthesis, floorplanning, placement, routing, physical signoff, and
-wrapper integration. The final `user_project_wrapper.gds` is a tape-out ready GDSII
-file.
+wrapper integration. The final `user_project_wrapper.gds` the latter of which will be
+integrated into the Caravel harness.
 ```
 
 ---
