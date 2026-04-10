@@ -1000,9 +1000,8 @@ If the flow crashes during the parasitic extraction (OpenROAD.RCX) step, add the
 following line to config.json and re-run. This forces single-threaded STA — slower
 but reliable when multi-thread STA causes memory or scheduling failures:
 
-     ```json
-    "STA_THREADS": 1
-     ```
+ "STA_THREADS": 1
+
 ```
 
 ---
