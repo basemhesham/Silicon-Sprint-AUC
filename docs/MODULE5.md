@@ -207,6 +207,7 @@ Paste the following complete configuration:
     "PDN_CORE_RING_VSPACING": 1.7,
     "PDN_CORE_RING_HSPACING": 1.7,
     "CLOCK_PORT": "wb_clk_i",
+    "PNR_SDC_FILE": "dir::signoff.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "MAGIC_DEF_LABELS": 0,
     "CLOCK_PERIOD": 25,
