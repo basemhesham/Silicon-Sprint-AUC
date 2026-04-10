@@ -1097,16 +1097,14 @@ flow default — they do not need to be explicitly written in `config.json`).
         "dir::../../verilog/rtl/user_project_wrapper.v"
     ],
 
-    "SYNTH_ELABORATE_ONLY": false,
-    "RUN_POST_GPL_DESIGN_REPAIR": true,
-    "RUN_POST_CTS_RESIZER_TIMING": true,
-    "DESIGN_REPAIR_BUFFER_INPUT_PORTS": true,
-    "PDN_ENABLE_RAILS": true,
-    "RUN_ANTENNA_REPAIR": true,
-    "RUN_FILL_INSERTION": true,
-    "RUN_TAP_ENDCAP_INSERTION": true,
-    "RUN_CTS": true,
-    "RUN_IRDROP_REPORT": true,
+     "SYNTH_STRATEGY": "DELAY 4",
+    "DEFAULT_CORNER": "max_tt_025C_1v80",
+    "DESIGN_REPAIR_MAX_SLEW_PCT": 30,
+    "DESIGN_REPAIR_MAX_CAP_PCT": 30,
+
+    "GRT_ANTENNA_REPAIR_ITERS": 10,
+    "GRT_ANTENNA_REPAIR_MARGIN": 15,
+    
     "VSRC_LOC_FILES": {
         "vccd1": "dir::vsrc/upw_vccd1_vsrc.loc",
         "vssd1": "dir::vsrc/upw_vssd1_vsrc.loc"
@@ -1121,11 +1119,8 @@ flow default — they do not need to be explicitly written in `config.json`).
     "PDN_VPITCH": 180,
     "PDN_HPITCH": 180,
     "ERROR_ON_PDN_VIOLATIONS": false,
-    "MAGIC_DRC_USE_GDS": true,
-    "MAX_TRANSITION_CONSTRAINT": 1.5,
-    "DEFAULT_CORNER": "max_tt_025C_1v80",
-    "RUN_POST_GRT_DESIGN_REPAIR": true,
-    "RUN_POST_GRT_RESIZER_TIMING": true,
+
+
 
     "//": "Fixed configurations for Caravel — do NOT edit below this line",
     "DESIGN_NAME": "user_project_wrapper",
