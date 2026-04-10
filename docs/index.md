@@ -37,7 +37,7 @@ MODULE2
 MODULE3
 MODULE4
 MODULE5
-
+MODULE6
 ```
 ---
 ::::{grid} 1 1 2 2
@@ -105,6 +105,14 @@ Hardening the aes core with the Wishbone wrapper as a macro
 +++
 *completed full physical signoff in
 Module 4 and that the `classic_flow_eco`*
+:::
+
+:::{grid-item-card}  Module 6 — OpenFrame Multi-Project Chip
+:link: MODULE6
+:link-type: doc
+
+Hardening Your Design for the OpenFrame Multi-Project Chip
+
 :::
 ::::
 
