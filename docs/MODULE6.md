@@ -101,9 +101,9 @@ design from being integrated.
 ```{admonition} Fixed-Budget Chip Resources
 :class: warning
 
-The die area is fixed. Power domains, I/O pads, clock domains, and layer usage must
-all be budgeted up front across every participating macro. You share the chip with up to
-11 other students — your choices affect everyone.
+The die area is fixed. Power, I/O pads, clock, and layer usage must all be budgeted
+up front across every participating macro. You share the chip with up to 11 other
+students — your choices affect everyone.
 ```
 
 ### What You Must Follow
