@@ -86,6 +86,9 @@ The orange muxes, green macro, purple routing macros, and scan controller are al
 **pre-hardened fixed infrastructure**. You do not touch them. Your responsibility is
 to harden your own `project_macro` to the correct footprint and submit the {term}`GDSII`.
 
+For a deeper understanding of the system architecture and the multiproject environment, please refer to the following resource:
+
+* **OpenFrame Multiproject Documentation:** [Caravel OpenFrame MPC Overview](https://github.com/basemhesham/openframe_multiproject/blob/main/Caravel_OF_MPC.md)
 ---
 
 ## 3. Design Rules and Integration Contract
@@ -113,7 +116,7 @@ all be budgeted up front across every participating macro. You share the chip wi
 | **Routing layer cap** | Use `RT_MAX_LAYER: "met4"`. | Same reason as above — Metal 5 must remain clear for the wrapper's power straps to pass through. |
 | **Power domain** | Use `vccd1` and `vssd1` only. | The slot's power is connected by the top-level wrapper. You declare the nets; the top level provides the connections. |
 | **Clock port** | Use port name `clk`. | The green macro drives `clk` by name to every project slot. |
-| **Timing constraints** | Use the provided `pnr.sdc` and `signoff.sdc`. | These encode the measured electrical delays through the orange and green macros. |
+| **Timing constraints** | Use the The Retrieved Constraints part. | These encode the measured electrical delays through openframe. |
 
 ```{note}
 If you use `PDN_CORE_RING: true` or allow Metal 5 routes, the resulting obstructions
