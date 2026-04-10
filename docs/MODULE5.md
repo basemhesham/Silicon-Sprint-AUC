@@ -126,7 +126,6 @@ $ gedit ~/Silicon-Sprint-AUC/verilog/rtl/user_project_wrapper.v
 ````{dropdown} user_project_wrapper.v
 ```{literalinclude} ./code/user_project_wrapper.v
 :language: verilog
-:linenos:
 ```
 ````
 
