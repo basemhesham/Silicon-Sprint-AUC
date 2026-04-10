@@ -75,7 +75,7 @@ and how much control you need over the top-level physical implementation.
 ::::{grid} 3
 
 :::{grid-item-card} Strategy 1 — Macro-First Hardening
-```{figure} ./figures/strategy_macro_first.png
+```{figure} ./figures/strategy_macro_first.webp
 :align: center
 ```
 Harden the user IP as a standalone macro first, then drop it into the wrapper without
@@ -84,7 +84,7 @@ small-to-medium designs — fastest runtime and simplest flow.
 :::
 
 :::{grid-item-card} Strategy 2 — Top-Level Integration
-```{figure} ./figures/strategy_top_level.png
+```{figure} ./figures/strategy_top_level.webp
 :align: center
 ```
 Harden the macro first, then integrate it into the wrapper **with** top-level standard
@@ -93,7 +93,7 @@ approach useful when the macro has boundary violations that require top-level fi
 :::
 
 :::{grid-item-card} Strategy 3 — Full-Wrapper Flattening
-```{figure} ./figures/strategy_flattening.png
+```{figure} ./figures/strategy_flattening.webp
 :align: center
 ```
 Merge all RTL — AES core, wrapper, and everything else — into one large flattened
@@ -876,12 +876,12 @@ The key change from Strategy 1 is that all disabled flags are now set to `true`,
 {
     "QUIT_ON_SYNTH_CHECKS": false,
 
+    "//": "Design files",
     "VERILOG_FILES": [
         "dir::../../verilog/rtl/defines.v",
         "dir::../../verilog/rtl/user_project_wrapper.v"
     ],
-    "PNR_SDC_FILE": "dir::pnr.sdc",
-
+    
     "SYNTH_ELABORATE_ONLY": false,
     "RUN_POST_GPL_DESIGN_REPAIR": true,
     "RUN_POST_CTS_RESIZER_TIMING": true,
@@ -893,27 +893,43 @@ The key change from Strategy 1 is that all disabled flags are now set to `true`,
     "RUN_CTS": true,
     "RUN_IRDROP_REPORT": false,
 
+    "//": "Macros configurations",
     "MACROS": {
         "aes_wb_wrapper": {
-            "gds":  ["dir::../../gds/aes_wb_wrapper.gds"],
-            "lef":  ["dir::../../lef/aes_wb_wrapper.lef"],
+            "gds": [
+                "dir::../../gds/aes_wb_wrapper.gds"
+            ],
+            "lef": [
+                "dir::../../lef/aes_wb_wrapper.lef"
+            ],
             "instances": {
                 "mprj": {
                     "location": [100, 100],
                     "orientation": "N"
                 }
             },
-            "nl":   ["dir::../../verilog/gl/aes_wb_wrapper.v"],
+            "nl": [
+                "dir::../../verilog/gl/aes_wb_wrapper.v"
+            ],
             "spef": {
-                "min_*": ["dir::../../spef/multicorner/aes_wb_wrapper.min.spef"],
-                "nom_*": ["dir::../../spef/multicorner/aes_wb_wrapper.nom.spef"],
-                "max_*": ["dir::../../spef/multicorner/aes_wb_wrapper.max.spef"]
+                "min_*": [
+                    "dir::../../spef/multicorner/aes_wb_wrapper.min.spef"
+                ],
+                "nom_*": [
+                    "dir::../../spef/multicorner/aes_wb_wrapper.nom.spef"
+                ],
+                "max_*": [
+                    "dir::../../spef/multicorner/aes_wb_wrapper.max.spef"
+                ]
             },
-            "lib":  {"*": "dir::../../lib/aes_wb_wrapper.lib"}
+            "lib": {
+                "*": "dir::../../lib/aes_wb_wrapper.lib"
+            }
         }
     },
     "PDN_MACRO_CONNECTIONS": ["mprj vccd2 vssd2 VPWR VGND"],
 
+    "//": "PDN configurations",
     "PDN_VOFFSET": 5,
     "PDN_HOFFSET": 5,
     "PDN_VWIDTH": 3.1,
@@ -923,15 +939,29 @@ The key change from Strategy 1 is that all disabled flags are now set to `true`,
     "PDN_VPITCH": 180,
     "PDN_HPITCH": 180,
     "QUIT_ON_PDN_VIOLATIONS": false,
-    "MAGIC_DRC_USE_GDS": true,
 
-    "//": "Fixed configurations for Caravel — do NOT edit below this line",
+    "//": "Magic variables",
+    "MAGIC_DRC_USE_GDS": true,
+    
+    "MAX_TRANSITION_CONSTRAINT": 1.5,
+
+    "//": "Fixed configurations for caravel. You should NOT edit this section",
     "DESIGN_NAME": "user_project_wrapper",
     "FP_SIZING": "absolute",
     "DIE_AREA": [0, 0, 2920, 3520],
     "FP_DEF_TEMPLATE": "dir::fixed_dont_change/user_project_wrapper.def",
-    "VDD_NETS": ["vccd1", "vccd2", "vdda1", "vdda2"],
-    "GND_NETS": ["vssd1", "vssd2", "vssa1", "vssa2"],
+    "VDD_NETS": [
+        "vccd1",
+        "vccd2",
+        "vdda1",
+        "vdda2"
+    ],
+    "GND_NETS": [
+        "vssd1",
+        "vssd2",
+        "vssa1",
+        "vssa2"
+    ],
     "PDN_CORE_RING": 1,
     "PDN_CORE_RING_VWIDTH": 3.1,
     "PDN_CORE_RING_HWIDTH": 3.1,
@@ -940,6 +970,7 @@ The key change from Strategy 1 is that all disabled flags are now set to `true`,
     "PDN_CORE_RING_VSPACING": 1.7,
     "PDN_CORE_RING_HSPACING": 1.7,
     "CLOCK_PORT": "wb_clk_i",
+    "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "MAGIC_DEF_LABELS": 0,
     "CLOCK_PERIOD": 25,
@@ -1042,6 +1073,11 @@ assign user_irq    = 3'b0;
 ```{warning}
 While these tie-offs are mandatory for Full-Wrapper Flattening prevent Yosys synthesis errors
 ,they must be removed if you switch back to the Macro-First Hardening strategy.
+
+In Macro-First mode, the tool expects the wrapper to be a pure elaboration frame for the pre-hardened macro.
+If these assign statements are present, Yosys preserves them in the synthesized gate-level netlist (.nl.v).
+This triggers the Netlist Assign Statement Checker (Stage 9), which is designed to raise a StepError and terminate
+the flow because assign statements are known to cause bugs in physical design (PnR) tools
 ```
 
 ---
@@ -1060,7 +1096,6 @@ flow default — they do not need to be explicitly written in `config.json`).
         "dir::../../verilog/rtl/defines.v",
         "dir::../../verilog/rtl/user_project_wrapper.v"
     ],
-    "PNR_SDC_FILE": "dir::pnr.sdc",
 
     "SYNTH_ELABORATE_ONLY": false,
     "RUN_POST_GPL_DESIGN_REPAIR": true,
@@ -1107,6 +1142,7 @@ flow default — they do not need to be explicitly written in `config.json`).
     "PDN_CORE_RING_VSPACING": 1.7,
     "PDN_CORE_RING_HSPACING": 1.7,
     "CLOCK_PORT": "wb_clk_i",
+    "PNR_SDC_FILE": "dir::pnr.sdc",
     "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
     "MAGIC_DEF_LABELS": 0,
     "CLOCK_PERIOD": 25,
@@ -1120,6 +1156,13 @@ This is especially important in the flattening strategy because the full design 
 the entire wrapper area and IR drop hotspots are more likely to occur at points far
 from the power ring. The `.loc` files define where the {term}`PDN` voltage sources are
 injected for the `OpenROAD.IRDropReport` simulation.
+```
+### 4.3 Running the Flow (Top-Level)
+
+```console
+[nix-shell:~]$ librelane \
+    ~/Silicon-Sprint-AUC/openlane/user_project_wrapper/config.json \
+    --run-tag flatten
 ```
 
 ---
