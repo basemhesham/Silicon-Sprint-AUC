@@ -3,6 +3,8 @@
 //
 // secworks/aes top-level ports:
 //   clk, reset_n, cs, we, address[7:0], write_data[31:0], read_data[31:0]
+//   NOTE: There is NO interrupt port. The AES "ready" status is a bit inside
+//   the read_data register at address 0x09. The host must poll it.
 //
 // SPI protocol (MSB-first, 42-bit frame, CPOL=0 CPHA=0):
 //   Bit[41]   : R/nW  (1=read, 0=write)
@@ -134,9 +136,13 @@ module project_macro (
     end
 
     // ----------------------------------------------------------------
-    // AES core instantiation
+    // AES core instantiation (secworks/aes — no interrupt port)
     // ----------------------------------------------------------------
     aes u_aes (
+`ifdef USE_POWER_PINS
+        .vccd1      (vccd1),
+        .vssd1      (vssd1),
+`endif
         .clk        (clk),
         .reset_n    (reset_n),
         .cs         (aes_cs),
