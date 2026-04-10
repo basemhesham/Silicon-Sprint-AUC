@@ -1,27 +1,36 @@
 // SPDX-License-Identifier: Apache-2.0
-// project_macro — AES-128 via 4-wire SPI interface
+// project_macro — User design sandbox
 //
-// secworks/aes top-level ports:
-//   clk, reset_n, cs, we, address[7:0], write_data[31:0], read_data[31:0]
-//   NOTE: There is NO interrupt port. The AES "ready" status is a bit inside
-//   the read_data register at address 0x09. The host must poll it.
+// Port mapping by physical edge:
+//   Left:   clk, reset_n (from green macro)
+//   Bottom: 15 GPIOs (-> bottom orange -> Caravel right pads)
+//   Right:  9 GPIOs  (-> right orange  -> Caravel top pads)
+//   Top:    14 GPIOs  (-> top orange    -> Caravel left pads)
 //
-// SPI protocol (MSB-first, 42-bit frame, CPOL=0 CPHA=0):
-//   Bit[41]   : R/nW  (1=read, 0=write)
-//   Bit[40:33]: address[7:0]
-//   Bit[32:1] : write_data[31:0] (ignored on reads)
-//   Bit[0]    : padding
+// Total usable GPIOs: 15 + 9 + 14 = 38
+// All outputs have safe default tie-offs. Users replace them with their logic.
 //
-//   On a read, MISO shifts out read_data[31:0] MSB-first starting one
-//   clock after the address has been decoded (bit 9 of the frame).
+// GPIO Signal Reference:
+//   gpio_*_out : Data driven onto the pad (active when oeb=0)
+//   gpio_*_oeb : Output Enable Bar (0=output, 1=input/Hi-Z)
+//   gpio_*_in  : Data sampled from the pad (always available)
+//   gpio_*_dm  : Drive Mode, 3 bits per pad [dm2, dm1, dm0]
 //
-// GPIO assignment:
-//   gpio_bot_in[0]  = spi_sclk    (from host)
-//   gpio_bot_in[1]  = spi_cs_n    (from host, active low)
-//   gpio_bot_in[2]  = spi_mosi    (from host)
-//   gpio_bot_out[0] = spi_miso    (to host)
-//   gpio_bot_out[14:1] = 14'b0    (unused, driven low)
-//   All right and top GPIOs: unused inputs
+// Drive Mode (dm[2:0]) — Sky130 OpenFrame GPIO Pad Modes:
+//   3'b000 : High-Z / Analog mode (pad completely disconnected)
+//   3'b001 : Input only, no pull resistor
+//   3'b010 : Input with weak pull-down (~50kΩ to VSS)
+//   3'b011 : Input with weak pull-up   (~50kΩ to VDD)
+//   3'b100 : Slow-slew output (reduced dI/dt for noise-sensitive signals)
+//   3'b101 : Slow-slew output with open-drain (external pull-up required)
+//   3'b110 : Strong digital push-pull output (DEFAULT — standard digital I/O)
+//   3'b111 : Strong digital output with weak pull-up
+//
+// Note: oeb controls the output driver gate. dm configures the pad cell itself.
+//   - For pure input:  oeb=1, dm=3'b001 (or 3'b010/011 for pull-down/up)
+//   - For push-pull:   oeb=0, dm=3'b110
+//   - For open-drain:  oeb=0, dm=3'b101 (needs external pull-up)
+//   - For analog:      oeb=1, dm=3'b000 (bypasses digital buffers entirely)
 
 `default_nettype none
 
@@ -30,143 +39,53 @@ module project_macro (
     inout vccd1,
     inout vssd1,
 `endif
+    // From green macro (left edge)
     input  wire        clk,
     input  wire        reset_n,
     input  wire        por_n,
+
+    // Bottom GPIOs (15) -> Caravel right pads via bottom orange chain
     input  wire [14:0] gpio_bot_in,
     output wire [14:0] gpio_bot_out,
     output wire [14:0] gpio_bot_oeb,
     output wire [44:0] gpio_bot_dm,
+
+    // Right GPIOs (9) -> Caravel top pads via right orange chain
     input  wire [8:0]  gpio_rt_in,
     output wire [8:0]  gpio_rt_out,
     output wire [8:0]  gpio_rt_oeb,
     output wire [26:0] gpio_rt_dm,
+
+    // Top GPIOs (14) -> Caravel left pads via top orange chain
     input  wire [13:0] gpio_top_in,
     output wire [13:0] gpio_top_out,
     output wire [13:0] gpio_top_oeb,
     output wire [41:0] gpio_top_dm
 );
 
-    // ----------------------------------------------------------------
-    // SPI signal extraction
-    // ----------------------------------------------------------------
-    wire spi_sclk = gpio_bot_in[0];
-    wire spi_cs_n = gpio_bot_in[1];
-    wire spi_mosi = gpio_bot_in[2];
+    // ============================================================
+    // USER LOGIC GOES HERE — Replace the safe tie-offs below
+    // ============================================================
 
-    // ----------------------------------------------------------------
-    // SPI-to-AES bridge
-    // ----------------------------------------------------------------
-    reg  [5:0]  bit_cnt;
-    reg  [41:0] shift_in;
-    reg  [31:0] shift_out;
-    reg          spi_sclk_r;
+    // Safe defaults: all pads configured as inputs (oeb=1) driving zero.
+    // Even if accidentally enabled, outputs are low — no floating or
+    // contention risk. dm=3'b110 (strong push-pull) is chosen so that
+    // when a project IS selected, its pads are ready for digital I/O
+    // without needing to reconfigure dm via the scan chain.
 
-    // AES register-file drive signals
-    reg          aes_cs;
-    reg          aes_we;
-    reg  [7:0]   aes_addr;
-    reg  [31:0]  aes_wdata;
+    // Bottom: 15 GPIOs, all input
+    assign gpio_bot_out = 15'b0;
+    assign gpio_bot_oeb = {15{1'b1}};
 
-    wire [31:0]  aes_rdata;
+    // Right: 9 GPIOs, all input
+    assign gpio_rt_out = 9'b0;
+    assign gpio_rt_oeb = {9{1'b1}};
 
-    wire sclk_posedge = spi_sclk  & ~spi_sclk_r;
-    wire sclk_negedge = ~spi_sclk &  spi_sclk_r;
+    // Top: 14 GPIOs, all input
+    assign gpio_top_out = 14'b0;
+    assign gpio_top_oeb = {14{1'b1}};
 
-    always @(posedge clk or negedge reset_n) begin
-        if (!reset_n) begin
-            bit_cnt    <= 6'd0;
-            shift_in   <= 42'd0;
-            shift_out  <= 32'd0;
-            spi_sclk_r <= 1'b0;
-            aes_cs     <= 1'b0;
-            aes_we     <= 1'b0;
-            aes_addr   <= 8'd0;
-            aes_wdata  <= 32'd0;
-        end else begin
-            spi_sclk_r <= spi_sclk;
-            aes_cs     <= 1'b0;
-            aes_we     <= 1'b0;
-
-            if (spi_cs_n) begin
-                // Deselected — reset frame state
-                bit_cnt  <= 6'd0;
-                shift_in <= 42'd0;
-            end else begin
-                // ---- Sample MOSI on rising SCLK ----
-                if (sclk_posedge) begin
-                    shift_in <= {shift_in[40:0], spi_mosi};
-                    bit_cnt  <= bit_cnt + 6'd1;
-
-                    // After 9 clocks the R/nW + address are available.
-                    // Immediately issue the AES read cycle so read_data
-                    // is ready to load into shift_out on the next negedge.
-                    if (bit_cnt == 6'd8) begin
-                        if (shift_in[40]) begin          // R/nW = 1 → read
-                            aes_cs   <= 1'b1;
-                            aes_we   <= 1'b0;
-                            aes_addr <= shift_in[39:32];
-                        end
-                    end
-
-                    // Full 42-bit frame received
-                    if (bit_cnt == 6'd41) begin
-                        if (!shift_in[41]) begin         // R/nW = 0 → write
-                            aes_cs    <= 1'b1;
-                            aes_we    <= 1'b1;
-                            aes_addr  <= shift_in[40:33];
-                            aes_wdata <= shift_in[32:1];
-                        end
-                        bit_cnt  <= 6'd0;
-                        shift_in <= 42'd0;
-                    end
-                end
-
-                // ---- Shift MISO out on falling SCLK ----
-                if (sclk_negedge) begin
-                    if (bit_cnt == 6'd9 && shift_in[40]) begin
-                        // Latch read_data after address is decoded
-                        shift_out <= aes_rdata;
-                    end else begin
-                        shift_out <= {shift_out[30:0], 1'b0};
-                    end
-                end
-            end
-        end
-    end
-
-    // ----------------------------------------------------------------
-    // AES core instantiation (secworks/aes — no interrupt port)
-    // ----------------------------------------------------------------
-    aes u_aes (
-`ifdef USE_POWER_PINS
-        .vccd1      (vccd1),
-        .vssd1      (vssd1),
-`endif
-        .clk        (clk),
-        .reset_n    (reset_n),
-        .cs         (aes_cs),
-        .we         (aes_we),
-        .address    (aes_addr),
-        .write_data (aes_wdata),
-        .read_data  (aes_rdata)
-    );
-
-    // ----------------------------------------------------------------
-    // GPIO output assignments
-    // gpio_bot_out[0] = MISO (output)
-    // gpio_bot_out[14:1] = low (unused)
-    // ----------------------------------------------------------------
-    assign gpio_bot_out    = {14'b0, shift_out[31]};
-    assign gpio_bot_oeb    = {14'hFFFF, 1'b0};   // [0]=output, [14:1]=input
-
-    // Right and top: all safe inputs, driven low
-    assign gpio_rt_out     = 9'b0;
-    assign gpio_rt_oeb     = {9{1'b1}};
-    assign gpio_top_out    = 14'b0;
-    assign gpio_top_oeb    = {14{1'b1}};
-
-    // Drive modes — strong push-pull for all pads
+    // Drive mode: 3'b110 = strong digital push-pull (see mode table above)
     genvar i;
     generate
         for (i = 0; i < 15; i = i + 1) begin : gen_bot_dm
