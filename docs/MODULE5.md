@@ -147,7 +147,6 @@ Paste the following complete configuration:
         "dir::../../verilog/rtl/defines.v",
         "dir::../../verilog/rtl/user_project_wrapper.v"
     ],
-    "PNR_SDC_FILE": "dir::signoff.sdc",
 
     "SYNTH_ELABORATE_ONLY": true,
     "RUN_POST_GPL_DESIGN_REPAIR": false,
