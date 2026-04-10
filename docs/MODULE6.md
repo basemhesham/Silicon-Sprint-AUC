@@ -1,4 +1,4 @@
-# Module 6: Hardening Your Design for the OpenFrame Multi-Project Chip
+# Module 6: Hardening Your Design for the OpenFrame Multi-Project
 
 ---
 
