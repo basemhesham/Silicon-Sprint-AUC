@@ -153,8 +153,7 @@ net when your macro is placed in the chip.
 Clone the workshop repository:
 
 ```console
-$ git clone https://github.com/basemhesham/openframe_multiproject \
-    ~/openframe_multiproject
+$ git clone https://github.com/basemhesham/openframe_multiproject ~/openframe_multiproject
 ```
 
 The relevant directory structure is:
