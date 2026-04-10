@@ -95,12 +95,12 @@ for integration.
 
 Each student's design occupies a single **project slot** — a fixed-size physical
 boundary called `project_macro`. All slots are identical in dimension
-(**915.33 × 1031.66 µm**) and must connect to the surrounding infrastructure through a
+(**880 × 1031.66 µm**) and must connect to the surrounding infrastructure through a
 fixed set of ports on each edge.
 
 The instructor provides a **DEF template** for the slot. LibreLane uses this template
 during floorplanning to stamp the correct boundary, I/O pin locations, and power ring
-geometry into your design — exactly as the `user_project_wrapper.def` template was
+geometry into your design — exactly as the `project_macro.def` template was
 used in Module 5 for Caravel.
 
 ```{admonition} Why a Fixed Footprint?
@@ -121,8 +121,8 @@ Clone the workshop repository, which contains the pre-configured `project_macro`
 template including the DEF file, SDC constraints, and configuration skeleton:
 
 ```console
-$ git clone https://github.com/basemhesham/openframe_silicon_sprint \
-    ~/openframe_silicon_sprint
+$ git clone https://github.com/basemhesham/openframe_multiproject \
+    ~/openframe_multiproject
 ```
 
 Inside `openlane/project_macro/` you will find:
@@ -168,7 +168,7 @@ the same SPI interface.
 Copy the provided RTL file into your project:
 
 ```console
-$ gedit ~/openframe_silicon_sprint/verilog/rtl/project_macro.v
+$ gedit ~/openframe_multiproject/verilog/rtl/project_macro.v
 ```
 
 ````{dropdown} project_macro.v
@@ -188,69 +188,16 @@ uses a strict 0.75 ns maximum transition to drive aggressive violation repair, a
 models the clock latency through the green macro clock buffer and the GPIO input delays
 through the orange mux macros.
 
-````{dropdown} pnr.sdc
-```{literalinclude} ./code/openframe/pnr.sdc
-:language: tcl
-```
-````
-
 `signoff.sdc` is applied **only** at the final signoff STA stage. It uses the relaxed
 1.5 ns library characterisation limit and slightly less pessimistic timing derate,
 reflecting a realistic assessment of the manufactured silicon's operating envelope. The
 I/O delay values are taken directly from the OpenFrame base SDC, derived from physical
 extraction of the actual orange macro and padframe routing.
 
-````{dropdown} signoff.sdc
-```{literalinclude} ./code/openframe/signoff.sdc
-:language: tcl
-```
-````
 
 ---
 
 ## 7. Hardening Configuration
-
-Open the configuration file:
-
-```console
-$ gedit ~/openframe_silicon_sprint/openlane/project_macro/config.json
-```
-
-Paste the following configuration:
-
-```json
-{
-    "VERILOG_FILES": [
-        "dir::../../../secworks_aes/src/rtl/*.v",
-        "dir::../../verilog/rtl/project_macro.v"
-    ],
-    "FP_CORE_UTIL": 40,
-    "PDN_MULTILAYER": false,
-    "RT_MAX_LAYER": "met4",
-    "SYNTH_STRATEGY": "DELAY 4",
-    "DEFAULT_CORNER": "max_ss_100C_1v60",
-    "RUN_POST_GRT_DESIGN_REPAIR": true,
-    "PNR_SDC_FILE": "dir::pnr.sdc",
-    "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
-    "GRT_ANTENNA_REPAIR_ITERS": 10,
-    "GRT_ANTENNA_REPAIR_MARGIN": 15,
-    "DIODE_ON_PORTS": "both",
-
-    "//": "Fixed slot configuration — do NOT edit below this line",
-    "DESIGN_NAME": "project_macro",
-    "FP_SIZING": "absolute",
-    "DIE_AREA": [0, 0, 915.33, 1031.66],
-    "FP_DEF_TEMPLATE": "dir::fixed_dont_change/project_macro.def",
-    "VDD_NETS": ["vccd1"],
-    "GND_NETS": ["vssd1"],
-    "CLOCK_PORT": "clk",
-    "MAGIC_DEF_LABELS": false,
-    "CLOCK_PERIOD": 25,
-    "MAGIC_ZEROIZE_ORIGIN": false
-}
-```
-
----
 
 ### Configuration Parameter Notes
 
@@ -279,66 +226,7 @@ is placed inside the multi-project wrapper during chip assembly. The violations 
 be fixed post-integration.
 ```
 
-#### Other Key Parameters
 
-| Parameter | Value | Reason |
-| :--- | :--- | :--- |
-| `SYNTH_STRATEGY` | `DELAY 4` | Best register-to-register slack for the AES core, as determined by SynthesisExploration in Module 1. |
-| `DEFAULT_CORNER` | `max_ss_100C_1v60` | The worst-case Slow-Slow corner produces the most violations — optimising against it ensures robustness across all corners. |
-| `FP_CORE_UTIL` | `40` | Leaves routing headroom for the dense AES datapath and the added SPI controller logic. |
-| `RUN_POST_GRT_DESIGN_REPAIR` | `true` | Enables a repair pass after Global Routing to fix any remaining slew and capacitance violations before Detailed Routing locks the topology. |
-| `GRT_ANTENNA_REPAIR_ITERS` | `10` | Allows up to 10 antenna repair iterations during Global Routing, ensuring complete antenna protection before Detailed Routing. |
-| `DIODE_ON_PORTS` | `"both"` | Inserts antenna protection diodes on all input and output ports at the macro boundary, preventing gate oxide damage from long interconnects in the wrapper. |
-| `DIE_AREA` | `[0, 0, 915.33, 1031.66]` | Fixed slot dimensions. Must not be changed — this is the standard footprint for all project slots in the multi-project chip. |
-| `FP_DEF_TEMPLATE` | `project_macro.def` | The fixed slot DEF template provided by the instructor. Stamps the exact pin positions and power ring geometry required by the surrounding infrastructure macros. |
-
----
-
-## 8. Running the Flow
-
-Enter the Nix shell:
-
-```console
-$ nix-shell --pure ~/librelane/shell.nix
-```
-
-Run the hardening flow:
-
-```console
-[nix-shell:~]$ librelane \
-    ~/openframe_silicon_sprint/openlane/project_macro/config.json \
-    --run-tag classic_flow
-```
-
-When the flow completes:
-
-```text
- Antenna
-Passed ✅
- LVS
-Passed ✅
- DRC
-Passed ✅
-```
-
-Submit the following files from `runs/classic_flow/final/` to your instructor for
-integration into the multi-project chip:
-
-```text
-final/
-├── gds/project_macro.gds    ← Primary submission — fabrication layout
-├── lef/project_macro.lef    ← Physical abstract for wrapper-level PnR
-└── verilog/gl/project_macro.v  ← Gate-level netlist for LVS verification
-```
-
-```{admonition} Congratulations!
-:class: tip
-
-You have hardened the AES-128 accelerator for tape-out on a real multi-project OpenFrame
-chip. From RTL through synthesis, floorplanning, placement, routing, and physical signoff
-— your `project_macro.gds` is ready to be slotted into the AUC Silicon Sprint chip
-alongside the other student designs.
-```
 
 ---
 
