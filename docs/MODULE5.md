@@ -103,14 +103,6 @@ most PnR time and iteration. Best for designs that need the full wrapper area.
 
 ::::
 
-| | Strategy 1 | Strategy 2 | Strategy 3 |
-| :--- | :---: | :---: | :---: |
-| Macro pre-hardened separately | ✅ | ✅ | ❌ |
-| Top-level standard cells | ❌ | ✅ | ✅ |
-| CTS / repair at wrapper level | ❌ | ✅ | ✅ |
-| Runtime | Fast | Medium | Slow |
-| Best for | Small designs | Boundary issues | Full-area designs |
-
 ---
 
 ## 3. Strategy 1 — Macro-First Hardening
