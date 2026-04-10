@@ -253,6 +253,13 @@ The configuration consists of two sections. The **user section** at the top is w
 you tune synthesis, floorplan, and routing parameters for your specific design. The
 **fixed section** at the bottom must never be modified.
 
+### Implementation Strategy: Flattened Design
+You must use a **Flattened Strategy** to meet the physical requirements of the OpenFrame environment:
+
+* **Maximize Routing:** Flattening allows the tool to use all metal layers from **met1 to met4**. In contrast, hierarchical flows often restrict the design to met3, limiting your routing resources.
+* **Power Grid Compatibility:** Since this macro uses **met4 straps** for the power grid, you must avoid using "Rings." Using rings would create physical blockages, preventing the power straps from reaching neighboring projects in the multiproject frame.
+* **Avoid Blockages:** A flattened approach ensures your design integrates seamlessly into the top-level implementation without creating electrical or physical obstacles for global shared resources.
+
 ### Fixed Section 
 
 ```json
