@@ -22,6 +22,7 @@ management SoC, a Wishbone bus, and a logic analyser, OpenFrame provides only th
 essential harness — a padframe, a power-on-reset circuit, and a 32-bit project ID ROM.
 
 ```{figure} ./figures/OpenFrame.png
+:scale: 50%
 :align: center
 
 *OpenFrame chip — bare padframe with a ~15 mm² open user area. All 44 GPIO pads are
