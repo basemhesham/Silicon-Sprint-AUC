@@ -223,16 +223,19 @@ Paste the following complete configuration:
 "FP_DEF_TEMPLATE": "dir::fixed_dont_change/user_project_wrapper.def"
 ```
 
-During floorplanning, LibreLane reads this pre-built DEF file and stamps its contents
-directly into the OpenROAD database. It encodes three things that cannot be derived
-from `config.json` parameters alone:
+The **Odb.ApplyDEFTemplate** step imports a pre-built template into the OpenROAD database. It copies the **die area**, 
+**core area**, and **I/O pin data** (names/locations) to ensure a perfect physical match with the top-level harness.
 
-- **Exact pin geometry** — every I/O pin has the precise shape, layer, and coordinate
-  that Caravel's management SoC and padframe expect.
-- **Fixed power rings** — the outer VDD/GND rings are pre-drawn to connect to
-  Caravel's top-level PDN during chip assembly.
-- **Fixed core area** — the `2920 × 3520 µm` boundary matches the open user area in
-  the fabricated chip exactly.
+#### **Key Requirements**
+* **Pin Matching:** By default, the design's pin set must **identically match** the template. Any mismatch will cause the flow to fail.
+* **Immutable Source:** Templates are stored in `fixed_dont_change/` and must not be edited, as they represent fixed physical hardware.
+
+#### **Why It Is Required for Caravel**
+The template (`FP_DEF_TEMPLATE`) encodes three attributes that `config.json` cannot define:
+
+1.  **Exact Pin Geometry:** Assigns the precise shape, layer, and coordinates required for connection to the management SoC and padframe.
+2.  **Fixed Power Rings:** Includes pre-drawn VDD/GND rings designed to align perfectly with the top-level Power Distribution Network (PDN).
+3.  **Fixed Core Area:** Enforces the exact **2,920 × 3,520 µm** boundary available in the fabricated silicon.
 
 ```{figure} ./figures/DEF_Templet.png
 :align: center
