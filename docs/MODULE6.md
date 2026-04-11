@@ -170,9 +170,6 @@ The relevant directory structure is:
 │       │   └── project_macro.def   ← Fixed slot DEF template — do NOT edit
 │       ├── pnr.sdc                  ← PnR timing constraints
 │       └── signoff.sdc              ← Signoff timing constraints
-├── gds/                             ← Submit your final GDS here
-├── lef/                             ← Submit your final LEF here
-└── verilog/gl/                      ← Submit your gate-level netlist here
 ```
 
 ---
