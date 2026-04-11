@@ -230,7 +230,7 @@ These are internal constraints based on your specific implementation goals. You 
 
 ### 2. Retrieved Constraints (Boundary-Defined)
 To ensure your macro functions correctly within the larger system, you must incorporate the I/O delays derived from the **OpenFrame** boundary. These represent the real-world electrical delays between the chip pads and your `project_macro` ports.
-* **Source:** You can retrieve these fixed boundary constraints from the `openframe_project_wrapper` SDC [here (Lines 37-38)](https://github.com/basemhesham/openframe_multiproject/blob/main/openlane/openframe_project_wrapper/base_user_project_wrapper.sdc#L37C1-L38C1).
+* **Source:** You can retrieve these fixed boundary constraints from the `openframe_project_wrapper` SDC [here](https://github.com/basemhesham/openframe_multiproject/blob/main/openlane/openframe_project_wrapper/base_user_project_wrapper.sdc#L37C1-L38C1).
 
 ---
 
