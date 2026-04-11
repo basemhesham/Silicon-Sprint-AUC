@@ -267,6 +267,8 @@ You must use a **Flattened Strategy** to meet the physical requirements of the O
     "VDD_NETS": ["vccd1"],
     "GND_NETS": ["vssd1"],
     "CLOCK_PORT": "clk",
+    "RT_MAX_LAYER": "met4",
+    "PDN_MULTILAYER": false
 ```
 
 | Parameter | Value | Why Fixed |
