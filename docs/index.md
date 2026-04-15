@@ -132,6 +132,12 @@ Hardening Your Design for the OpenFrame Multi-Project Chip
 | **SkyWater 130nm PDK** | `sky130_fd_sc_hd` standard cell library |
 
 ---
+---
+## Credits
+
+Developed by **Basem Hesham**  
+📧 [basemhesham159@gmail.com](mailto:basemhesham159@gmail.com)  
+💼 [LinkedIn Profile](https://www.linkedin.com/in/basem-hesham1/?skipRedirect=true)
 
 ```{glossary}
 GDSII
