@@ -217,23 +217,78 @@ used as the black box interface at the top level.
 
 ## 7. Timing Constraints
 
-You are responsible for authoring two distinct SDC files: `pnr.sdc` (for implementation) and `signoff.sdc` (for final verification). These files must be constructed by integrating two specific sets of data:
+Your design must close timing correctly both during implementation and at final
+verification. This requires two SDC files: `pnr.sdc`, used throughout the physical
+implementation flow, and `signoff.sdc`, used after parasitic extraction for the final
+timing check.
 
-### 1. Design Constraints (User-Defined)
-These are internal constraints based on your specific implementation goals. You must define:
-* **Clock Period:** Set based on your target operating frequency.
-* **Uncertainty & Derate:** To account for clock jitter and process variation.
-* **Transition Limits:** To ensure signal integrity across your logic gates.
+### `pnr.sdc` — Implementation Constraints
 
-### 2. Retrieved Constraints (Boundary-Defined)
-To ensure your macro functions correctly within the larger system, you must incorporate the I/O delays derived from the **OpenFrame** boundary. These represent the real-world electrical delays between the chip pads and your `project_macro` ports.
-* **Source:** You can retrieve these fixed boundary constraints from the `openframe_project_wrapper` SDC [here](https://github.com/basemhesham/openframe_multiproject/blob/main/openlane/openframe_project_wrapper/base_user_project_wrapper.sdc#L37C1-L38C1).
+This file is active during synthesis, placement, clock tree synthesis, and routing.
+It intentionally uses **tighter** settings than the real electrical requirements:
+
+- A smaller `clock_uncertainty` margin reserves extra guard-band before the clock
+  tree is balanced.
+- A wider `timing_derate` (±7 %) compensates for the gap between the router's
+  estimated wire delays and the actual parasitics that will be extracted later.
+- A tighter `max_transition` forces the router to insert additional buffers early,
+  preventing slew violations from appearing only at signoff.
+
+Over-constraining here means any timing problems surface and are resolved during
+routing, before extraction reveals the real numbers.
+
+````{dropdown} pnr.sdc
+
+````
 
 ---
 
-### Implementation Strategy
-* **pnr.sdc:** Write this file with more aggressive targets (tighter constraints). This accounts for the gap between the tool’s early parasitic estimations and the final extracted values. Over-constraining here ensures that potential violations are resolved early in the routing phase.
-* **signoff.sdc:** This file should reflect the true timing requirements. It is used during the final timing signoff after **SPEF extraction** to confirm that the design meets all real-world electrical targets.
+### `signoff.sdc` — Final Verification Constraints
+
+This file is used only at the `OpenROAD.STAPostPNR` step, after SPEF parasitic
+extraction has completed. The settings are relaxed to reflect the true operating
+requirements:
+
+- `clock_uncertainty` is reduced to 0.10 ns — the clock tree is now balanced.
+- `timing_derate` is reduced to ±5 % — real parasitics replace estimates.
+- `max_transition` is relaxed to 1.50 ns — the routing is complete.
+
+````{dropdown} signoff.sdc
+
+````
+
+---
+
+### Retrieved Constraints — I/O Boundary Delays
+
+````{admonition} Use the Correct Boundary Delays
+:class: warning
+
+The I/O delay values in your SDC are not arbitrary — they are **measured physical
+delays** that encode the full signal path from the chip pads through the OpenFrame
+infrastructure to your `project_macro` ports. Using incorrect values means your macro
+will close timing in isolation but fail when integrated into the chip.
+````
+
+Every `set_input_delay` and `set_output_delay` value in both SDC files reflects two
+stacked delays that a real signal experiences:
+
+1. **OpenFrame external boundary** — the board trace and Caravel pad buffer delays
+   specified in the OpenFrame wrapper SDC.
+2. **Internal infrastructure** — the combinational delay through the purple broadcast
+   buffer and the orange local buffer before the signal reaches your `gpio_*_in` port
+   (for inputs), or through the orange MUX chain and purple mux after it leaves your
+   `gpio_*_out` port (for outputs).
+
+The `set_clock_latency` values encode the full clock path from the external source
+through the green macro column chain and ICG cell to your `clk` port. This value
+**differs by grid position** — macros in higher rows have a longer green chain and
+therefore a higher source latency.
+
+For the exact values to use for your specific row and column position, refer to the
+SDC Constraints Guide:
+
+> 📄 [SDC Constraints Guide](https://github.com/basemhesham/openframe_multiproject/blob/main/openlane/project_macro/Sdc%20constraints%20guide.md)
 
 ---
 
