@@ -237,7 +237,7 @@ It intentionally uses **tighter** settings than the real electrical requirements
 Over-constraining here means any timing problems surface and are resolved during
 routing, before extraction reveals the real numbers.
 
-````{dropdown} pnr.sdc
+```tcl
 #===========================================================================#
 # PROJECT MACRO PNR
 #===========================================================================#
@@ -333,9 +333,7 @@ set_load 0.19 $all_macro_outputs
 # 8. TIMING EXCEPTIONS (False Paths)
 #---------------------------------------------------------------------------#
 set_false_path -from [get_ports {reset_n por_n}]
-
-:language: tcl
-````
+```
 
 ---
 
@@ -349,7 +347,7 @@ requirements:
 - `timing_derate` is reduced to ±5 % — real parasitics replace estimates.
 - `max_transition` is relaxed to 1.50 ns — the routing is complete.
 
-````{dropdown} signoff.sdc
+```tcl
 #===========================================================================#
 # PROJECT MACRO SIGNOFF
 #===========================================================================#
@@ -446,7 +444,7 @@ set_load 0.19 $all_macro_outputs
 # 8. TIMING EXCEPTIONS (False Paths)
 #---------------------------------------------------------------------------#
 set_false_path -from [get_ports {reset_n por_n}]
-````
+```
 
 ---
 
