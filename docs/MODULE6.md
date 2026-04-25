@@ -333,6 +333,8 @@ set_load 0.19 $all_macro_outputs
 # 8. TIMING EXCEPTIONS (False Paths)
 #---------------------------------------------------------------------------#
 set_false_path -from [get_ports {reset_n por_n}]
+
+:language: tcl
 ````
 
 ---
