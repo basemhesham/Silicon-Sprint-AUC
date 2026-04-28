@@ -181,7 +181,7 @@ less efficient when many parallel bus wires are involved.
 | `GRT_ANTENNA_REPAIR_MARGIN` | `int` | Percentage margin above the PDK limit used to over-fix violations. A value of `15` means the tool fixes nets that are within 15% of the limit — providing guard-band against post-DRT worsening. | `10` |
 | `GRT_ANTENNA_REPAIR_JUMPER_ONLY` | `bool` | Restricts repair to metal jumpering only. Cannot be combined with `DIODE_ONLY`. | `False` |
 | `GRT_ANTENNA_REPAIR_DIODE_ONLY` | `bool` | Restricts repair to diode insertion only. | `False` |
-| `DRT_ANTENNA_REPAIR_ITERS` | `int` | Maximum antenna repair iterations during Detailed Routing. | `0` |
+| `DRT_ANTENNA_REPAIR_ITERS` | `int` | Maximum antenna repair iterations during Detailed Routing. | `3` |
 | `DRT_ANTENNA_REPAIR_MARGIN` | `int` | Margin percentage for over-fixing violations during Detailed Routing. | `10` |
 | `RUN_HEURISTIC_DIODE_INSERTION` | `bool` | Enables the `Odb.HeuristicDiodeInsertion` step to insert antenna diodes  | `False` |
 | `HEURISTIC_ANTENNA_THRESHOLD ` | `Decimal?` | A Manhattan distance above which a diode is recommended to be inserted by the heuristic inserter.  | `None` |
