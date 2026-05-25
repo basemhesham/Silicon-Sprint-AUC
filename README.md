@@ -1,18 +1,8 @@
 <div align="center">
 
-<img src="https://github.com/user-attachments/assets/84028fb9-2e26-4733-af28-c6e825395912" alt="Silicon Sprint AUC logo" height="120" />
-
 # Silicon Sprint AUC
 
 **An open-source ASIC design workshop for taking a Wishbone-connected design from RTL to GDSII using LibreLane and the SkyWater 130nm process.**
-
-<p>
-  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache 2.0" /></a>
-  <a href="https://silicon-sprint-auc.readthedocs.io/en/latest/"><img src="https://readthedocs.org/projects/silicon-sprint-auc/badge/?version=latest" alt="Documentation status" /></a>
-  <a href="https://github.com/chipfoundry/librelane"><img src="https://img.shields.io/badge/Flow-LibreLane%20v3-FF69B4" alt="LibreLane v3" /></a>
-  <a href="https://nixos.org/"><img src="https://img.shields.io/static/v1?logo=nixos&logoColor=white&label=&message=Built%20with%20Nix&color=41439a" alt="Built with Nix" /></a>
-  <a href="https://skywater-pdk.readthedocs.io/"><img src="https://img.shields.io/badge/PDK-SkyWater%20130nm-0B7285" alt="SkyWater 130nm PDK" /></a>
-</p>
 
 [Documentation](https://silicon-sprint-auc.readthedocs.io/en/latest/) |
 [Getting Started](#getting-started) |
@@ -133,21 +123,6 @@ The repository includes reference output views from the hardening flow. These fi
 - `signoff/`: final metrics, timing summaries, DRC/LVS logs, and signoff reports.
 
 Before using any collateral for a new tapeout or shuttle submission, re-run the flow and signoff checks in your own environment.
-
-## Documentation Development
-
-The documentation source lives in `docs/` and is configured through `.readthedocs.yml` and `docs/conf.py`.
-
-To build the documentation locally:
-
-```console
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r docs/requirements.txt
-sphinx-build -b html docs docs/_build/html
-```
-
-On Linux, macOS, or WSL2, activate the virtual environment with `source .venv/bin/activate` instead.
 
 ## License
 
